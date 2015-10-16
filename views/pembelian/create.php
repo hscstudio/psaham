@@ -17,7 +17,7 @@ $this->params['breadcrumbs'][] = $this->title;
       <div class="header">
         Keterangan:
       </div>
-      <p>Lorem ipsum sit dolor amet </p>
+      <p>Input data pembelian</p>
     </div>
     <div class="ui divider"></div>
 

@@ -50,12 +50,19 @@ AppAsset::register($this);
         $menuItems[] = ['label' => 'Signup', 'url' => ['/site/signup']];
         $menuItems[] = ['label' => 'Login', 'url' => ['/site/login']];
     } else {
-        $menuItems[] = ['label' => 'App', 'items' => [
+        $menuItems[] = ['label' => 'Master', 'items' => [
             ['label' => 'Komisi', 'url' => ['/komisi/index']],
             ['label' => 'Securitas', 'url' => ['/securitas/index']],
             ['label' => 'Emiten', 'url' => ['/emiten/index']],
-            ['label' => 'Pembelian', 'url' => ['/pembelian/index']],
+            ['label' => 'Parameter', 'url' => ['/paramfund/index']],
+            '<hr>',
             ['label' => 'Note', 'url' => ['/note/index']],
+        ]];
+        $menuItems[] = ['label' => 'Transaksi', 'items' => [
+            ['label' => 'Pembelian', 'url' => ['/pembelian/index']],
+        ]];
+        $menuItems[] = ['label' => 'Laporan', 'items' => [
+
         ]];
         /*
         $menuItems[] = ['label' => 'Admin', 'items' => [

@@ -52,7 +52,9 @@ class Paramfund extends \yii\db\ActiveRecord
     {
         return [
             [['EMITEN_KODE', 'TAHUN', 'TRIWULAN', 'BV', 'EPS', 'PBV', 'PER', 'DER', 'SHARE', 'HARGA', 'CE', 'CA', 'TA', 'TE', 'CL', 'TL', 'SALES', 'NI', 'ROE', 'ROA'], 'required'],
-            [['BV', 'P_BV', 'EPS', 'P_EPS', 'PBV', 'PER', 'DER', 'SHARE', 'HARGA', 'CE', 'CA', 'TA', 'TE', 'CL', 'TL', 'SALES', 'NI', 'ROE', 'ROA', 'P_TE', 'P_SALES', 'P_NI'], 'number'],
+            [['BV', 'P_BV', 'EPS', 'P_EPS', 'PBV', 'PER', 'DER', 'SHARE', 'HARGA', 'CE', 'CA', 'TA', 'TE', 'CL', 'TL', 'SALES', 'NI', 'ROE', 'ROA', 'P_TE', 'P_SALES', 'P_NI'], 'number',
+              'enableClientValidation'=> false,
+            ],
             [['EMITEN_KODE'], 'string', 'max' => 8],
             [['TAHUN'], 'string', 'max' => 4],
             [['TRIWULAN'], 'string', 'max' => 5]
@@ -68,35 +70,35 @@ class Paramfund extends \yii\db\ActiveRecord
             'EMITEN_KODE' => 'Emiten  Kode',
             'TAHUN' => 'Tahun',
             'TRIWULAN' => 'Triwulan',
-            'BV' => 'Bv',
-            'P_BV' => 'P  Bv',
-            'EPS' => 'Eps',
-            'P_EPS' => 'P  Eps',
-            'PBV' => 'Pbv',
-            'PER' => 'Per',
-            'DER' => 'Der',
+            'BV' => 'BV',
+            'P_BV' => 'Persentase BV',
+            'EPS' => 'EPS',
+            'P_EPS' => 'Persentase EPS',
+            'PBV' => 'PBV',
+            'PER' => 'PER',
+            'DER' => 'DER',
             'SHARE' => 'Share',
-            'HARGA' => 'Harga',
-            'CE' => 'Ce',
-            'CA' => 'Ca',
-            'TA' => 'Ta',
-            'TE' => 'Te',
-            'CL' => 'Cl',
-            'TL' => 'Tl',
+            'HARGA' => 'Closing Price',
+            'CE' => 'Cash Equivalent',
+            'CA' => 'Current Asset',
+            'TA' => 'Total Asset',
+            'TE' => 'Total Equity',
+            'CL' => 'Current Liabilities',
+            'TL' => 'Total Liabilities',
             'SALES' => 'Sales',
-            'NI' => 'Ni',
-            'ROE' => 'Roe',
-            'ROA' => 'Roa',
-            'P_TE' => 'P  Te',
-            'P_SALES' => 'P  Sales',
-            'P_NI' => 'P  Ni',
+            'NI' => 'Net Income',
+            'ROE' => 'ROE',
+            'ROA' => 'ROA',
+            'P_TE' => 'Persentase TE',
+            'P_SALES' => 'Persentase   Sales',
+            'P_NI' => 'Persentase Net Income',
         ];
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getEMITENKODE()
+    public function getEmiten()
     {
         return $this->hasOne(Emiten::className(), ['KODE' => 'EMITEN_KODE']);
     }

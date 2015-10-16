@@ -203,7 +203,11 @@ class PembelianController extends Controller
     public function actionDelete($id)
     {
         $model = $this->findModel($id);
-        $oldModel = $model;
+        $EMITEN_KODE = $model->EMITEN_KODE;
+        $TOTAL_BELI = $model->TOTAL_BELI;
+        $SALDOR1 = $model->SALDOR1;
+        $JMLSAHAM = $model->JMLSAHAM;
+        $JMLLOT = $model->JMLLOT;
         $connection = \Yii::$app->db;
         $transaction = $connection->beginTransaction();
         try {
@@ -212,14 +216,14 @@ class PembelianController extends Controller
             // Ada trigger saat terjadi pembelian yg mengubah nilai
             // Saldor1 = (Saldo + Total Beli) / (Jml Saham + Jml Saham Beli)
             // Total Beli, Jml Saham Beli dari table Pembelian sesuai kode Emiten.
-            $modelEmiten = Emiten::find()->where(['KODE'=>$oldModel->EMITEN_KODE])->one();
+            $modelEmiten = Emiten::find()->where(['KODE'=>$EMITEN_KODE])->one();
             if($modelEmiten){
-              $modelEmiten->SALDOR1 = @ ($modelEmiten->SALDO - $oldModel->TOTAL_BELI ) / ($modelEmiten->JMLSAHAM - $oldModel->JMLSAHAM);
+              $modelEmiten->SALDOR1 = @ ($modelEmiten->SALDO - $TOTAL_BELI ) / ($modelEmiten->JMLSAHAM - $JMLSAHAM);
               //-Ada trigger saat terjadi pembelian untuk mengubah nilai jmllot dan saldo pada table emiten:
               // JMLLOTB = JMLLOTB + JMLLOT BELI
               // SALDOB = SALDOB + TOTAL BELI
-              $modelEmiten->JMLLOTB = $modelEmiten->JMLLOTB - $oldModel->JMLLOT;
-              $modelEmiten->SALDOB = $modelEmiten->SALDOB - $oldModel->TOTAL_BELI;
+              $modelEmiten->JMLLOTB = $modelEmiten->JMLLOTB - $JMLLOT;
+              $modelEmiten->SALDOB = $modelEmiten->SALDOB - $TOTAL_BELI;
               if($modelEmiten->save()){
                 Yii::$app->session->setFlash('success', 'Data berhasil dihapus.');
                 $transaction->commit();
