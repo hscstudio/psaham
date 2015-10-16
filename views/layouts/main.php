@@ -55,6 +55,7 @@ AppAsset::register($this);
             ['label' => 'Securitas', 'url' => ['/securitas/index']],
             ['label' => 'Emiten', 'url' => ['/emiten/index']],
             ['label' => 'Pembelian', 'url' => ['/pembelian/index']],
+            ['label' => 'Note', 'url' => ['/note/index']],
         ]];
         /*
         $menuItems[] = ['label' => 'Admin', 'items' => [
