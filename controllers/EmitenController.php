@@ -5,6 +5,7 @@ namespace app\controllers;
 use Yii;
 use app\models\Emiten;
 use app\models\EmitenSearch;
+use app\models\Lotshare;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -35,7 +36,7 @@ class EmitenController extends Controller
     {
         $searchModel = new EmitenSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-
+        $dataProvider->pagination->pageSize=10;
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
@@ -63,11 +64,26 @@ class EmitenController extends Controller
     {
         $model = new Emiten();
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->KODE]);
+        if ($model->load(Yii::$app->request->post())) {
+            $model->SALDOR1 = (float) @($model->SALDO / $model->JMLSAHAM);
+            $model->JMLLOTB = $model->JMLLOT;
+            $model->SALDOB = $model->SALDO;
+            if($model->save()){
+              Yii::$app->session->setFlash('success', 'Data berhasil disimpan.');
+              return $this->redirect(['index']);
+            }
+            else{
+              Yii::$app->session->setFlash('error', 'Data gagal disimpan.');
+              return $this->render('create', [
+                  'model' => $model,
+                  'lotshare' => $this->getLotshare(),
+              ]);
+            }
+            //return $this->redirect(['view', 'id' => $model->KODE]);
         } else {
             return $this->render('create', [
                 'model' => $model,
+                'lotshare' => $this->getLotshare(),
             ]);
         }
     }
@@ -82,11 +98,23 @@ class EmitenController extends Controller
     {
         $model = $this->findModel($id);
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->KODE]);
+        if ($model->load(Yii::$app->request->post())) {
+            //return $this->redirect(['view', 'id' => $model->KODE]);
+            if($model->save()){
+              Yii::$app->session->setFlash('success', 'Data berhasil disimpan.');
+              return $this->redirect(['index']);
+            }
+            else{
+              Yii::$app->session->setFlash('error', 'Data gagal disimpan.');
+              return $this->render('update', [
+                  'model' => $model,
+                  'lotshare' => $this->getLotshare(),
+              ]);
+            }
         } else {
             return $this->render('update', [
                 'model' => $model,
+                'lotshare' => $this->getLotshare(),
             ]);
         }
     }
@@ -123,5 +151,15 @@ class EmitenController extends Controller
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
+    }
+
+    public function getLotshare()
+    {
+        $lotshare = Lotshare::find()->select('JML_LBRSAHAM')->one();
+        $jml_saham = '100';
+        if($lotshare!==null){
+            $jml_saham = (int)$lotshare->JML_LBRSAHAM;
+        }
+        return $jml_saham;
     }
 }

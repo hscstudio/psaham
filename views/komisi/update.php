@@ -16,7 +16,7 @@ $this->params['breadcrumbs'][] = ['label' => 'Komisi', 'url' => ['index']];
       <div class="header">
         Keterangan:
       </div>
-      <p>Fill out the form below to sign-up for a new account</p>
+      <p>Update data komisi dan jumlah saham perlot</p>
     </div>
     <div class="ui divider"></div>
     <?= $this->render('_form', [

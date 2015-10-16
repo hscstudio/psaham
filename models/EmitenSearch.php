@@ -19,7 +19,7 @@ class EmitenSearch extends Emiten
     {
         return [
             [['KODE', 'NAMA'], 'safe'],
-            [['JMLLOT', 'SALDO', 'HARGA', 'SALDOR1', 'JMLLOTB', 'SALDOB'], 'number'],
+            [['JMLLOT', 'JMLSAHAM', 'SALDO', 'HARGA', 'SALDOR1', 'JMLLOTB', 'SALDOB'], 'number'],
         ];
     }
 
@@ -57,6 +57,7 @@ class EmitenSearch extends Emiten
 
         $query->andFilterWhere([
             'JMLLOT' => $this->JMLLOT,
+            'JMLSAHAM' => $this->JMLSAHAM,
             'SALDO' => $this->SALDO,
             'HARGA' => $this->HARGA,
             'SALDOR1' => $this->SALDOR1,

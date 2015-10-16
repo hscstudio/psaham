@@ -18,7 +18,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
     <?php Pjax::begin([
-      'id'=>'pjax-gridview',
+      'id'=>'securitas-index-pjax',
     ]); ?>
 
     <?= GridView::widget([
@@ -155,10 +155,8 @@ $this->params['breadcrumbs'][] = $this->title;
                     $icon='<span class="glyphicon glyphicon-trash"></span>';
                     return Html::a($icon,$url,[
                       'class'=>'btn btn-default btn-xs',
-                      'data-pjax'=>'0',
-                      'data-toggle'=>"modal",
-                      'data-target'=>"#myModal",
-                      'data-title'=>"Update Data",
+                      'data-confirm'=>"Apakah anda mau menghapus data ini?",
+                      'data-method'=>'post',
                     ]);
                   },
               ]

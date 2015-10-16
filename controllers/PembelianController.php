@@ -76,22 +76,54 @@ class PembelianController extends Controller
         ]);
 
         if ($model->load(Yii::$app->request->post())) {
+          $connection = \Yii::$app->db;
+          $transaction = $connection->beginTransaction();
+          try {
             $model->NOMOR = $this->getNumber();
             $dates = $this->getDates($model->TGL);
             $model->TGL  = $dates[0];
             if($model->save()){
-                Yii::$app->session->setFlash('success', 'Data have created.');
+                // Ada trigger saat terjadi pembelian yg mengubah nilai
+                // Saldor1 = (Saldo + Total Beli) / (Jml Saham + Jml Saham Beli)
+                // Total Beli, Jml Saham Beli dari table Pembelian sesuai kode Emiten.
+                $modelEmiten = Emiten::find()->where(['KODE'=>$model->EMITEN_KODE])->one();
+                if($modelEmiten){
+                  $modelEmiten->SALDOR1 = @ ($modelEmiten->SALDO + $model->TOTAL_BELI) / ($modelEmiten->JMLSAHAM + $model->JMLSAHAM);
+                  //-Ada trigger saat terjadi pembelian untuk mengubah nilai jmllot dan saldo pada table emiten:
+                  // JMLLOTB = JMLLOTB + JMLLOT BELI
+                  // SALDOB = SALDOB + TOTAL BELI
+                  $modelEmiten->JMLLOTB = $modelEmiten->JMLLOTB + $model->JMLLOT;
+                  $modelEmiten->SALDOB = $modelEmiten->SALDOB + $model->TOTAL_BELI;
+                  if($modelEmiten->save()){
+                    Yii::$app->session->setFlash('success', 'Data berhasil disimpan.');
+                    $transaction->commit();
+                  }
+                  else{
+                    Yii::$app->session->setFlash('error', 'Data gagal disimpan.');
+                    $transaction->rollBack();
+                  }
+                }
+                else{
+                  Yii::$app->session->setFlash('error', 'Data gagal disimpan.');
+                  $transaction->rollBack();
+                }
+
                 //return $this->redirect(['view', 'id' => $model->NOMOR]);
             }
             else{
-                Yii::$app->session->setFlash('error', 'Data create.');
+                Yii::$app->session->setFlash('error', 'Data gagal disimpan.');
+                $transaction->rollBack();
             }
-            return $this->redirect(['index', 'date'=>$dates[0] ]);
+          } catch(Exception $e) {
+            Yii::$app->session->setFlash('error', 'Fatal error.');
+            $transaction->rollback();
+          }
+          return $this->redirect(['index', 'date'=>$dates[0] ]);
         } else {
             $model->NOMOR = $this->getNumber();
             $model->TGL = $dates[1];
-            $model->JMLLOT = 1;
-            $model->HARGA = 1000;
+            //$model->JMLLOT = 1;
+            //$model->HARGA = 1000;
             $model->KOM_BELI = $this->getKomisi();
             return $this->render('create', [
                 'model' => $model,
@@ -109,19 +141,50 @@ class PembelianController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
+        $oldModel = $model;
         $dates = $this->getDates($model->TGL);
         if ($model->load(Yii::$app->request->post())) {
+          $connection = \Yii::$app->db;
+          $transaction = $connection->beginTransaction();
+          try {
             $dates = $this->getDates($model->TGL);
             $model->TGL  = $dates[0];
             if($model->save()){
-                Yii::$app->session->setFlash('success', 'Data have updated.');
+                // Ada trigger saat terjadi pembelian yg mengubah nilai
+                // Saldor1 = (Saldo + Total Beli) / (Jml Saham + Jml Saham Beli)
+                // Total Beli, Jml Saham Beli dari table Pembelian sesuai kode Emiten.
+                $modelEmiten = Emiten::find()->where(['KODE'=>$model->EMITEN_KODE])->one();
+                if($modelEmiten){
+                  $modelEmiten->SALDOR1 = @ ($modelEmiten->SALDO + $model->TOTAL_BELI - $oldModel->TOTAL_BELI ) / ($modelEmiten->JMLSAHAM + $model->JMLSAHAM - $oldModel->JMLSAHAM);
+                  //-Ada trigger saat terjadi pembelian untuk mengubah nilai jmllot dan saldo pada table emiten:
+                  // JMLLOTB = JMLLOTB + JMLLOT BELI
+                  // SALDOB = SALDOB + TOTAL BELI
+                  $modelEmiten->JMLLOTB = $modelEmiten->JMLLOTB + $model->JMLLOT - $oldModel->JMLLOT;
+                  $modelEmiten->SALDOB = $modelEmiten->SALDOB + $model->TOTAL_BELI - $oldModel->TOTAL_BELI;
+                  if($modelEmiten->save()){
+                    Yii::$app->session->setFlash('success', 'Data berhasil disimpan.');
+                    $transaction->commit();
+                  }
+                  else{
+                    Yii::$app->session->setFlash('error', 'Data gagal disimpan.');
+                    $transaction->rollBack();
+                  }
+                }
+                else {
+                  Yii::$app->session->setFlash('error', 'Data gagal disimpan.');
+                  $transaction->rollBack();
+                }
                 //return $this->redirect(['view', 'id' => $model->NOMOR]);
             }
             else{
-                die(print_r($model->errors));
-                Yii::$app->session->setFlash('error', 'Update failed.');
+                Yii::$app->session->setFlash('error', 'Data gagal disimpan.');
+                $transaction->rollBack();
             }
-            return $this->redirect(['index', 'date'=>$dates[0] ]);
+          } catch(Exception $e) {
+            Yii::$app->session->setFlash('error', 'Fatal error.');
+            $transaction->rollback();
+          }
+          return $this->redirect(['index', 'date'=>$dates[0] ]);
         } else {
             $model->TGL  = $dates[1];
             return $this->render('update', [
@@ -140,12 +203,44 @@ class PembelianController extends Controller
     public function actionDelete($id)
     {
         $model = $this->findModel($id);
-        $dates = $this->getDates($model->TGL);
-        if($model->delete()){
-          Yii::$app->session->setFlash('success', 'Data have deleted.');
-        }
-        else{
-          Yii::$app->session->setFlash('error', 'Delete fail.');
+        $oldModel = $model;
+        $connection = \Yii::$app->db;
+        $transaction = $connection->beginTransaction();
+        try {
+          $dates = $this->getDates($model->TGL);
+          if($model->delete()){
+            // Ada trigger saat terjadi pembelian yg mengubah nilai
+            // Saldor1 = (Saldo + Total Beli) / (Jml Saham + Jml Saham Beli)
+            // Total Beli, Jml Saham Beli dari table Pembelian sesuai kode Emiten.
+            $modelEmiten = Emiten::find()->where(['KODE'=>$oldModel->EMITEN_KODE])->one();
+            if($modelEmiten){
+              $modelEmiten->SALDOR1 = @ ($modelEmiten->SALDO - $oldModel->TOTAL_BELI ) / ($modelEmiten->JMLSAHAM - $oldModel->JMLSAHAM);
+              //-Ada trigger saat terjadi pembelian untuk mengubah nilai jmllot dan saldo pada table emiten:
+              // JMLLOTB = JMLLOTB + JMLLOT BELI
+              // SALDOB = SALDOB + TOTAL BELI
+              $modelEmiten->JMLLOTB = $modelEmiten->JMLLOTB - $oldModel->JMLLOT;
+              $modelEmiten->SALDOB = $modelEmiten->SALDOB - $oldModel->TOTAL_BELI;
+              if($modelEmiten->save()){
+                Yii::$app->session->setFlash('success', 'Data berhasil dihapus.');
+                $transaction->commit();
+              }
+              else{
+                Yii::$app->session->setFlash('error', 'Data gagal dihapus.');
+                $transaction->rollBack();
+              }
+            }
+            else {
+              Yii::$app->session->setFlash('error', 'Data gagal dihapus.');
+              $transaction->rollBack();
+            }
+          }
+          else{
+            Yii::$app->session->setFlash('error', 'Data gagal dihapus.');
+            $transaction->rollback();
+          }
+        } catch(Exception $e) {
+          Yii::$app->session->setFlash('error', 'Fatal error.');
+          $transaction->rollback();
         }
         return $this->redirect(['index', 'date'=>$dates[0] ]);
     }

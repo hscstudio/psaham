@@ -29,6 +29,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'KODE',
             'NAMA',
             'JMLLOT',
+            'JMLSAHAM',
             'SALDO',
             'HARGA',
             'SALDOR1',

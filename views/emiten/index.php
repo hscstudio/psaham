@@ -94,6 +94,22 @@ $this->params['breadcrumbs'][] = $this->title;
               //'footer'=>true
             ],
             [
+              'attribute' => 'JMLSAHAM',
+              'label' => 'Jml Saham',
+              'format'=>['decimal',2],
+              'options' => [
+                  'width' => '100px',
+              ],
+              'headerOptions' => [
+                  'style' => 'text-align:center'
+              ],
+              'hAlign'=>'right',
+              'vAlign'=>'middle',
+              'pageSummary'=>true,
+              'pageSummaryFunc'=>GridView::F_SUM,
+              //'footer'=>true
+            ],
+            [
               'attribute' => 'SALDO',
               'label' => 'Saldo',
               'format'=>['decimal',2],

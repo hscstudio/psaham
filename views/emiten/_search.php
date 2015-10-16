@@ -21,6 +21,8 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'JMLLOT') ?>
 
+    <?= $form->field($model, 'JMLSAHAM') ?>
+
     <?= $form->field($model, 'SALDO') ?>
 
     <?= $form->field($model, 'HARGA') ?>

@@ -19,7 +19,7 @@ class PembelianSearch extends Pembelian
     {
         return [
             [['NOMOR', 'TGL', 'EMITEN_KODE', 'SECURITAS_KODE'], 'safe'],
-            [['JMLLOT', 'HARGA', 'KOM_BELI'], 'number'],
+            [['JMLLOT', 'JMLSAHAM', 'HARGA', 'KOM_BELI'], 'number'],
         ];
     }
 
@@ -58,6 +58,7 @@ class PembelianSearch extends Pembelian
         $query->andFilterWhere([
             'TGL' => $this->TGL,
             'JMLLOT' => $this->JMLLOT,
+            'JMLSAHAM' => $this->JMLSAHAM,
             'HARGA' => $this->HARGA,
             'KOM_BELI' => $this->KOM_BELI,
         ]);

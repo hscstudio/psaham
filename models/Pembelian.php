@@ -34,10 +34,10 @@ class Pembelian extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['NOMOR', 'TGL', 'JMLLOT', 'HARGA', 'KOM_BELI','EMITEN_KODE', 'SECURITAS_KODE'], 'required'],
+            [['NOMOR', 'TGL', 'JMLLOT', 'JMLSAHAM', 'HARGA', 'KOM_BELI','EMITEN_KODE', 'SECURITAS_KODE'], 'required'],
             [['TGL'], 'safe'],
-            //[['JMLLOT', 'HARGA', 'KOM_BELI'], 'number'],
-            [['JMLLOT', 'HARGA', 'KOM_BELI'], 'number',
+            [['JMLLOT', 'JMLSAHAM', 'HARGA', 'KOM_BELI'], 'number',
+                'min' => 0,
                 'enableClientValidation'=> false,
                 //'numberPattern' => '/^\s*[-+]?([0-9]\,?)+[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*$/mig',
             ],
@@ -54,7 +54,8 @@ class Pembelian extends \yii\db\ActiveRecord
         return [
             'NOMOR' => 'Nomor',
             'TGL' => 'Tgl',
-            'JMLLOT' => 'Jmllot',
+            'JMLLOT' => 'Jml lot',
+            'JMLSAHAM' => 'Jml Saham',
             'HARGA' => 'Harga',
             'KOM_BELI' => 'Kom  Beli',
             'EMITEN_KODE' => 'Emiten  Kode',

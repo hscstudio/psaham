@@ -11,6 +11,7 @@ use yii\helpers\ArrayHelper;
 use yii\helpers\Url;
 use app\models\Emiten;
 use app\models\Securitas;
+use app\components\JsBlock;
 /* @var $this yii\web\View */
 /* @var $model app\models\Pembelian */
 /* @var $form yii\widgets\ActiveForm */
@@ -65,6 +66,7 @@ use app\models\Securitas;
                 $( "#emiten-name" ).focus();
               });
             ',
+            'disabled'=>(!$model->isNewRecord)?true:false,
           ],
           'pluginOptions' => [
             'allowClear' => true,
@@ -144,8 +146,11 @@ use app\models\Securitas;
         <?= 'x'.number_format($lotshare) ?>
       </div>
       <div class="col-xs-6 col-xs-offset-6 col-sm-3 col-sm-offset-0">
+        <?php
+        echo $form->field($model, 'JMLSAHAM')->label(false)->hiddenInput();
+        ?>
         <label class="control-label">Jml Saham</label>
-        <?= Html::input('text', 'saham-total', number_format($lotshare*$model->JMLLOT), [
+        <?= Html::input('text', 'saham-total', number_format($model->JMLSAHAM), [
             'class' => 'form-control',
             'id'=> 'saham-total',
             'readonly'=> 'true',
@@ -186,7 +191,7 @@ use app\models\Securitas;
       </div>
       <div class="col-xs-6 col-sm-6">
         <label class="control-label">Total Komisi</label>
-        <?= Html::input('text', 'komisi-total', number_format($model->KOM_BELI*($lotshare*$model->JMLLOT)*$model->HARGA), [
+        <?= Html::input('text', 'komisi-total', number_format($model->KOM_BELI*$model->JMLSAHAM*$model->HARGA), [
             'class' => 'form-control',
             'id'=> 'komisi-total',
             'readonly'=> 'true',
@@ -195,7 +200,7 @@ use app\models\Securitas;
       </div>
       <div class="col-xs-6 col-xs-offset-6 col-sm-3 col-sm-offset-0">
         <label class="control-label">Harga Total</label>
-        <?= Html::input('text', 'harga-total', number_format( ($lotshare*$model->JMLLOT)*$model->HARGA ), [
+        <?= Html::input('text', 'harga-total', number_format( $model->JMLSAHAM*$model->HARGA - ($model->KOM_BELI*$model->JMLSAHAM*$model->HARGA) ), [
             'class' => 'form-control',
             'id'=> 'harga-total',
             'readonly'=> 'true',
@@ -217,25 +222,24 @@ use app\models\Securitas;
 </div>
 
 <?php
-
 $this->registerJs('
+  $("#pembelian-jmllot, #pembelian-harga, #pembelian-kom_beli ").bind("change", function(){
+      changeInput();
+  });
 
-    $("#pembelian-jmllot, #pembelian-harga, #pembelian-kom_beli ").bind("change", function(){
-        changeInput();
-    });
+  function changeInput(){
+      jml_lot = accounting.unformat($("#pembelian-jmllot").val());
+      harga = accounting.unformat($("#pembelian-harga").val());
+      komisi = accounting.unformat($("#pembelian-kom_beli").val());
+      saham_total = '.$lotshare.'* jml_lot;
+      bruto = saham_total * harga
+      komisi_total = komisi * bruto;
+      netto = bruto - komisi_total;
 
-    function changeInput(){
-        jml_lot = accounting.unformat($("#pembelian-jmllot").val());
-        harga = accounting.unformat($("#pembelian-harga").val());
-        komisi = accounting.unformat($("#pembelian-kom_beli").val());
-        saham_total = '.$lotshare.'* jml_lot;
-        harga_total = saham_total * harga;
-        komisi_total = komisi * harga_total;
+      $("#saham-total").val( accounting.formatNumber(saham_total, 2) );
+      $("#komisi-total").val( accounting.formatNumber(komisi_total, 2) );
+      $("#harga-total").val( accounting.formatNumber(netto, 2) );
 
-        $("#saham-total").val( accounting.formatNumber(saham_total, 2) );
-        $("#harga-total").val( accounting.formatNumber(harga_total, 2) );
-        $("#komisi-total").val( accounting.formatNumber(komisi_total, 2) );
-    }
-
+      $("#pembelian-jmlsaham").val( saham_total );
+  }
 ');
-?>

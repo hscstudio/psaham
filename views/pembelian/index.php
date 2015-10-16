@@ -149,11 +149,9 @@ $this->params['breadcrumbs'][] = $this->title;
               //'footer'=>true
             ],
             [
-              'header' => 'Jml Saham',
+              'attribute' => 'JMLSAHAM',
+              'label' => 'Jml Saham',
               'format'=>['decimal',2],
-              'value' => function($data) use ($lotshare) {
-                  return $data->JMLLOT * $lotshare;
-              },
               'headerOptions' => [
                   'style' => 'text-align:center'
               ],
@@ -180,10 +178,33 @@ $this->params['breadcrumbs'][] = $this->title;
               //'footer'=>true
             ],
             [
+              'attribute' => 'KOM_BELI',
+              'label' => 'Komisi',
+              'format'=>['decimal',2],
+              'options' => [
+                  'width' => '100px',
+              ],
+              'headerOptions' => [
+                  'style' => 'text-align:center'
+              ],
+              'value' => function($data) {
+                  $bruto = $data->JMLSAHAM * $data->HARGA;
+                  $netto = $data->KOM_BELI * $bruto;
+                  return $netto;
+              },
+              'hAlign'=>'right',
+              'vAlign'=>'middle',
+              'pageSummary'=>true,
+              'pageSummaryFunc'=>GridView::F_SUM,
+              //'footer'=>true
+            ],
+            [
               'header' => 'Total',
               'format'=>['decimal',2],
-              'value' => function($data) use ($lotshare) {
-                  return $data->JMLLOT * $lotshare * $data->HARGA;
+              'value' => function($data) {
+                  $bruto = $data->JMLSAHAM * $data->HARGA;
+                  $netto = $bruto - $data->KOM_BELI * $bruto;
+                  return $netto;
               },
               'headerOptions' => [
                   'style' => 'text-align:center'

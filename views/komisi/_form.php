@@ -3,6 +3,7 @@
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 //use Zelenin\yii\SemanticUI\widgets\ActiveForm;
+use yii\widgets\MaskedInput;
 use app\components\GrowlLoad;
 use kartik\widgets\AlertBlock;
 use yii\widgets\Pjax;
@@ -23,17 +24,47 @@ use yii\widgets\Pjax;
 
     <div class="row">
       <div class="col-md-3">
-      <?= $form->field($model, 'KOM_BELI')->textInput(['maxlength' => true]) ?>
+      <?php
+      echo $form->field($model, 'KOM_BELI')->widget(MaskedInput::classname(),[
+          'clientOptions' => [
+              'alias' =>  'numeric',
+              'groupSeparator' => ',',
+              'radixPoint' => '.',
+              'autoGroup' => true,
+              'removeMaskOnSubmit' =>true,
+          ],
+      ]);
+      ?>
       </div>
     </div>
     <div class="row">
       <div class="col-md-3">
-      <?= $form->field($model, 'KOM_JUAL')->textInput(['maxlength' => true]) ?>
+        <?php
+        echo $form->field($model, 'KOM_JUAL')->widget(MaskedInput::classname(),[
+            'clientOptions' => [
+                'alias' =>  'numeric',
+                'groupSeparator' => ',',
+                'radixPoint' => '.',
+                'autoGroup' => true,
+                'removeMaskOnSubmit' =>true,
+            ],
+        ]);
+        ?>
       </div>
     </div>
     <div class="row">
       <div class="col-md-3">
-      <?= $form->field($model2, 'JML_LBRSAHAM')->textInput(['maxlength' => true])->label('Jml Saham / Lot') ?>
+      <?php
+      echo $form->field($model2, 'JML_LBRSAHAM')->widget(MaskedInput::classname(),[
+          'clientOptions' => [
+              'alias' =>  'numeric',
+              'groupSeparator' => ',',
+              'radixPoint' => '.',
+              'autoGroup' => true,
+              'removeMaskOnSubmit' =>true,
+          ],
+      ])->label('Jml Saham / Lot') ;
+      ?>
       </div>
     </div>
     <div class="form-group">

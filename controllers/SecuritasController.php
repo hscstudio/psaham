@@ -156,6 +156,7 @@ class SecuritasController extends Controller
         } catch(Exception $e) {
           Yii::$app->session->setFlash('error', 'Data tidak dapat dihapus karena telah digunakan pada transaksi pembelian.');
         }
+
         return $this->redirect(['index']);
     }
 

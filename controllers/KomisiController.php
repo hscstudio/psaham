@@ -55,7 +55,7 @@ class KomisiController extends Controller
             }
             //return $this->redirect(['index']);
         }
-        
+
         if($ajax)
           return $this->renderAjax('update', [
               'model' => $model,

@@ -5,7 +5,6 @@ use yii\widgets\ActiveForm;
 use yii\widgets\MaskedInput;
 use app\components\GrowlLoad;
 use kartik\widgets\AlertBlock;
-use app\components\JsBlock;
 use yii\widgets\Pjax;
 
 /* @var $this yii\web\View */
@@ -25,7 +24,7 @@ use yii\widgets\Pjax;
 
     <div class="row">
       <div class="col-xs-6 col-sm-4 col-md-3">
-        <?= $form->field($model, 'KODE')->textInput(['maxlength' => true]) ?>
+        <?= $form->field($model, 'KODE')->textInput(['maxlength' => true,'disabled'=>(!$model->isNewRecord)?true:false]) ?>
       </div>
     </div>
 
@@ -73,18 +72,3 @@ use yii\widgets\Pjax;
     ?>
   <?php Pjax::end(); ?>
 </div>
-
-<?php
-if(Yii::$app->request->isAjax){
-  JsBlock::begin();
-  ?>
-  <script>
-  $('body').on('submit', 'form#securitas-form', function () {
-
-
-  });
-  </script>
-  <?php
-  JsBlock::end();
-}
-?>

@@ -10,6 +10,7 @@ use Yii;
  * @property string $KODE
  * @property string $NAMA
  * @property string $JMLLOT
+ * @property string $JMLSAHAM
  * @property string $SALDO
  * @property string $HARGA
  * @property string $SALDOR1
@@ -36,8 +37,11 @@ class Emiten extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['KODE', 'NAMA', 'JMLLOT', 'SALDO', 'HARGA', 'SALDOR1', 'JMLLOTB', 'SALDOB'], 'required'],
-            [['JMLLOT', 'SALDO', 'HARGA', 'SALDOR1', 'JMLLOTB', 'SALDOB'], 'number'],
+            [['KODE', 'NAMA', 'JMLLOT', 'JMLSAHAM', 'SALDO', 'HARGA', 'SALDOR1', 'JMLLOTB', 'SALDOB'], 'required'],
+            [['JMLLOT', 'JMLSAHAM', 'SALDO', 'HARGA', 'SALDOR1', 'JMLLOTB', 'SALDOB'], 'number',
+              'min' => 0,
+              'enableClientValidation'=> false,
+            ],
             [['KODE'], 'string', 'max' => 8],
             [['NAMA'], 'string', 'max' => 50]
         ];
@@ -51,7 +55,8 @@ class Emiten extends \yii\db\ActiveRecord
         return [
             'KODE' => 'Kode',
             'NAMA' => 'Nama',
-            'JMLLOT' => 'Jmllot',
+            'JMLLOT' => 'Jml lot',
+            'JMLSAHAM' => 'Jml Saham',
             'SALDO' => 'Saldo',
             'HARGA' => 'Harga',
             'SALDOR1' => 'Saldor1',
