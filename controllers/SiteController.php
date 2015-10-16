@@ -168,23 +168,27 @@ class SiteController extends Controller
 
     public function actionProfile()
     {
-        $session = Yii::$app->session;
-        $language = $session->set('language','Indonesia');
-
         $model = $this->findProfile();
+        $ajax = Yii::$app->request->isAjax;
         if ($model->load(Yii::$app->request->post())) {
-
           if($model->save()){
               Yii::$app->session->setFlash('success','Profile berhasil diupdate');
           }
           else{
               Yii::$app->session->setFlash('error','Profile gagal diupdate');
           }
-          return $this->refresh();
+          //return $this->refresh();
         }
-        return $this->render('profile', [
-            'model' => $model,
-        ]);
+
+        if($ajax){
+          return $this->renderAjax('profile', [
+              'model' => $model,
+          ]);
+        }
+        else
+          return $this->render('profile', [
+              'model' => $model,
+          ]);
     }
 
     /**

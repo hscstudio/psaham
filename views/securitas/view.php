@@ -11,7 +11,7 @@ $this->params['breadcrumbs'][] = ['label' => 'Securitas', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="securitas-view">
-
+  <?php if (!Yii::$app->request->isAjax){ ?>
   <h2 class="ui header"><?= Html::encode($this->title) ?></h2>
   <div class="ui attached message">
     <div class="header">
@@ -20,7 +20,10 @@ $this->params['breadcrumbs'][] = $this->title;
     <p>Lorem ipsum sit dolor amet </p>
   </div>
   <div class="ui divider"></div>
-    <p><?= Html::a('Cancel',['index'],['class'=>'btn btn-default']) ?></p>
+  <?php } ?>
+
+    <p><?= Html::a('Cancel',['index'],['class'=>'btn btn-default',
+      'onclick'=>(Yii::$app->request->isAjax)?'$("#myModal").modal("hide");return false':'']); ?></p>
 
     <?= DetailView::widget([
         'model' => $model,
@@ -35,7 +38,11 @@ $this->params['breadcrumbs'][] = $this->title;
     ]) ?>
 
     <p>
-        <?= Html::a('Update', ['update', 'id' => $model->KODE], ['class' => 'btn btn-primary']) ?>
+        <?php if (!Yii::$app->request->isAjax) { ?>
+        <?= Html::a('Update', ['update', 'id' => $model->KODE], [
+            'class' => 'btn btn-primary',
+        ]) ?>
+        <?php } ?>
         <?= Html::a('Delete', ['delete', 'id' => $model->KODE], [
             'class' => 'btn btn-danger',
             'data' => [

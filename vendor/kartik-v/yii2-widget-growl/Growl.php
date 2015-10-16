@@ -48,9 +48,9 @@ class Growl extends \kartik\base\Widget
      * @var string the title for the alert
      */
     public $title = '';
-    
+
     /**
-     * @var string the url to redirect to on clicking the alert. If this is <code>null</code> or not set, 
+     * @var string the url to redirect to on clicking the alert. If this is <code>null</code> or not set,
      * the alert will not be clickable.
      */
     public $linkUrl = '';
@@ -69,7 +69,7 @@ class Growl extends \kartik\base\Widget
      * @var string the alert message body
      */
     public $body = '';
-    
+
     /**
      * @var array the HTML options and settings for the bootstrap progress bar. Defaults to:
      * ```
@@ -96,37 +96,37 @@ class Growl extends \kartik\base\Widget
      * @var array the options for rendering the close button tag.
      */
     public $closeButton = [];
-    
+
     /**
      * @var use animations
      */
     public $useAnimation = true;
-    
+
     /**
      * @var array the HTML attributes for the growl icon container.
      */
     public $iconOptions = [];
-    
+
     /**
      * @var array the HTML attributes for the growl title container.
      */
     public $titleOptions = [];
-    
+
     /**
      * @var array the HTML attributes for the growl message body.
      */
     public $bodyOptions = [];
-    
+
     /**
      * @var array the HTML attributes for the growl progress bar container.
      */
     public $progressContainerOptions = [];
-    
+
     /**
      * @var array the HTML attributes for the growl url link
      */
     public $linkOptions = [];
-    
+
     /**
      * @var array the bootstrap growl plugin configuration options
      * @see http://bootstrap-growl.remabledesigns.com/
@@ -141,11 +141,11 @@ class Growl extends \kartik\base\Widget
         self::TYPE_MINIMALIST,
         self::TYPE_PASTEL
     ];
-    
+
      /**
-     * @var array the first part of growl plugin settings/options 
+     * @var array the first part of growl plugin settings/options
      */
-    private $_settings;    
+    private $_settings;
 
     /**
      * Initializes the widget
@@ -206,7 +206,7 @@ class Growl extends \kartik\base\Widget
         $content = $this->renderCloseButton() . "\n" .
             Html::tag($iconTag, '', $this->iconOptions) . "\n" .
             Html::tag('span', '{1}', $this->titleOptions) . "\n" .
-            $divider . 
+            $divider .
             Html::tag('span', '{2}', $this->bodyOptions) . "\n" .
             Html::tag('div', Html::tag('div', $progressTitle, $this->progressBarOptions), $this->progressContainerOptions) . "\n" .
             Html::a('', '{3}', $this->linkOptions);

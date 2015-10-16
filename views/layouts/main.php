@@ -11,7 +11,7 @@ use Zelenin\yii\SemanticUI\collections\Breadcrumb;
 use app\assets\AppAsset;
 //use app\widgets\Alert;
 use kartik\widgets\AlertBlock;
-use kartik\widgets\Growl;
+use yii\bootstrap\Modal;
 
 AppAsset::register($this);
 ?>
@@ -89,73 +89,35 @@ AppAsset::register($this);
           ]) ?>
         </div>
         <div class="ui blue piled segment">
-        <?= AlertBlock::widget([
-            'type' => AlertBlock::TYPE_GROWL,
-            'useSessionFlash' => true,
-            'alertSettings' => [
-              'success' => [
-                'type' => Growl::TYPE_SUCCESS,
-                'title' => 'Informasi!',
-                'icon' => 'glyphicon glyphicon-ok-sign',
-                'showSeparator' => true,
-                'delay' => 0,
-                'pluginOptions' => [
-                    'showProgressbar' => true,
-                    'placement' => [
-                        'from' => 'top',
-                        'align' => 'center',
-                    ]
-                ],
-              ],
-              'error' => [
-                'type' => Growl::TYPE_DANGER,
-                'title' => 'Perhatian!',
-                'icon' => 'glyphicon glyphicon-remove-sign',
-                'showSeparator' => true,
-                'delay' => 0,
-                'pluginOptions' => [
-                    'showProgressbar' => true,
-                    'placement' => [
-                        'from' => 'top',
-                        'align' => 'center',
-                    ]
-                ],
-              ],
-              'info' => [
-                'type' => Growl::TYPE_INFO,
-                'title' => 'Informasi!',
-                'icon' => 'glyphicon glyphicon-info-sign',
-                'showSeparator' => true,
-                'delay' => 0,
-                'pluginOptions' => [
-                    'showProgressbar' => true,
-                    'placement' => [
-                        'from' => 'top',
-                        'align' => 'center',
-                    ]
-                ],
-              ],
-              'warning' => [
-                'type' => Growl::TYPE_WARNING,
-                'title' => 'Perhatian!',
-                'icon' => 'glyphicon glyphicon-exclamation-sign',
-                'showSeparator' => true,
-                'delay' => 0,
-                'pluginOptions' => [
-                    'showProgressbar' => true,
-                    'placement' => [
-                        'from' => 'top',
-                        'align' => 'center',
-                    ]
-                ],
-              ],
-            ],
-        ]); ?>
+        <?= AlertBlock::widget(Yii::$app->params['alertBlockConfig']); ?>
         <?= $content ?>
         </div>
       </div>
     </div>
 </div>
+
+<?php
+Modal::begin([
+    'id' => 'myModal',
+    'header' => '<h4 class="modal-title">...</h4>',
+]);
+echo '...';
+Modal::end();
+$this->registerJs("
+    $('#myModal').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget)
+        var modal = $(this)
+        var title = button.data('title')
+        var href = button.attr('href')
+        modal.find('.modal-title').html(title)
+        modal.find('.modal-body').html('<i class=\"fa fa-spinner fa-spin\"></i>')
+        $.post(href)
+            .done(function( data ) {
+                modal.find('.modal-body').html(data)
+            });
+        })
+");
+?>
 
 <footer class="footer">
     <div class="container">

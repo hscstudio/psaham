@@ -36,6 +36,7 @@ class KomisiController extends Controller
     {
         $model = $this->findModel();
         $model2 = $this->findModel2();
+        $ajax = Yii::$app->request->isAjax;
         if ($model->load(Yii::$app->request->post()) && $model2->load(Yii::$app->request->post())) {
             $connection = \Yii::$app->db;
             $transaction = $connection->beginTransaction();
@@ -52,13 +53,19 @@ class KomisiController extends Controller
               Yii::$app->session->setFlash('error', 'Fatal error.');
               $transaction->rollback();
             }
-            return $this->redirect(['index']);
-        } else {
-            return $this->render('update', [
-                'model' => $model,
-                'model2' => $model2,
-            ]);
+            //return $this->redirect(['index']);
         }
+        
+        if($ajax)
+          return $this->renderAjax('update', [
+              'model' => $model,
+              'model2' => $model2,
+          ]);
+        else
+          return $this->render('update', [
+              'model' => $model,
+              'model2' => $model2,
+          ]);
     }
 
     /**
