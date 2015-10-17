@@ -62,7 +62,8 @@ AppAsset::register($this);
             ['label' => 'Pembelian', 'url' => ['/pembelian/index']],
         ]];
         $menuItems[] = ['label' => 'Laporan', 'items' => [
-
+            ['label' => 'History Fundamental', 'url' => ['/history-paramfund/index']],
+            ['label' => 'History Emiten', 'url' => ['/history-emiten/index']],
         ]];
         /*
         $menuItems[] = ['label' => 'Admin', 'items' => [
@@ -119,11 +120,14 @@ $this->registerJs("
         var href = button.attr('href')
         modal.find('.modal-title').html(title)
         modal.find('.modal-body').html('<i class=\"fa fa-spinner fa-spin\"></i>')
-        $.post(href)
-            .done(function( data ) {
-                modal.find('.modal-body').html(data)
-            });
-        })
+        $.ajax({
+          method: 'post',
+          url: href,
+          //async: true
+        }).done(function(data) {
+            modal.find('.modal-body').html(data)
+        });
+    })
 ");
 ?>
 

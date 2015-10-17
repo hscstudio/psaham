@@ -5,8 +5,8 @@ use yii\helpers\Html;
 /* @var $this yii\web\View */
 /* @var $model app\models\Paramfund */
 
-$this->title = 'Update Paramfund: ' . ' ' . $model->EMITEN_KODE;
-$this->params['breadcrumbs'][] = ['label' => 'Paramfunds', 'url' => ['index']];
+$this->title = 'Update : ' . ' ' . $model->EMITEN_KODE;
+$this->params['breadcrumbs'][] = ['label' => 'Parameter Fundamental', 'url' => ['index']];
 $this->params['breadcrumbs'][] = ['label' => $model->EMITEN_KODE, 'url' => ['view', 'EMITEN_KODE' => $model->EMITEN_KODE, 'TAHUN' => $model->TAHUN, 'TRIWULAN' => $model->TRIWULAN]];
 $this->params['breadcrumbs'][] = 'Update';
 ?>

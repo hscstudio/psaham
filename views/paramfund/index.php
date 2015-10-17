@@ -7,7 +7,7 @@ use kartik\grid\GridView;
 /* @var $searchModel app\models\ParamfundSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'Paramfunds';
+$this->title = 'Parameter Fundamental';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="paramfund-index">

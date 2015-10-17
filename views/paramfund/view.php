@@ -7,7 +7,7 @@ use yii\widgets\DetailView;
 /* @var $model app\models\Paramfund */
 
 $this->title = $model->EMITEN_KODE;
-$this->params['breadcrumbs'][] = ['label' => 'Paramfunds', 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => 'Parameter Fundamental', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="paramfund-view">

@@ -6,8 +6,8 @@ use yii\helpers\Html;
 /* @var $this yii\web\View */
 /* @var $model app\models\Paramfund */
 
-$this->title = 'Create Paramfund';
-$this->params['breadcrumbs'][] = ['label' => 'Paramfunds', 'url' => ['index']];
+$this->title = 'Create';
+$this->params['breadcrumbs'][] = ['label' => 'Parameter Fundamental', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="paramfund-create">
