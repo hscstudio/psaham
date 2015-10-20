@@ -55,6 +55,7 @@ AppAsset::register($this);
             ['label' => 'Securitas', 'url' => ['/securitas/index']],
             ['label' => 'Emiten', 'url' => ['/emiten/index']],
             ['label' => 'Parameter', 'url' => ['/paramfund/index']],
+            ['label' => 'Asset', 'url' => ['/asset/index']],
             '<hr>',
             ['label' => 'Note', 'url' => ['/note/index']],
         ]];

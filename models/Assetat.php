@@ -38,7 +38,9 @@ class Assetat extends \yii\db\ActiveRecord
         return [
             [['TGL', 'KAS_BANK', 'TRAN_JALAN', 'INV_LAIN', 'STOK_SAHAM', 'HUTANG', 'HUT_LAIN', 'MODAL', 'CAD_LABA', 'LABA_JALAN', 'UNITAT', 'NAVAT'], 'required'],
             [['TGL'], 'safe'],
-            [['KAS_BANK', 'TRAN_JALAN', 'INV_LAIN', 'STOK_SAHAM', 'HUTANG', 'HUT_LAIN', 'MODAL', 'CAD_LABA', 'LABA_JALAN', 'UNITAT', 'NAVAT'], 'number']
+            [['KAS_BANK', 'TRAN_JALAN', 'INV_LAIN', 'STOK_SAHAM', 'HUTANG', 'HUT_LAIN', 'MODAL', 'CAD_LABA', 'LABA_JALAN', 'UNITAT', 'NAVAT'], 'number',
+              'enableClientValidation'=> false,
+            ]
         ];
     }
 
