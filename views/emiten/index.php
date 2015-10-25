@@ -4,6 +4,8 @@ use yii\helpers\Html;
 //use yii\grid\GridView;
 use kartik\grid\GridView;
 use yii\widgets\Pjax;
+use hscstudio\mimin\components\Mimin;
+use hscstudio\export\widgets\ButtonExport;
 
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\EmitenSearch */
@@ -37,7 +39,13 @@ $this->params['breadcrumbs'][] = $this->title;
             'before'=>
             '<div class="row">'.
               '<div class="col-xs-2 col-lg-1">'.
-              Html::a('Create', ['create'], ['class' => 'btn btn-success']).' '.
+              ((Mimin::filterRoute($this->context->id.'/create'))?Html::a('Create', ['create'], ['class' => 'btn btn-success',
+              'data-pjax'=>'0',
+              'data-toggle'=>"modal",
+              'data-target'=>"#myModal",
+              'data-title'=>"Create Data",
+              'data-size'=>"modal-lg",
+              ]):'').' '.
               '</div>'.
               '<div class="col-xs-5 col-sm-4 col-md-3 col-lg-2">'.
 
@@ -48,7 +56,7 @@ $this->params['breadcrumbs'][] = $this->title;
             ['content'=>
                 Html::a('<i class="glyphicon glyphicon-repeat"></i>', ['index'], ['data-pjax'=>0, 'class' => 'btn btn-default', 'title'=>'Reset Grid'])
             ],
-            '{export}',
+            ButtonExport::widget(),
             '{toggleData}',
         ],
         'export' => [
@@ -194,6 +202,41 @@ $this->params['breadcrumbs'][] = $this->title;
               'class' => 'kartik\grid\ActionColumn',
               'hAlign'=>'center',
               'vAlign'=>'middle',
+              'options' => [
+                  'width' => '100px',
+              ],
+              'template' => Mimin::filterTemplateActionColumn(['view','update','delete'],$this->context->route),
+              'buttons' => [
+                  'view' => function ($url, $model) {
+                    $icon='<span class="glyphicon glyphicon-eye-open"></span>';
+                    return Html::a($icon,$url,[
+                      'class'=>'btn btn-default btn-xs',
+                      'data-pjax'=>'0',
+                      'data-toggle'=>"modal",
+                      'data-target'=>"#myModal",
+                      'data-title'=>"View Data",
+                    ]);
+                  },
+                  'update' => function ($url, $model) {
+                    $icon='<span class="glyphicon glyphicon-pencil"></span>';
+                    return Html::a($icon,$url,[
+                      'class'=>'btn btn-default btn-xs',
+                      'data-pjax'=>'0',
+                      'data-toggle'=>"modal",
+                      'data-target'=>"#myModal",
+                      'data-title'=>"Update Data",
+                      'data-size'=>"modal-lg",
+                    ]);
+                  },
+                  'delete' => function ($url, $model) {
+                    $icon='<span class="glyphicon glyphicon-trash"></span>';
+                    return Html::a($icon,$url,[
+                      'class'=>'btn btn-default btn-xs',
+                      'data-confirm'=>"Apakah anda mau menghapus data ini?",
+                      'data-method'=>'post',
+                    ]);
+                  },
+              ]
             ],
         ],
     ]); ?>

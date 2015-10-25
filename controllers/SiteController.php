@@ -12,6 +12,7 @@ use app\models\PasswordResetRequestForm;
 use app\models\ResetPasswordForm;
 use app\models\SignupForm;
 use app\models\Profile;
+use hscstudio\mimin\models\AuthAssignment;
 
 class SiteController extends Controller
 {
@@ -20,10 +21,13 @@ class SiteController extends Controller
         return [
             'access' => [
                 'class' => AccessControl::className(),
-                'only' => ['logout'],
+                //'only' => ['logout'],
                 'rules' => [
                     [
-                        'actions' => ['logout'],
+                        'actions' => ['signup','login', 'error','reset-password','request-password-reset'],
+                        'allow' => true,
+                    ],
+                    [
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -53,6 +57,28 @@ class SiteController extends Controller
 
     public function actionIndex()
     {
+    		/*
+        $auth = Yii::$app->authManager;
+
+    		$module = $this->module->id;
+    		$controller = $this->id;
+    		$action = $this->action->id;
+
+        // add "updatePost" permission
+        $updateKomisi = $auth->createPermission($module.'/'.$controller.'/'.$action);
+        $updateKomisi->description = 'Update '.$module.'/'.$controller.'/'.$action;
+        $auth->add($updateKomisi);
+
+        // add "admin" role and give this role the "updatePost" permission
+        // as well as the permissions of the "author" role
+        $admin = $auth->createRole('admin');
+        $auth->add($admin);
+        $auth->addChild($admin, $updateKomisi);
+
+        $auth->assign($admin, 1);
+    		//echo $module.'/'.$controller.'/'.$action;
+    		//exit;
+    		*/
         return $this->render('index');
     }
 
@@ -171,6 +197,11 @@ class SiteController extends Controller
         $model = $this->findProfile();
         $ajax = Yii::$app->request->isAjax;
         if ($model->load(Yii::$app->request->post())) {
+          if(!empty($model->new_password)){
+            if($model->validatePassword($model->new_password)){
+                $model->setPassword($model->new_password) ;
+            }
+          }
           if($model->save()){
               Yii::$app->session->setFlash('success','Profile berhasil diupdate');
           }
@@ -180,14 +211,20 @@ class SiteController extends Controller
           //return $this->refresh();
         }
 
+        $authAssignments = AuthAssignment::find()->where([
+          'user_id' => Yii::$app->user->id,
+        ])->column();
+
         if($ajax){
           return $this->renderAjax('profile', [
               'model' => $model,
+              'authAssignments' => $authAssignments,
           ]);
         }
         else
           return $this->render('profile', [
               'model' => $model,
+              'authAssignments' => $authAssignments,
           ]);
     }
 

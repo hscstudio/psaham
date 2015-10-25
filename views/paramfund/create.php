@@ -11,7 +11,7 @@ $this->params['breadcrumbs'][] = ['label' => 'Parameter Fundamental', 'url' => [
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="paramfund-create">
-
+  <?php if (!Yii::$app->request->isAjax){ ?>
   <h2 class="ui header"><?= Html::encode($this->title) ?></h2>
   <div class="ui attached message">
     <div class="header">
@@ -20,7 +20,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <p>Input data parameter </p>
   </div>
   <div class="ui divider"></div>
-
+  <?php } ?>
     <?= $this->render('_form', [
         'model' => $model,
     ]) ?>

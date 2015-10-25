@@ -3,6 +3,9 @@
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use yii\widgets\MaskedInput;
+use app\components\GrowlLoad;
+use kartik\widgets\AlertBlock;
+use yii\widgets\Pjax;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\Emiten */
@@ -11,7 +14,14 @@ use yii\widgets\MaskedInput;
 
 <div class="emiten-form">
 
-    <?php $form = ActiveForm::begin(); ?>
+  <?php Pjax::begin([
+      'id' => 'emiten-form-pjax',
+      'enablePushState' => false,
+    ]); ?>
+      <?php $form = ActiveForm::begin([
+        'id' => 'emiten-form',
+        'options' => ['data-pjax' => true ]
+      ]); ?>
 
     <div class="row">
       <div class="col-xs-6 col-sm-3">
@@ -122,11 +132,17 @@ use yii\widgets\MaskedInput;
           'class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary',
           'data-confirm'=>"Apakah anda yakin akan menyimpan data ini?",
           ]) ?>
-        <?= Html::a('Cancel',['index'],['class'=>'btn btn-default']) ?>
+        <?= Html::a('Cancel',['index'],['class'=>'btn btn-default','onclick'=>(Yii::$app->request->isAjax)?'$("#myModal").modal("hide");return false':'']) ?>
     </div>
 
     <?php ActiveForm::end(); ?>
-
+    <?php
+    if(Yii::$app->request->isAjax){
+      AlertBlock::widget(Yii::$app->params['alertBlockConfig']);
+      GrowlLoad::init($this);
+    }
+    ?>
+  <?php Pjax::end(); ?>
 </div>
 
 <?php

@@ -10,6 +10,7 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\base\Exception;
+use yii\filters\AccessControl;
 
 /**
  * KomisiController implements the CRUD actions for Komisi model.
@@ -19,7 +20,16 @@ class KomisiController extends Controller
     public function behaviors()
     {
         return [
-            'verbs' => [
+          'access' => [
+              'class' => AccessControl::className(),
+              'rules' => [
+                  [
+                      'allow' => true,
+                      'roles' => ['@'],
+                  ],
+              ],
+          ],
+          'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
                     'update' => ['post'],

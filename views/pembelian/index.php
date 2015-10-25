@@ -6,6 +6,7 @@ use kartik\grid\GridView;
 use kartik\widgets\DatePicker;
 use yii\helpers\Url;
 use yii\widgets\Pjax;
+use hscstudio\mimin\components\Mimin;
 
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\PembelianSearch */
@@ -40,7 +41,13 @@ $this->params['breadcrumbs'][] = $this->title;
             'before'=>
             '<div class="row">'.
               '<div class="col-xs-2 col-lg-1">'.
-              Html::a('Create', ['create', 'date'=> $dates[1]], ['class' => 'btn btn-success']).' '.
+              ((Mimin::filterRoute($this->context->id.'/create'))?Html::a('Create', ['create','date'=> $dates[1]], ['class' => 'btn btn-success',
+              'data-pjax'=>'0',
+              'data-toggle'=>"modal",
+              'data-target'=>"#myModal",
+              'data-title'=>"Create Data",
+              'data-size'=>"modal-lg",
+              ]):'').' '.
               '</div>'.
               '<div class="col-xs-5 col-sm-4 col-md-3 col-lg-2">'.
               DatePicker::widget([
@@ -71,22 +78,11 @@ $this->params['breadcrumbs'][] = $this->title;
               '</div>'.
             '</div>',
         ],
-        /*
-        'beforeHeader'=>[
-            [
-              'columns'=>[
-                ['content'=>' ', 'options'=>['colspan'=>10, 'class'=>'text-center warning']],
-              ],
-              //'options'=>['class'=>'skip-export'] // remove this row from export
-            ]
-        ],
-        */
-        // set your toolbar
         'toolbar' => [
             ['content'=>
                 Html::a('<i class="glyphicon glyphicon-repeat"></i>', ['index','date'=>$dates[1]], ['data-pjax'=>0, 'class' => 'btn btn-default', 'title'=>'Reset Grid'])
             ],
-            '{export}',
+            //'{export}',
             '{toggleData}',
         ],
         'export' => [
@@ -218,9 +214,33 @@ $this->params['breadcrumbs'][] = $this->title;
             //'KOM_BELI',
             [
               'class' => 'kartik\grid\ActionColumn',
-              'hAlign'=>'right',
+              'hAlign'=>'center',
               'vAlign'=>'middle',
-              'template' => '{update} {delete}'
+              'options' => [
+                  'width' => '100px',
+              ],
+              'template' => Mimin::filterTemplateActionColumn(['update','delete'],$this->context->route),
+              'buttons' => [
+                  'update' => function ($url, $model) {
+                    $icon='<span class="glyphicon glyphicon-pencil"></span>';
+                    return Html::a($icon,$url,[
+                      'class'=>'btn btn-default btn-xs',
+                      'data-pjax'=>'0',
+                      'data-toggle'=>"modal",
+                      'data-target'=>"#myModal",
+                      'data-title'=>"Update Data",
+                      'data-size'=>"modal-lg",
+                    ]);
+                  },
+                  'delete' => function ($url, $model) {
+                    $icon='<span class="glyphicon glyphicon-trash"></span>';
+                    return Html::a($icon,$url,[
+                      'class'=>'btn btn-default btn-xs',
+                      'data-confirm'=>"Apakah anda mau menghapus data ini?",
+                      'data-method'=>'post',
+                    ]);
+                  },
+              ]
             ],
         ],
     ]); ?>

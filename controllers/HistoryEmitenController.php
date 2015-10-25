@@ -8,6 +8,7 @@ use app\models\EmitenSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\filters\AccessControl;
 
 /**
  * HistoryEmitenController implements the CRUD actions for Emiten model.
@@ -17,7 +18,16 @@ class HistoryEmitenController extends Controller
     public function behaviors()
     {
         return [
-            'verbs' => [
+          'access' => [
+              'class' => AccessControl::className(),
+              'rules' => [
+                  [
+                      'allow' => true,
+                      'roles' => ['@'],
+                  ],
+              ],
+          ],
+          'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
                     'delete' => ['post'],

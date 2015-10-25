@@ -2,6 +2,9 @@
 
 use yii\helpers\Html;
 use kartik\grid\GridView;
+use yii\widgets\Pjax;
+use hscstudio\mimin\components\Mimin;
+use hscstudio\export\widgets\ButtonExport;
 
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\ParamfundSearch */
@@ -14,6 +17,9 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <h1><?= Html::encode($this->title) ?></h1>
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
+    <?php Pjax::begin([
+      'id'=>'pjax-gridview',
+    ]); ?>
 
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
@@ -28,14 +34,20 @@ $this->params['breadcrumbs'][] = $this->title;
             'heading'=>'<h3 class="panel-title"><i class="glyphicon glyphicon-th"></i> <span class="hidden-xs"></span>'.'</h3>',
             //'type'=>'primary',
             'before'=>
-              Html::a('Create', ['create'], ['class' => 'btn btn-success']).' '
+            ((Mimin::filterRoute($this->context->id.'/create'))?Html::a('Create', ['create'], ['class' => 'btn btn-success',
+            'data-pjax'=>'0',
+            'data-toggle'=>"modal",
+            'data-target'=>"#myModal",
+            'data-title'=>"Create Data",
+            'data-size'=>"modal-lg",
+            ]):'').' '
             ,
         ],
         'toolbar' => [
             ['content'=>
                 Html::a('<i class="glyphicon glyphicon-repeat"></i>', ['index','date'=>$dates[1]], ['data-pjax'=>0, 'class' => 'btn btn-default', 'title'=>'Reset Grid'])
             ],
-            '{export}',
+            ButtonExport::widget(),
             '{toggleData}',
         ],
         'export' => [
@@ -68,12 +80,60 @@ $this->params['breadcrumbs'][] = $this->title;
               'hAlign'=>'center',
               'vAlign'=>'middle',
             ],
-            'CE',
-            'CA',
-            'TA',
-            'TE',
-            'CL',
-            'TL',
+            [
+              'attribute' => 'CE',
+              'format'=>['decimal',2],
+              'headerOptions' => [
+                  'style' => 'text-align:center'
+              ],
+              'hAlign'=>'right',
+              'vAlign'=>'middle',
+            ],
+            [
+              'attribute' => 'CA',
+              'format'=>['decimal',2],
+              'headerOptions' => [
+                  'style' => 'text-align:center'
+              ],
+              'hAlign'=>'right',
+              'vAlign'=>'middle',
+            ],
+            [
+              'attribute' => 'TA',
+              'format'=>['decimal',2],
+              'headerOptions' => [
+                  'style' => 'text-align:center'
+              ],
+              'hAlign'=>'right',
+              'vAlign'=>'middle',
+            ],
+            [
+              'attribute' => 'TE',
+              'format'=>['decimal',2],
+              'headerOptions' => [
+                  'style' => 'text-align:center'
+              ],
+              'hAlign'=>'right',
+              'vAlign'=>'middle',
+            ],
+            [
+              'attribute' => 'CL',
+              'format'=>['decimal',2],
+              'headerOptions' => [
+                  'style' => 'text-align:center'
+              ],
+              'hAlign'=>'right',
+              'vAlign'=>'middle',
+            ],
+            [
+              'attribute' => 'TL',
+              'format'=>['decimal',2],
+              'headerOptions' => [
+                  'style' => 'text-align:center'
+              ],
+              'hAlign'=>'right',
+              'vAlign'=>'middle',
+            ],
             //'BV',
             //'P_BV',
             // 'EPS',
@@ -93,8 +153,47 @@ $this->params['breadcrumbs'][] = $this->title;
             // 'P_SALES',
             // 'P_NI',
 
-            ['class' => 'kartik\grid\ActionColumn'],
+            [
+              'class' => 'kartik\grid\ActionColumn',
+              'hAlign'=>'center',
+              'vAlign'=>'middle',
+              'options' => [
+                  'width' => '100px',
+              ],
+              'template' => Mimin::filterTemplateActionColumn(['view','update','delete'],$this->context->route),
+              'buttons' => [
+                  'view' => function ($url, $model) {
+                    $icon='<span class="glyphicon glyphicon-eye-open"></span>';
+                    return Html::a($icon,$url,[
+                      'class'=>'btn btn-default btn-xs',
+                      'data-pjax'=>'0',
+                      'data-toggle'=>"modal",
+                      'data-target'=>"#myModal",
+                      'data-title'=>"View Data",
+                    ]);
+                  },
+                  'update' => function ($url, $model) {
+                    $icon='<span class="glyphicon glyphicon-pencil"></span>';
+                    return Html::a($icon,$url,[
+                      'class'=>'btn btn-default btn-xs',
+                      'data-pjax'=>'0',
+                      'data-toggle'=>"modal",
+                      'data-target'=>"#myModal",
+                      'data-title'=>"Update Data",
+                      'data-size'=>"modal-lg",
+                    ]);
+                  },
+                  'delete' => function ($url, $model) {
+                    $icon='<span class="glyphicon glyphicon-trash"></span>';
+                    return Html::a($icon,$url,[
+                      'class'=>'btn btn-default btn-xs',
+                      'data-confirm'=>"Apakah anda mau menghapus data ini?",
+                      'data-method'=>'post',
+                    ]);
+                  },
+              ]
+            ],
         ],
     ]); ?>
-
+    <?php Pjax::end(); ?>
 </div>

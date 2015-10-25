@@ -33,7 +33,7 @@ use yii\widgets\Pjax;
     <?= $form->field($model, 'ALAMAT')->textInput(['maxlength' => true]) ?>
 
     <div class="row">
-      <div class="col-xs-6 col-sm-4 col-md-3">
+      <div class="col-xs-6 col-sm-4">
       <?php
       echo $form->field($model, 'TELP')->widget(MaskedInput::classname(),[
           'mask' => '9',
@@ -45,12 +45,12 @@ use yii\widgets\Pjax;
       ]);
       ?>
       </div>
-      <div class="col-xs-6 col-sm-4 col-md-3">
+      <div class="col-xs-6 col-sm-4">
       <?= $form->field($model, 'HP')->textInput(['maxlength' => true]) ?>
       </div>
     </div>
     <div class="row">
-      <div class="col-xs-6 col-sm-4 col-md-3">
+      <div class="col-xs-6 col-sm-4">
       <?= $form->field($model, 'CP')->textInput(['maxlength' => true])->label('Contact Person') ?>
       </div>
     </div>

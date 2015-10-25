@@ -4,6 +4,8 @@ use yii\helpers\Html;
 //use yii\grid\GridView;
 use kartik\grid\GridView;
 use yii\widgets\Pjax;
+use hscstudio\mimin\components\Mimin;
+use hscstudio\export\widgets\ButtonExport;
 
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\SecuritasSearch */
@@ -11,6 +13,13 @@ use yii\widgets\Pjax;
 
 $this->title = 'Securitas';
 $this->params['breadcrumbs'][] = $this->title;
+/*
+$permission = '/'.$this->context->id.'/create';
+echo $permission."<br>";
+$pos = (strrpos($permission, '/'));
+$parent = substr($permission, 0, $pos);
+echo $parent;
+*/
 ?>
 <div class="securitas-index">
     <h1 class="ui header"><?= Html::encode($this->title) ?></h1>
@@ -36,34 +45,25 @@ $this->params['breadcrumbs'][] = $this->title;
             'before'=>
             '<div class="row">'.
               '<div class="col-xs-2 col-lg-1">'.
-              Html::a('Create', ['create'], ['class' => 'btn btn-success',
+              ((Mimin::filterRoute($this->context->id.'/create'))?Html::a('Create', ['create'], ['class' => 'btn btn-success',
               'data-pjax'=>'0',
               'data-toggle'=>"modal",
               'data-target'=>"#myModal",
-              'data-title'=>"Create Data"
-              ]).' '.
+              'data-title'=>"Create Data",
+              ]):'').' '.
               '</div>'.
               '<div class="col-xs-5 col-sm-4 col-md-3 col-lg-2">'.
 
               '</div>'.
             '</div>',
         ],
-        /*
-        'beforeHeader'=>[
-            [
-              'columns'=>[
-                ['content'=>' ', 'options'=>['colspan'=>10, 'class'=>'text-center warning']],
-              ],
-              //'options'=>['class'=>'skip-export'] // remove this row from export
-            ]
-        ],
-        */
-        // set your toolbar
         'toolbar' => [
             ['content'=>
-                Html::a('<i class="glyphicon glyphicon-repeat"></i>', ['index'], ['data-pjax'=>0, 'class' => 'btn btn-default', 'title'=>'Reset Grid'])
+                Html::a('<i class="glyphicon glyphicon-repeat"></i>', ['index'], [
+                  'data-pjax'=>0, 'class' => 'btn btn-default', 'title'=>'Reset Grid'
+                ])
             ],
-            '{export}',
+            ButtonExport::widget(),
             '{toggleData}',
         ],
         'export' => [
@@ -130,6 +130,7 @@ $this->params['breadcrumbs'][] = $this->title;
               'options' => [
                   'width' => '100px',
               ],
+              'template' => Mimin::filterTemplateActionColumn(['view','update','delete'],$this->context->route),
               'buttons' => [
                   'view' => function ($url, $model) {
                     $icon='<span class="glyphicon glyphicon-eye-open"></span>';
@@ -164,4 +165,5 @@ $this->params['breadcrumbs'][] = $this->title;
         ],
     ]); ?>
     <?php Pjax::end(); ?>
+
 </div>

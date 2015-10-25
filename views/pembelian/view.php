@@ -37,5 +37,5 @@ $this->params['breadcrumbs'][] = $this->title;
             'SECURITAS_KODE',
         ],
     ]) ?>
-
+    <?php ActiveForm::end(); ?>
 </div>

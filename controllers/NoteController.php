@@ -8,6 +8,7 @@ use app\models\NoteSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\filters\AccessControl;
 
 /**
  * NoteController implements the CRUD actions for Note model.
@@ -17,7 +18,16 @@ class NoteController extends Controller
     public function behaviors()
     {
         return [
-            'verbs' => [
+          'access' => [
+              'class' => AccessControl::className(),
+              'rules' => [
+                  [
+                      'allow' => true,
+                      'roles' => ['@'],
+                  ],
+              ],
+          ],
+          'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
                     'delete' => ['post'],
@@ -48,9 +58,16 @@ class NoteController extends Controller
      */
     public function actionView($id)
     {
-        return $this->render('view', [
-            'model' => $this->findModel($id),
-        ]);
+        if (Yii::$app->request->isAjax) {
+          return $this->renderAjax('view', [
+              'model' => $this->findModel($id),
+          ]);
+        }
+        else{
+          return $this->render('view', [
+              'model' => $this->findModel($id),
+          ]);
+        }
     }
 
     /**
@@ -62,12 +79,36 @@ class NoteController extends Controller
     {
         $model = new Note();
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['index']);
+        $ajax = Yii::$app->request->isAjax;
+        if ($model->load(Yii::$app->request->post())) {
+            if($model->save()){
+              Yii::$app->session->setFlash('success', 'Data berhasil disimpan.');
+              return $this->redirect(['index']);
+            }
+            else{
+              Yii::$app->session->setFlash('error', 'Data gagal disimpan.');
+              if ($ajax) {
+                return $this->renderAjax('create', [
+                    'model' => $model,
+                ]);
+              }
+              else{
+                return $this->render('create', [
+                    'model' => $model,
+                ]);
+              }
+            }
         } else {
-            return $this->render('create', [
-                'model' => $model,
-            ]);
+            if ($ajax) {
+              return $this->renderAjax('create', [
+                  'model' => $model,
+              ]);
+            }
+            else{
+              return $this->render('create', [
+                  'model' => $model,
+              ]);
+            }
         }
     }
 
@@ -81,12 +122,33 @@ class NoteController extends Controller
     {
         $model = $this->findModel($id);
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['index']);
-        } else {
-            return $this->render('update', [
+        $ajax = Yii::$app->request->isAjax;
+        if ($model->load(Yii::$app->request->post())) {
+            if($model->save()){
+              Yii::$app->session->setFlash('success', 'Data berhasil disimpan.');
+            }
+            else{
+              Yii::$app->session->setFlash('error', 'Data gagal disimpan.');
+            }
+            if ($ajax) {
+              return $this->renderAjax('update', [
                 'model' => $model,
-            ]);
+              ]);
+            }
+            else{
+              return $this->refresh();
+            }
+        } else {
+            if ($ajax) {
+              return $this->renderAjax('update', [
+                  'model' => $model,
+              ]);
+            }
+            else{
+              return $this->render('update', [
+                  'model' => $model,
+              ]);
+            }
         }
     }
 
@@ -99,7 +161,7 @@ class NoteController extends Controller
     public function actionDelete($id)
     {
         $this->findModel($id)->delete();
-
+        Yii::$app->session->setFlash('success', 'Data berhasil dihapus.');
         return $this->redirect(['index']);
     }
 

@@ -2,6 +2,7 @@
 
 use yii\helpers\Html;
 use kartik\grid\GridView;
+use hscstudio\mimin\components\Mimin;
 
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\ParamfundSearch */

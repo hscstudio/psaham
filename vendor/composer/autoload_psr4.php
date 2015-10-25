@@ -41,6 +41,7 @@ return array(
     'kartik\\alert\\' => array($vendorDir . '/kartik-v/yii2-widget-alert'),
     'kartik\\affix\\' => array($vendorDir . '/kartik-v/yii2-widget-affix'),
     'hscstudio\\export\\' => array($vendorDir . '/hscstudio/yii2-export'),
+	'hscstudio\\mimin\\' => array($vendorDir . '/hscstudio/yii2-mimin'),
     'cebe\\markdown\\' => array($vendorDir . '/cebe/markdown'),
     'Zelenin\\yii\\SemanticUI\\' => array($vendorDir . '/zelenin/yii2-semantic-ui'),
     'Faker\\' => array($vendorDir . '/fzaninotto/faker/src/Faker'),

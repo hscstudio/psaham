@@ -11,11 +11,9 @@ $this->params['breadcrumbs'][] = ['label' => 'Parameter Fundamental', 'url' => [
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="paramfund-view">
-
+    <?php if (!Yii::$app->request->isAjax){ ?>
     <h1><?= Html::encode($this->title) ?></h1>
-    <p>
-      <?= Html::a('Cancel',['index'],['class'=>'btn btn-default']) ?>
-    </p>
+    <?php } ?>
 
 
     <?= DetailView::widget([
@@ -50,7 +48,7 @@ $this->params['breadcrumbs'][] = $this->title;
     ]) ?>
 
     <p>
-        <?= Html::a('Update', ['update', 'EMITEN_KODE' => $model->EMITEN_KODE, 'TAHUN' => $model->TAHUN, 'TRIWULAN' => $model->TRIWULAN], ['class' => 'btn btn-primary']) ?>
+
         <?= Html::a('Delete', ['delete', 'EMITEN_KODE' => $model->EMITEN_KODE, 'TAHUN' => $model->TAHUN, 'TRIWULAN' => $model->TRIWULAN], [
             'class' => 'btn btn-danger',
             'data' => [
@@ -58,5 +56,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'method' => 'post',
             ],
         ]) ?>
+        <?= Html::a('Cancel',['index'],['class'=>'btn btn-default','onclick'=>(Yii::$app->request->isAjax)?'$("#myModal").modal("hide");return false':'']) ?>
+        
     </p>
 </div>

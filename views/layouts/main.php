@@ -12,6 +12,7 @@ use app\assets\AppAsset;
 //use app\widgets\Alert;
 use kartik\widgets\AlertBlock;
 use yii\bootstrap\Modal;
+use hscstudio\mimin\components\Mimin;
 
 AppAsset::register($this);
 ?>
@@ -46,11 +47,22 @@ AppAsset::register($this);
         //['label' => 'About', 'url' => ['/site/about']],
         //['label' => 'Contact', 'url' => ['/site/contact']],
     ];
+
     if (Yii::$app->user->isGuest) {
         $menuItems[] = ['label' => 'Signup', 'url' => ['/site/signup']];
         $menuItems[] = ['label' => 'Login', 'url' => ['/site/login']];
     } else {
-        $menuItems[] = ['label' => 'Master', 'items' => [
+        $items=[
+            ['label' => 'User', 'url' => ['/mimin/user']],
+            ['label' => 'Role', 'url' => ['/mimin/role']],
+            ['label' => 'Route', 'url' => ['/mimin/route']],
+        ];
+        $items = Mimin::filterRouteMenu($items);
+        if(count($items)>0){
+            $menuItems[] = ['label' => 'Administrator', 'items' => $items];
+        }
+
+        $items = [
             ['label' => 'Komisi', 'url' => ['/komisi/index']],
             ['label' => 'Securitas', 'url' => ['/securitas/index']],
             ['label' => 'Emiten', 'url' => ['/emiten/index']],
@@ -58,14 +70,31 @@ AppAsset::register($this);
             ['label' => 'Asset', 'url' => ['/asset/index']],
             '<hr>',
             ['label' => 'Note', 'url' => ['/note/index']],
-        ]];
-        $menuItems[] = ['label' => 'Transaksi', 'items' => [
+        ];
+        $items = Mimin::filterRouteMenu($items);
+        if(count($items)>0){
+            $menuItems[] = ['label' => 'Master', 'items' => $items];
+        }
+
+        $items = [
             ['label' => 'Pembelian', 'url' => ['/pembelian/index']],
-        ]];
-        $menuItems[] = ['label' => 'Laporan', 'items' => [
+        ];
+        $items = Mimin::filterRouteMenu($items);
+        if(count($items)>0){
+            $menuItems[] = ['label' => 'Transaksi', 'items' => $items];
+        }
+
+        $items = [
             ['label' => 'History Fundamental', 'url' => ['/history-paramfund/index']],
             ['label' => 'History Emiten', 'url' => ['/history-emiten/index']],
-        ]];
+        ];
+        $items = Mimin::filterRouteMenu($items);
+        if(count($items)>0){
+            $menuItems[] = ['label' => 'Laporan', 'items' => $items];
+        }
+
+
+
         /*
         $menuItems[] = ['label' => 'Admin', 'items' => [
               ['label' => 'Assigment', 'url' => ['/admin/assignment']],
@@ -118,8 +147,10 @@ $this->registerJs("
         var button = $(event.relatedTarget)
         var modal = $(this)
         var title = button.data('title')
+        var size = button.data('size')
         var href = button.attr('href')
         modal.find('.modal-title').html(title)
+        modal.find('.modal-dialog').attr('class','modal-dialog '+size)
         modal.find('.modal-body').html('<i class=\"fa fa-spinner fa-spin\"></i>')
         $.ajax({
           method: 'post',

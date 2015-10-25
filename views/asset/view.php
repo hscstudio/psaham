@@ -11,7 +11,7 @@ $this->params['breadcrumbs'][] = ['label' => 'Assets', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="asset-view">
-
+  <?php if (!Yii::$app->request->isAjax){ ?>
   <h2 class="ui header"><?= Html::encode($this->title) ?></h2>
   <div class="ui attached message">
     <div class="header">
@@ -20,10 +20,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <p>Data asset </p>
   </div>
   <div class="ui divider"></div>
-
-    <p>
-    <?= Html::a('Cancel',['index'],['class'=>'btn btn-default']) ?>
-    </p>
+  <?php } ?>
 
     <?= DetailView::widget([
         'model' => $model,
@@ -45,7 +42,6 @@ $this->params['breadcrumbs'][] = $this->title;
     ]) ?>
 
     <p>
-        <?= Html::a('Update', ['update', 'id' => $model->TGL], ['class' => 'btn btn-primary']) ?>
         <?= Html::a('Delete', ['delete', 'id' => $model->TGL], [
             'class' => 'btn btn-danger',
             'data' => [
@@ -53,5 +49,6 @@ $this->params['breadcrumbs'][] = $this->title;
                 'method' => 'post',
             ],
         ]) ?>
+        <?= Html::a('Cancel',['index'],['class'=>'btn btn-default','onclick'=>(Yii::$app->request->isAjax)?'$("#myModal").modal("hide");return false':'']) ?>
     </p>
 </div>

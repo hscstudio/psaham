@@ -1,7 +1,7 @@
 <?php
-namespace frontend\models;
+namespace app\models;
 
-use common\models\User;
+use app\models\User;
 use yii\base\InvalidParamException;
 use yii\base\Model;
 use Yii;

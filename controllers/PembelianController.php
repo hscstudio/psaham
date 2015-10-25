@@ -12,6 +12,7 @@ use app\models\Lotshare;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\filters\AccessControl;
 
 /**
  * PembelianController implements the CRUD actions for Pembelian model.
@@ -21,7 +22,16 @@ class PembelianController extends Controller
     public function behaviors()
     {
         return [
-            'verbs' => [
+          'access' => [
+              'class' => AccessControl::className(),
+              'rules' => [
+                  [
+                      'allow' => true,
+                      'roles' => ['@'],
+                  ],
+              ],
+          ],
+          'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
                     'delete' => ['post'],
@@ -58,9 +68,16 @@ class PembelianController extends Controller
      */
     public function actionView($id)
     {
-        return $this->render('view', [
-            'model' => $this->findModel($id),
-        ]);
+        if (Yii::$app->request->isAjax) {
+          return $this->renderAjax('view', [
+              'model' => $this->findModel($id),
+          ]);
+        }
+        else{
+          return $this->render('view', [
+              'model' => $this->findModel($id),
+          ]);
+        }
     }
 
     /**
@@ -74,7 +91,7 @@ class PembelianController extends Controller
         $model = new Pembelian([
               'TGL' => $dates[0],
         ]);
-
+        $ajax = Yii::$app->request->isAjax;
         if ($model->load(Yii::$app->request->post())) {
           $connection = \Yii::$app->db;
           $transaction = $connection->beginTransaction();
@@ -113,6 +130,18 @@ class PembelianController extends Controller
             else{
                 Yii::$app->session->setFlash('error', 'Data gagal disimpan.');
                 $transaction->rollBack();
+                if ($ajax) {
+                  return $this->renderAjax('create', [
+                      'model' => $model,
+                      'lotshare' => $this->getLotshare(),
+                  ]);
+                }
+                else{
+                  return $this->render('create', [
+                      'model' => $model,
+                      'lotshare' => $this->getLotshare(),
+                  ]);
+                }
             }
           } catch(Exception $e) {
             Yii::$app->session->setFlash('error', 'Fatal error.');
@@ -125,10 +154,18 @@ class PembelianController extends Controller
             //$model->JMLLOT = 1;
             //$model->HARGA = 1000;
             $model->KOM_BELI = $this->getKomisi();
-            return $this->render('create', [
-                'model' => $model,
-                'lotshare' => $this->getLotshare(),
-            ]);
+            if ($ajax) {
+              return $this->renderAjax('create', [
+                  'model' => $model,
+                  'lotshare' => $this->getLotshare(),
+              ]);
+            }
+            else{
+              return $this->render('create', [
+                  'model' => $model,
+                  'lotshare' => $this->getLotshare(),
+              ]);
+            }
         }
     }
 
@@ -143,6 +180,7 @@ class PembelianController extends Controller
         $model = $this->findModel($id);
         $oldModel = $model;
         $dates = $this->getDates($model->TGL);
+        $ajax = Yii::$app->request->isAjax;
         if ($model->load(Yii::$app->request->post())) {
           $connection = \Yii::$app->db;
           $transaction = $connection->beginTransaction();
@@ -179,6 +217,18 @@ class PembelianController extends Controller
             else{
                 Yii::$app->session->setFlash('error', 'Data gagal disimpan.');
                 $transaction->rollBack();
+                if ($ajax) {
+                  return $this->renderAjax('update', [
+                      'model' => $model,
+                      'lotshare' => $this->getLotshare(),
+                  ]);
+                }
+                else{
+                  return $this->render('update', [
+                      'model' => $model,
+                      'lotshare' => $this->getLotshare(),
+                  ]);
+                }
             }
           } catch(Exception $e) {
             Yii::$app->session->setFlash('error', 'Fatal error.');
@@ -187,10 +237,18 @@ class PembelianController extends Controller
           return $this->redirect(['index', 'date'=>$dates[0] ]);
         } else {
             $model->TGL  = $dates[1];
-            return $this->render('update', [
-                'model' => $model,
-                'lotshare' => $this->getLotshare(),
-            ]);
+            if ($ajax) {
+              return $this->renderAjax('update', [
+                  'model' => $model,
+                  'lotshare' => $this->getLotshare(),
+              ]);
+            }
+            else{
+              return $this->render('update', [
+                  'model' => $model,
+                  'lotshare' => $this->getLotshare(),
+              ]);
+            }
         }
     }
 

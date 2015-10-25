@@ -21,6 +21,11 @@ $this->params['breadcrumbs'][] = $this->title;
         Keterangan:
       </div>
       <p>Update data diri anda disini! </p>
+      <p>
+        <?php
+        echo "Hak akses anda adalah sebagai " .implode(",", $authAssignments);
+        ?>
+      </p>
     </div>
     <div class="ui divider"></div>
 
@@ -49,6 +54,8 @@ $this->params['breadcrumbs'][] = $this->title;
       <?= $form->field($model, 'repeat_password') ?>
 
       <?= $form->field($model, 'old_password') ?>
+
+      <div class="ui divider"></div>
 
       <div class="form-group">
           <?= Html::submitButton('Simpan', ['class' => 'btn btn-primary',

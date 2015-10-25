@@ -10,6 +10,7 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\data\ActiveDataProvider;
+use yii\filters\AccessControl;
 
 /**
  * HistoryParamfundController implements the CRUD actions for Paramfund model.
@@ -19,7 +20,16 @@ class HistoryParamfundController extends Controller
     public function behaviors()
     {
         return [
-            'verbs' => [
+          'access' => [
+              'class' => AccessControl::className(),
+              'rules' => [
+                  [
+                      'allow' => true,
+                      'roles' => ['@'],
+                  ],
+              ],
+          ],
+          'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
                     'delete' => ['post'],
@@ -135,5 +145,5 @@ class HistoryParamfundController extends Controller
 
     }
 
-    
+
 }

@@ -11,7 +11,7 @@ $this->params['breadcrumbs'][] = ['label' => $model->NOMOR, 'url' => ['view', 'i
 $this->params['breadcrumbs'][] = 'Update';
 ?>
 <div class="pembelian-update">
-
+    <?php if (!Yii::$app->request->isAjax){ ?>
     <h1 class="ui header"><?= Html::encode($this->title) ?></h1>
     <div class="ui attached message">
       <div class="header">
@@ -20,7 +20,7 @@ $this->params['breadcrumbs'][] = 'Update';
       <p>Input data pembelian </p>
     </div>
     <div class="ui divider"></div>
-
+    <?php } ?>
     <?= $this->render('_form', [
         'model' => $model,
         'lotshare' => $lotshare,

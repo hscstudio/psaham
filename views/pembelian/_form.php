@@ -12,6 +12,9 @@ use yii\helpers\Url;
 use app\models\Emiten;
 use app\models\Securitas;
 use app\components\JsBlock;
+use app\components\GrowlLoad;
+use kartik\widgets\AlertBlock;
+use yii\widgets\Pjax;
 /* @var $this yii\web\View */
 /* @var $model app\models\Pembelian */
 /* @var $form yii\widgets\ActiveForm */
@@ -19,7 +22,13 @@ use app\components\JsBlock;
 
 <div class="pembelian-form">
 
-    <?php $form = ActiveForm::begin([
+  <?php Pjax::begin([
+      'id' => 'pembelian-form-pjax',
+      'enablePushState' => false,
+    ]); ?>
+      <?php $form = ActiveForm::begin([
+        'id' => 'pembelian-form',
+        'options' => ['data-pjax' => true ]
       ]); ?>
 
     <div class="row">
@@ -214,11 +223,17 @@ use app\components\JsBlock;
             'class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary',
             'data-confirm'=>"Apakah anda yakin akan menyimpan data ini?",
         ]) ?>
-        <?= Html::a('Cancel',['index','date' =>date('Y-m-d',strtotime($model->TGL))],['class'=>'btn btn-default']) ?>
+        <?= Html::a('Cancel',['index','date' =>date('Y-m-d',strtotime($model->TGL))],['class'=>'btn btn-default','onclick'=>(Yii::$app->request->isAjax)?'$("#myModal").modal("hide");return false':'']) ?>
     </div>
 
     <?php ActiveForm::end(); ?>
-
+    <?php
+    if(Yii::$app->request->isAjax){
+      AlertBlock::widget(Yii::$app->params['alertBlockConfig']);
+      GrowlLoad::init($this);
+    }
+    ?>
+  <?php Pjax::end(); ?>
 </div>
 
 <?php

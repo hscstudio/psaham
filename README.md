@@ -99,3 +99,34 @@ return [
 **NOTE:** Yii won't create the database for you, this has to be done manually before you can access it.
 
 Also check and edit the other files in the `config/` directory to customize your application.
+
+SECURITY
+--------
+
+/*
+For security purpose
+--------------------
+
+1) Asumsi Folder aplikasi anda disini
+`C:/xampp/htdocs/saham`
+
+2) Pindahkan (cut) folder aplikasi anda ke luar dari htdocs, misal
+`C:/xampp/saham`
+
+3) Copy folder web yang ada didalam folder aplikasi anda ke htdocs, misal
+copy folder `C:/xampp/saham/web`  (ingat folder web aja)
+paste ke `C:/xampp/htdocs`
+
+Sehingga di posisi folder web ada di 
+`C:/xampp/htdocs/web/`
+
+4) Lalu buka file index.php didalam folder web tsb.. sesuaikan variabel $coreAppDir mengaarah ke 
+folder aplikasi..
+```php
+$coreAppDir = '/../../saham';
+```
+
+5) Anda boleh merename folder web itu.. misal dari web menjadi saham
+`C:/xampp/htdocs/saham/`
+
+6) Sehingga untuk mengaksesnya http://localhost/saham

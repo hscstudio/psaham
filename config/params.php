@@ -3,6 +3,8 @@ use kartik\widgets\AlertBlock;
 use kartik\widgets\Growl;
 return [
     'adminEmail' => 'admin@example.com',
+    'supportEmail' => 'support@example.com',
+    'user.passwordResetTokenExpire' => 3600,
     'alertBlockConfig' => [
         'type' => AlertBlock::TYPE_GROWL,
         'useSessionFlash' => true,

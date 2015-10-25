@@ -282,4 +282,13 @@ return array (
       '@hscstudio/export' => $vendorDir . '/hscstudio/yii2-export',
     ),
   ),
+  'hscstudio/yii2-mimin' => 
+  array (
+    'name' => 'hscstudio/yii2-mimin',
+    'version' => '9999999-dev',
+    'alias' => 
+    array (
+      '@hscstudio/mimin' => $vendorDir . '/hscstudio/yii2-mimin',
+    ),
+  ),
 );

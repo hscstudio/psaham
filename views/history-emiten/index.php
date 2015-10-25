@@ -2,12 +2,13 @@
 
 use yii\helpers\Html;
 use kartik\grid\GridView;
+use hscstudio\mimin\components\Mimin;
 
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\EmitenSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'Emitens';
+$this->title = 'History Emitens';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="emiten-index">
@@ -18,6 +19,27 @@ $this->params['breadcrumbs'][] = $this->title;
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
+        'responsive'=>true,
+        'responsiveWrap'=>true,
+        'hover'=>true,
+        'resizableColumns'=>true,
+        //'showPageSummary'=>true,
+        'showFooter'=>true,
+        'panel' => [
+            'heading'=>'<h3 class="panel-title"><i class="glyphicon glyphicon-th"></i> <span class="hidden-xs"></span> </h3>',
+            //'type'=>'primary',
+            'before'=>'',
+        ],
+        'toolbar' => [
+            ['content'=>
+                Html::a('<i class="glyphicon glyphicon-repeat"></i>', ['index'], ['data-pjax'=>0, 'class' => 'btn btn-default', 'title'=>'Reset Grid'])
+            ],
+            //'{export}',
+            '{toggleData}',
+        ],
+        'export' => [
+            'fontAwesome' => true
+        ],
         'columns' => [
             ['class' => 'kartik\grid\SerialColumn'],
             [
@@ -34,7 +56,10 @@ $this->params['breadcrumbs'][] = $this->title;
               'options' => [
                   'width' => '100px',
               ],
-              'hAlign'=>'center',
+              'headerOptions' => [
+                  'style' => 'text-align:center',
+              ],
+              'hAlign'=>'right',
               'vAlign'=>'middle',
               'filter' => false,
             ],
@@ -43,6 +68,11 @@ $this->params['breadcrumbs'][] = $this->title;
               'options' => [
                   'width' => '100px',
               ],
+              'headerOptions' => [
+                  'style' => 'text-align:center',
+              ],
+              'hAlign'=>'right',
+              'format'=>['decimal',2],
               'hAlign'=>'center',
               'vAlign'=>'middle',
               'filter' => false,
@@ -60,6 +90,7 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
             [
               'header' => 'Range',
+              'format'=>['decimal',2],
               'options' => [
                   'width' => '100px',
               ],
@@ -75,19 +106,27 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
             [
               'attribute' => 'SALDO',
+              'format'=>['decimal',2],
               'options' => [
                   'width' => '100px',
               ],
-              'hAlign'=>'center',
+              'headerOptions' => [
+                  'style' => 'text-align:center',
+              ],
+              'hAlign'=>'right',
               'vAlign'=>'middle',
               'filter' => false,
             ],
             [
               'attribute' => 'HARGA',
+              'format'=>['decimal',2],
               'options' => [
                   'width' => '100px',
               ],
-              'hAlign'=>'center',
+              'headerOptions' => [
+                  'style' => 'text-align:center',
+              ],
+              'hAlign'=>'right',
               'vAlign'=>'middle',
               'filter' => false,
             ],
@@ -106,6 +145,7 @@ $this->params['breadcrumbs'][] = $this->title;
             // - Saldo**) tidak disimpan ke table emiten. Hanya merupakan info saja.
             [
               'header' => 'Saldo **)',
+              'format'=>['decimal',2],
               'options' => [
                   'width' => '100px',
               ],

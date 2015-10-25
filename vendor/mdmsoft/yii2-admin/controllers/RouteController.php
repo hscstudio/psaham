@@ -29,7 +29,7 @@ class RouteController extends \yii\web\Controller
      */
     public function actionIndex()
     {
-        
+
         return $this->render('index');
     }
 
@@ -123,7 +123,7 @@ class RouteController extends \yii\web\Controller
                 }
             }
         }
-        
+
         Yii::$app->response->format = 'json';
         return $result;
     }

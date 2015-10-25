@@ -22,9 +22,6 @@ $this->params['breadcrumbs'][] = $this->title;
   <div class="ui divider"></div>
   <?php } ?>
 
-    <p><?= Html::a('Cancel',['index'],['class'=>'btn btn-default',
-      'onclick'=>(Yii::$app->request->isAjax)?'$("#myModal").modal("hide");return false':'']); ?></p>
-
     <?= DetailView::widget([
         'model' => $model,
         'attributes' => [
@@ -38,11 +35,7 @@ $this->params['breadcrumbs'][] = $this->title;
     ]) ?>
 
     <p>
-        <?php if (!Yii::$app->request->isAjax) { ?>
-        <?= Html::a('Update', ['update', 'id' => $model->KODE], [
-            'class' => 'btn btn-primary',
-        ]) ?>
-        <?php } ?>
+
         <?= Html::a('Delete', ['delete', 'id' => $model->KODE], [
             'class' => 'btn btn-danger',
             'data' => [
@@ -50,6 +43,9 @@ $this->params['breadcrumbs'][] = $this->title;
                 'method' => 'post',
             ],
         ]) ?>
+        <?= Html::a('Cancel',['index'],['class'=>'btn btn-default',
+        'onclick'=>(Yii::$app->request->isAjax)?'$("#myModal").modal("hide");return false':'']); ?>
+        
     </p>
 
 </div>

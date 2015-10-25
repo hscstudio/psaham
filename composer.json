@@ -23,7 +23,8 @@
         "kartik-v/yii2-widgets": "*",
         "kartik-v/yii2-grid": "~3.0",
         "kartik-v/yii2-mpdf": "@dev",
-        "hscstudio/yii2-export": "1.0.0"
+        "hscstudio/yii2-export": "1.0.0",
+        "hscstudio/yii2-mimin": "*"
     },
     "require-dev": {
         "yiisoft/yii2-codeception": "*",

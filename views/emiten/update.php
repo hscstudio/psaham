@@ -11,7 +11,7 @@ $this->params['breadcrumbs'][] = ['label' => $model->KODE, 'url' => ['view', 'id
 $this->params['breadcrumbs'][] = 'Update';
 ?>
 <div class="emiten-update">
-
+  <?php if (!Yii::$app->request->isAjax){ ?>
   <h2 class="ui header"><?= Html::encode($this->title) ?></h2>
   <div class="ui attached message">
     <div class="header">
@@ -20,7 +20,7 @@ $this->params['breadcrumbs'][] = 'Update';
     <p>Lorem ipsum sit dolor amet </p>
   </div>
   <div class="ui divider"></div>
-
+  <?php } ?>
     <?= $this->render('_form', [
         'model' => $model,
         'lotshare' => $lotshare,
