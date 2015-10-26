@@ -6,7 +6,7 @@ use kartik\widgets\DatePicker;
 use yii\helpers\Url;
 use yii\widgets\Pjax;
 use yii\widgets\MaskedInput;
-use yii\grid\GridView;
+use kartik\grid\GridView;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\Asset */
@@ -176,14 +176,14 @@ use yii\grid\GridView;
         <table class="table table-responsive table-condensed table-hover table-striped input-yellow">
           <thead>
           <tr>
-            <th class="tgl_awal_tahun text-center"><?= '01-Jan-'.date('Y',strtotime($model->TGL)) ?></th>
             <th class="tgl_transaksi text-center"><?= $model->TGL ?></th>
+            <th class="tgl_awal_tahun text-center"><?= '01-Jan-'.date('Y',strtotime($model->TGL)) ?></th>
             <th></th>
           </tr>
           </thead>
           <tbody>
           <tr>
-            <td><?= $form->field($modelat, 'HUTANG')->textInput(['maxlength' => true])->widget(MaskedInput::classname(),[
+            <td><?= $form->field($model, 'HUTANG')->textInput(['maxlength' => true])->widget(MaskedInput::classname(),[
                 'clientOptions' => [
                     'alias' =>  'numeric',
                     'groupSeparator' => ',',
@@ -192,7 +192,7 @@ use yii\grid\GridView;
                     'removeMaskOnSubmit' =>true,
                 ],
             ])->label(false) ?></td>
-            <td><?= $form->field($model, 'HUTANG')->textInput(['maxlength' => true])->widget(MaskedInput::classname(),[
+            <td><?= $form->field($modelat, 'HUTANG')->textInput(['maxlength' => true])->widget(MaskedInput::classname(),[
                 'clientOptions' => [
                     'alias' =>  'numeric',
                     'groupSeparator' => ',',
@@ -204,7 +204,7 @@ use yii\grid\GridView;
             <th>Hutang *)</th>
           </tr>
           <tr>
-            <td><?= $form->field($modelat, 'HUT_LAIN')->textInput(['maxlength' => true])->widget(MaskedInput::classname(),[
+            <td><?= $form->field($model, 'HUT_LANCAR')->textInput(['maxlength' => true])->widget(MaskedInput::classname(),[
                 'clientOptions' => [
                     'alias' =>  'numeric',
                     'groupSeparator' => ',',
@@ -213,7 +213,7 @@ use yii\grid\GridView;
                     'removeMaskOnSubmit' =>true,
                 ],
             ])->label(false) ?></td>
-            <td><?= $form->field($model, 'HUT_LANCAR')->textInput(['maxlength' => true])->widget(MaskedInput::classname(),[
+            <td><?= $form->field($modelat, 'HUT_LAIN')->textInput(['maxlength' => true])->widget(MaskedInput::classname(),[
                 'clientOptions' => [
                     'alias' =>  'numeric',
                     'groupSeparator' => ',',
@@ -225,7 +225,7 @@ use yii\grid\GridView;
             <th>Hutang Lancar *)</th>
           </tr>
           <tr>
-            <td><?= $form->field($modelat, 'MODAL')->textInput(['maxlength' => true])->widget(MaskedInput::classname(),[
+            <td><?= $form->field($model, 'MODAL')->textInput(['maxlength' => true])->widget(MaskedInput::classname(),[
                 'clientOptions' => [
                     'alias' =>  'numeric',
                     'groupSeparator' => ',',
@@ -234,7 +234,7 @@ use yii\grid\GridView;
                     'removeMaskOnSubmit' =>true,
                 ],
             ])->label(false) ?></td>
-            <td><?= $form->field($model, 'MODAL')->textInput(['maxlength' => true])->widget(MaskedInput::classname(),[
+            <td><?= $form->field($modelat, 'MODAL')->textInput(['maxlength' => true])->widget(MaskedInput::classname(),[
                 'clientOptions' => [
                     'alias' =>  'numeric',
                     'groupSeparator' => ',',
@@ -246,7 +246,7 @@ use yii\grid\GridView;
             <th>Modal *)</th>
           </tr>
           <tr>
-            <td><?= $form->field($modelat, 'CAD_LABA')->textInput(['maxlength' => true])->widget(MaskedInput::classname(),[
+            <td><?= $form->field($model, 'CAD_LABA')->textInput(['maxlength' => true])->widget(MaskedInput::classname(),[
                 'clientOptions' => [
                     'alias' =>  'numeric',
                     'groupSeparator' => ',',
@@ -255,7 +255,7 @@ use yii\grid\GridView;
                     'removeMaskOnSubmit' =>true,
                 ],
             ])->label(false) ?></td>
-            <td><?= $form->field($model, 'CAD_LABA')->textInput(['maxlength' => true])->widget(MaskedInput::classname(),[
+            <td><?= $form->field($modelat, 'CAD_LABA')->textInput(['maxlength' => true])->widget(MaskedInput::classname(),[
                 'clientOptions' => [
                     'alias' =>  'numeric',
                     'groupSeparator' => ',',
@@ -267,7 +267,7 @@ use yii\grid\GridView;
             <th>Cadangan Laba *)</th>
           </tr>
           <tr>
-            <td><?= $form->field($modelat, 'LABA_JALAN')->textInput(['maxlength' => true])->widget(MaskedInput::classname(),[
+            <td><?= $form->field($model, 'LABA_JALAN')->textInput(['maxlength' => true])->widget(MaskedInput::classname(),[
                 'clientOptions' => [
                     'alias' =>  'numeric',
                     'groupSeparator' => ',',
@@ -276,7 +276,7 @@ use yii\grid\GridView;
                     'removeMaskOnSubmit' =>true,
                 ],
             ])->label(false) ?></td>
-            <td><?= $form->field($model, 'LABA_JALAN')->textInput(['maxlength' => true])->widget(MaskedInput::classname(),[
+            <td><?= $form->field($modelat, 'LABA_JALAN')->textInput(['maxlength' => true])->widget(MaskedInput::classname(),[
                 'clientOptions' => [
                     'alias' =>  'numeric',
                     'groupSeparator' => ',',
@@ -295,17 +295,17 @@ use yii\grid\GridView;
                 $passivaat = $modelat->HUTANG + $modelat->HUT_LAIN + $modelat->MODAL + $modelat->CAD_LABA + $modelat->LABA_JALAN;
                 $passiva = $model->HUTANG + $model->HUT_LANCAR + $model->MODAL + $model->CAD_LABA + $model->LABA_JALAN;
                 ?>
-                <?= Html::input('text', 'passivaat', number_format($passivaat,2), [
+                <?= Html::input('text', 'passiva', number_format($passiva,2), [
                     'class' => 'form-control',
-                    'id'=> 'passivaat',
+                    'id'=> 'passiva',
                     'readonly'=> 'true',
                     'style'=>'text-align:right;',
                 ]) ?>
               </td>
               <td>
-                <?= Html::input('text', 'passiva', number_format($passiva,2), [
+                <?= Html::input('text', 'passivaat', number_format($passivaat,2), [
                     'class' => 'form-control',
-                    'id'=> 'passiva',
+                    'id'=> 'passivaat',
                     'readonly'=> 'true',
                     'style'=>'text-align:right;',
                 ]) ?>
@@ -342,7 +342,7 @@ use yii\grid\GridView;
                 ],
             ])->label(false) ?></td>
             <td>
-                <?= Html::input('text', 'navat', number_format($modelat->NAVAT), [
+                <?= Html::input('text', 'navat', number_format($modelat->NAVAT,2), [
                     'class' => 'form-control',
                     'id'=> 'navat',
                     'readonly'=> 'true',
@@ -362,7 +362,7 @@ use yii\grid\GridView;
                 ],
             ])->label(false) ?></td>
             <td>
-              <?= Html::input('text', 'nav', number_format($model->NAV), [
+              <?= Html::input('text', 'nav', number_format($model->NAV,2), [
                   'class' => 'form-control',
                   'id'=> 'nav',
                   'readonly'=> 'true',
@@ -396,32 +396,45 @@ use yii\grid\GridView;
     echo $form->field($modelat, 'NAVAT')->label(false)->hiddenInput();
     echo $form->field($model, 'NAV')->label(false)->hiddenInput();
     ?>
-
-    <hr>
-    <h2>INDIKATOR TOBE CONTINUED</h2>
-    <?= GridView::widget([
-        'dataProvider' => $dataProvider,
-        'filterModel' => $searchModel,
-        'columns' => [
-            ['class' => 'yii\grid\SerialColumn'],
-
-            'TGL',
-            'NAMA',
-            'NAVAT',
-            'NAV',
-            'TUMBUH',
-
-            ['class' => 'yii\grid\ActionColumn'],
-        ],
-    ]); ?>
     <hr>
     <div class="form-group">
         <?= Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
         <?= Html::a('Cancel',['index'],['class'=>'btn btn-default']) ?>
     </div>
 
+    <hr>
+    <?php Pjax::begin([
+      'id'=>'pjax-indikator',
+      'enablePushState'=>false,
+      'enableReplaceState'=>false,
+    ]); ?>
+    <?= GridView::widget([
+      'dataProvider' => $dataProvider,
+      'filterModel' => $searchModel,
+    ]); ?>
+    <?php Pjax::end(); ?>
+
+    <?php
+    $this->registerJs("
+
+      $.pjax.reload('#pjax-indikator', {
+        url: '".Url::to(['indikator/index','tgl'=>date('Y-m-d',strtotime($model->TGL))])."',
+        container: '#pjax-indikator',
+        timeout: 3000,
+        push: false,
+        replace: false
+      });
+
+    ");
+    ?>
     <?php ActiveForm::end(); ?>
     <?php Pjax::end(); ?>
+
+    <?= Html::a('<i class="glyphicon glyphicon-print"></i> Cetak EXCEL',['export-excel-detail','tgl'=>date('Y-m-d',strtotime($model->TGL))],[
+      'class'=>'btn btn-default']) ?>
+      
+    <?php Html::a('<i class="glyphicon glyphicon-print"></i> Cetak PDF',['export-pdf-detail','tgl'=>date('Y-m-d',strtotime($model->TGL))],[
+      'class'=>'btn btn-default']) ?>
 </div>
 
 <?php
@@ -555,7 +568,7 @@ $this->registerJs('
     navat = accounting.unformat($("#navat").val());
 
     tumbuh = 0;
-    if(navat>0) tumbuh = (nav - navat) / navat * 100;
+    if(navat>0) tumbuh = ((nav - navat) / navat);// * 100;
 
     $("#tumbuh").val( accounting.formatNumber(tumbuh, 2) );
     $("#asset-tumbuh").val( tumbuh );

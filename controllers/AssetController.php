@@ -170,7 +170,7 @@ class AssetController extends Controller
           if(!Yii::$app->request->post()){
             foreach ($model->attributes as $key => $value) {
                 if($key=='TGL'){
-                  $model->TGL = $dates[1];
+                  $model->TGL = $dates[0];
                 }
                 else{
                   $model->{$key} = 0.00;
@@ -178,6 +178,7 @@ class AssetController extends Controller
             }
           }
           $model->save();
+          $model->TGL = $dates[1];
         }
 
         $modelat = Assetat::find()->where(['TGL'=>$dates[2]]) ->one();
@@ -196,6 +197,7 @@ class AssetController extends Controller
             }
           }
           $modelat->save();
+          $modelat->TGL = $dates[4];
         }
 
         $searchModel = new IndikatorSearch([
@@ -330,6 +332,110 @@ class AssetController extends Controller
   	EXPORT WITH MPDF
   	*/
     public function actionExportPdf()
+    {
+        //$searchModel = new SecuritasSearch();
+        //$dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $session = Yii::$app->session;
+        $dataProvider = $session->get('dataProvider');
+        $html = $this->renderPartial('_pdf',['dataProvider'=>$dataProvider]);
+        //function mPDF($mode='',$format='A4',$default_font_size=0,$default_font='',$mgl=15,$mgr=15,$mgt=16,$mgb=16,$mgh=9,$mgf=9, $orientation='P') {
+        $mpdf=new \mPDF('c','A4',0,'' , 15 , 10 , 15 , 10 , 10 , 10);
+        $header = [
+          'L' => [],
+          'C' => [],
+          'R' => [
+            'content' => 'Page {PAGENO} of {nbpg}',
+            'font-family' => 'sans',
+            'font-style' => '',
+            'font-size' => '9',	/* gives default */
+          ],
+          'line' => 1,		/* 1 or 0 to include line above/below header/footer */
+        ];
+        $mpdf->SetFooter($header,'O');
+        $mpdf->SetDisplayMode('fullpage');
+        $mpdf->list_indent_first_level = 0;  // 1 or 0 - whether to indent the first level of a list
+        $mpdf->WriteHTML($html);
+        $mpdf->Output($this->id.'_'.date('YmdHis').'.pdf','D');
+        exit;
+    }
+
+    /*
+  	EXPORT WITH PHPEXCEL
+  	*/
+  	public function actionExportExcelDetail($tgl)
+    {
+        $dates = $this->getDates($tgl);
+        $asset = Asset::find()->where(['TGL'=>$dates[0]])->one();
+        $assetat = Assetat::find()->where(['TGL'=>$dates[2]])->one();
+
+        $objReader = \PHPExcel_IOFactory::createReader('Excel2007');
+        $template = Yii::getAlias('@app/views/'.$this->id).'/_detail_export.xlsx';
+        $objPHPExcel = $objReader->load($template);
+
+        $activeSheet = $objPHPExcel->getActiveSheet();
+        $activeSheet->setCellValue('E1',date('d M Y H:i:s'));
+        $activeSheet->setCellValue('B5',$dates[3]);
+        $activeSheet->setCellValue('B6',$assetat->KAS_BANK);
+        $activeSheet->setCellValue('B7',$assetat->TRAN_JALAN);
+        $activeSheet->setCellValue('B8',$assetat->INV_LAIN);
+        $activeSheet->setCellValue('B9',$assetat->STOK_SAHAM);
+        $activeSheet->setCellValue('E6',$assetat->HUTANG);
+        $activeSheet->setCellValue('E7',$assetat->HUT_LAIN);
+        $activeSheet->setCellValue('E8',$assetat->MODAL);
+        $activeSheet->setCellValue('E9',$assetat->CAD_LABA);
+        $activeSheet->setCellValue('E10',$assetat->LABA_JALAN);
+        $activeSheet->setCellValue('B14',$assetat->UNITAT);
+        $activeSheet->setCellValue('C14',$assetat->NAVAT);
+
+        $activeSheet->setCellValue('C5',$dates[1]);
+        $activeSheet->setCellValue('C6',$asset->KAS_BANK);
+        $activeSheet->setCellValue('C7',$asset->TRAN_JALAN);
+        $activeSheet->setCellValue('C8',$asset->INV_LAIN);
+        $activeSheet->setCellValue('C9',$asset->STOK_SAHAM);
+        $activeSheet->setCellValue('D6',$asset->HUTANG);
+        $activeSheet->setCellValue('D7',$asset->HUT_LANCAR);
+        $activeSheet->setCellValue('D8',$asset->MODAL);
+        $activeSheet->setCellValue('D9',$asset->CAD_LABA);
+        $activeSheet->setCellValue('D10',$asset->LABA_JALAN);
+        $activeSheet->setCellValue('B15',$asset->UNIT);
+        $activeSheet->setCellValue('C15',$asset->NAV);
+        $activeSheet->setCellValue('C16',$asset->TUMBUH);
+
+        $searchModel = new IndikatorSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $baseRow=19; // line 2
+        $activeSheet = $objPHPExcel->getActiveSheet();
+        foreach($dataProvider->getModels() as $row){
+            if($baseRow!=19) $activeSheet->insertNewRowBefore($baseRow,1);
+            $activeSheet->setCellValue('A'.$baseRow, $row->NAMA);
+            $activeSheet->setCellValue('D'.$baseRow, $row->NAVAT);
+            $activeSheet->setCellValue('E'.$baseRow, $row->NAV);
+            $activeSheet->setCellValue('F'.$baseRow, $row->TUMBUH);
+            if($baseRow%2==0){
+                $activeSheet->getStyle('A'.$baseRow.':'.'F'.$baseRow)->applyFromArray(
+                    [
+                        'fill' => [
+                            'type' => \PHPExcel_Style_Fill::FILL_SOLID,
+                            'color' => ['rgb' => 'efefef']
+                        ]
+                    ]
+                );
+            }
+            $baseRow++;
+
+        }
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment;filename="'.$this->id.'_'.date('YmdHis').'.xlsx"');
+        header('Cache-Control: max-age=0');
+        $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, "Excel2007");
+        $objWriter->save('php://output');
+        exit;
+    }
+
+    /*
+  	EXPORT WITH MPDF
+  	*/
+    public function actionExportPdfDetail()
     {
         //$searchModel = new SecuritasSearch();
         //$dataProvider = $searchModel->search(Yii::$app->request->queryParams);

@@ -12,7 +12,8 @@ $config = [
          'allowActions' => [
             'site/*',
             'debug/*',
-            'mimin/*'
+            'mimin/*',
+            'gii/*'
         ],
     ],
     'modules' => [
