@@ -31,7 +31,7 @@ class Indikator extends \yii\db\ActiveRecord
         return [
             [['TGL', 'NAMA', 'NAVAT', 'NAV', 'TUMBUH'], 'required'],
             [['TGL'], 'safe'],
-            [['NAVAT', 'NAV', 'TUMBUH'], 'number'],
+            [['NAVAT', 'NAV', 'TUMBUH'], 'number','enableClientValidation'=> false],
             [['NAMA'], 'string', 'max' => 100]
         ];
     }

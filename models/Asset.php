@@ -30,7 +30,7 @@ class Asset extends \yii\db\ActiveRecord
     {
         return 'asset';
     }
-
+    
     /**
      * @inheritdoc
      */

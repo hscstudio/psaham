@@ -379,6 +379,7 @@ class AssetController extends Controller
         $activeSheet->setCellValue('B7',$assetat->TRAN_JALAN);
         $activeSheet->setCellValue('B8',$assetat->INV_LAIN);
         $activeSheet->setCellValue('B9',$assetat->STOK_SAHAM);
+
         $activeSheet->setCellValue('E6',$assetat->HUTANG);
         $activeSheet->setCellValue('E7',$assetat->HUT_LAIN);
         $activeSheet->setCellValue('E8',$assetat->MODAL);
@@ -392,6 +393,7 @@ class AssetController extends Controller
         $activeSheet->setCellValue('C7',$asset->TRAN_JALAN);
         $activeSheet->setCellValue('C8',$asset->INV_LAIN);
         $activeSheet->setCellValue('C9',$asset->STOK_SAHAM);
+
         $activeSheet->setCellValue('D6',$asset->HUTANG);
         $activeSheet->setCellValue('D7',$asset->HUT_LANCAR);
         $activeSheet->setCellValue('D8',$asset->MODAL);
@@ -401,7 +403,9 @@ class AssetController extends Controller
         $activeSheet->setCellValue('C15',$asset->NAV);
         $activeSheet->setCellValue('C16',$asset->TUMBUH);
 
-        $searchModel = new IndikatorSearch();
+        $searchModel = new IndikatorSearch([
+          'TGL' => $tgl
+          ]);
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $baseRow=19; // line 2
         $activeSheet = $objPHPExcel->getActiveSheet();
@@ -435,17 +439,32 @@ class AssetController extends Controller
     /*
   	EXPORT WITH MPDF
   	*/
-    public function actionExportPdfDetail()
+    public function actionExportPdfDetail($tgl)
     {
-        //$searchModel = new SecuritasSearch();
-        //$dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-        $session = Yii::$app->session;
-        $dataProvider = $session->get('dataProvider');
-        $html = $this->renderPartial('_pdf',['dataProvider'=>$dataProvider]);
+        $dates = $this->getDates($tgl);
+        $asset = Asset::find()->where(['TGL'=>$dates[0]])->one();
+        $assetat = Assetat::find()->where(['TGL'=>$dates[2]])->one();
+
+        $searchModel = new IndikatorSearch([
+          'TGL' => $tgl
+          ]);
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+        $html = $this->renderPartial('_detail_pdf',[
+          'asset'=>$asset,
+          'assetat'=>$assetat,
+          'dataProvider'=>$dataProvider,
+          'dates'=>$dates,
+        ]);
         //function mPDF($mode='',$format='A4',$default_font_size=0,$default_font='',$mgl=15,$mgr=15,$mgt=16,$mgb=16,$mgh=9,$mgf=9, $orientation='P') {
         $mpdf=new \mPDF('c','A4',0,'' , 15 , 10 , 15 , 10 , 10 , 10);
         $header = [
-          'L' => [],
+          'L' => [
+            'content' => date('d-M-Y H:i:s'),
+            'font-family' => 'sans',
+            'font-style' => '',
+            'font-size' => '9',	/* gives default */
+          ],
           'C' => [],
           'R' => [
             'content' => 'Page {PAGENO} of {nbpg}',

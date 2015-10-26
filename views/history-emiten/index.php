@@ -1,8 +1,11 @@
 <?php
 
 use yii\helpers\Html;
+use yii\helpers\Url;
 use kartik\grid\GridView;
 use hscstudio\mimin\components\Mimin;
+use hscstudio\export\widgets\ButtonExport;
+use yii\widgets\Pjax;
 
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\EmitenSearch */
@@ -16,26 +19,44 @@ $this->params['breadcrumbs'][] = $this->title;
     <h1><?= Html::encode($this->title) ?></h1>
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
+    <?php Pjax::begin([
+      'id'=>'pjax-gridview',
+    ]); ?>
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
         'responsive'=>true,
         'responsiveWrap'=>true,
         'hover'=>true,
-        'resizableColumns'=>true,
+        //'resizableColumns'=>true,
         //'showPageSummary'=>true,
         'showFooter'=>true,
         'panel' => [
             'heading'=>'<h3 class="panel-title"><i class="glyphicon glyphicon-th"></i> <span class="hidden-xs"></span> </h3>',
             //'type'=>'primary',
-            'before'=>'',
+            'before'=>'
+              <div class="row">'.
+                '<div class="col-xs-2 col-md-1">'.
+                Html::dropDownList('perpage', $perpage, [
+                  '10'  =>'10',
+                  '20'  =>'20',
+                  '50'  =>'50',
+                  '100' =>'100',
+                  'all' =>'all',
+                ],[
+                  'id'=>'perpage',
+                  'class'=>'form-control',
+                ]).
+                '</div>'.
+              '</div>',
         ],
         'toolbar' => [
             ['content'=>
-                Html::a('<i class="glyphicon glyphicon-repeat"></i>', ['index'], ['data-pjax'=>0, 'class' => 'btn btn-default', 'title'=>'Reset Grid'])
+                Html::a('<i class="glyphicon glyphicon-repeat"></i>', ['index'], [
+                  'data-pjax'=>0, 'class' => 'btn btn-default', 'title'=>'Reset Grid'
+                ])
             ],
-            //'{export}',
-            '{toggleData}',
+            ButtonExport::widget(),
         ],
         'export' => [
             'fontAwesome' => true
@@ -176,4 +197,43 @@ $this->params['breadcrumbs'][] = $this->title;
         ],
     ]); ?>
 
+    <?php
+    $this->registerJs('
+      $("#perpage").on("change", function () {
+        $.pjax.reload("#pjax-gridview", {
+          url: "'.Url::to(['index']).'?perpage="+$(this).val(),
+          container: "#pjax-gridview",
+          timeout: 3000,
+          push: true,
+          replace: true
+        });
+      });
+    ');
+    ?>
+
+    <?php Pjax::end(); ?>
+
+    <?php
+    $this->registerJs('
+        if(typeof(EventSource)!=="undefined") {
+          var eSource = new EventSource("'.Url::to(['sse']).'?time=");
+          var now = 0;
+          eSource.onmessage = function(event) {
+            if (event.data>now){
+              $.pjax.reload("#pjax-gridview", {
+                url: "'.Url::to(['index']).'",
+                container: "#pjax-gridview",
+                timeout: 3000,
+                push: false,
+                replace: false
+              });
+              now = event.data
+            }
+          };
+        }
+        else {
+          alert("Your web browser not support auto refresh!")
+        }
+    ');
+    ?>
 </div>

@@ -19,6 +19,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <?php
     if(count($dataProviders)>0){
+
       foreach ($dataProviders as $emitenCode => $dataProvider) {
           echo "<hr>";
           echo "<div style='font-weight:bold;'>Emiten: ".$emitenCode."</div>";
@@ -132,6 +133,12 @@ $this->params['breadcrumbs'][] = $this->title;
               ]
             ]);
       }
+
+      echo "<hr>";
+      echo Html::a('<i class="glyphicon glyphicon-print"></i> Cetak EXCEL',['export-excel'],[
+        'class'=>'btn btn-default'])." ";
+      echo Html::a('<i class="glyphicon glyphicon-print"></i> Cetak PDF',['export-pdf'],[
+        'class'=>'btn btn-default']);
     }
     ?>
 </div>

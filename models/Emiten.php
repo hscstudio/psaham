@@ -3,6 +3,9 @@
 namespace app\models;
 
 use Yii;
+use yii\db\Expression;
+use yii\db\ActiveRecord;
+use yii\behaviors\TimestampBehavior;
 
 /**
  * This is the model class for table "emiten".
@@ -31,6 +34,19 @@ class Emiten extends \yii\db\ActiveRecord
         return 'emiten';
     }
 
+    public function behaviors()
+    {
+      return [
+          [
+              'class' => TimestampBehavior::className(),
+              'attributes' => [
+                  ActiveRecord::EVENT_BEFORE_INSERT => ['last_update'],
+                  ActiveRecord::EVENT_BEFORE_UPDATE => ['last_update'],
+              ],
+          ],
+      ];
+    }
+
     /**
      * @inheritdoc
      */
@@ -42,6 +58,7 @@ class Emiten extends \yii\db\ActiveRecord
               'min' => 0,
               'enableClientValidation'=> false,
             ],
+            [['last_update'], 'integer'],
             [['KODE'], 'string', 'max' => 8],
             [['NAMA'], 'string', 'max' => 50]
         ];

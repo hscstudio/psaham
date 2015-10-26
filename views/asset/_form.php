@@ -431,9 +431,9 @@ use kartik\grid\GridView;
     <?php Pjax::end(); ?>
 
     <?= Html::a('<i class="glyphicon glyphicon-print"></i> Cetak EXCEL',['export-excel-detail','tgl'=>date('Y-m-d',strtotime($model->TGL))],[
-      'class'=>'btn btn-default']) ?>
-      
-    <?php Html::a('<i class="glyphicon glyphicon-print"></i> Cetak PDF',['export-pdf-detail','tgl'=>date('Y-m-d',strtotime($model->TGL))],[
+      'class'=>'btn btn-default'])." "; ?>
+
+    <?= Html::a('<i class="glyphicon glyphicon-print"></i> Cetak PDF',['export-pdf-detail','tgl'=>date('Y-m-d',strtotime($model->TGL))],[
       'class'=>'btn btn-default']) ?>
 </div>
 
