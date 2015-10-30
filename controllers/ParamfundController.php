@@ -110,11 +110,11 @@ class ParamfundController extends Controller
                 */
                 $oldModel = $this->findModel($model->EMITEN_KODE, $model->TAHUN-1, $model->TRIWULAN,true);
                 if($oldModel){
-                    $model->P_BV = @number_format( (($model->BV - $oldModel->BV) / $oldModel->BV ) , 2);
-                    $model->P_EPS = @number_format( (($model->P_EPS - $oldModel->P_EPS) / $oldModel->P_EPS ), 2);
-                    $model->P_TE = @number_format(  (($model->P_TE - $oldModel->P_TE) / $oldModel->P_TE ), 2);
-                    $model->P_SALES = @number_format(  (($model->P_SALES - $oldModel->P_SALES) / $oldModel->P_SALES ), 2);
-                    $model->P_NI = @number_format(  (($model->P_NI - $oldModel->P_NI) / $oldModel->P_NI ), 2);
+                    $model->P_BV = @number_format( (($model->BV - $oldModel->BV) / $oldModel->BV )*100 , 2);
+                    $model->P_EPS = @number_format( (($model->P_EPS - $oldModel->P_EPS) / $oldModel->P_EPS )*100, 2);
+                    $model->P_TE = @number_format(  (($model->P_TE - $oldModel->P_TE) / $oldModel->P_TE )*100, 2);
+                    $model->P_SALES = @number_format(  (($model->P_SALES - $oldModel->P_SALES) / $oldModel->P_SALES )*100, 2);
+                    $model->P_NI = @number_format(  (($model->P_NI - $oldModel->P_NI) / $oldModel->P_NI )*100, 2);
                     $model->save();
                 }
                 return $this->redirect(['index']);
@@ -165,11 +165,11 @@ class ParamfundController extends Controller
                 Yii::$app->session->setFlash('success', 'Data berhasil disimpan.');
                 $oldModel = @$this->findModel($model->EMITEN_KODE, $model->TAHUN-1, $model->TRIWULAN,true);
                 if($oldModel){
-                    $model->P_BV = @number_format( (($model->BV - $oldModel->BV) / $oldModel->BV ) , 2);
-                    $model->P_EPS = @number_format( (($model->P_EPS - $oldModel->P_EPS) / $oldModel->P_EPS ), 2);
-                    $model->P_TE = @number_format(  (($model->P_TE - $oldModel->P_TE) / $oldModel->P_TE ), 2);
-                    $model->P_SALES = @number_format(  (($model->P_SALES - $oldModel->P_SALES) / $oldModel->P_SALES ), 2);
-                    $model->P_NI = @number_format(  (($model->P_NI - $oldModel->P_NI) / $oldModel->P_NI ), 2);
+                    $model->P_BV = @number_format( (($model->BV - $oldModel->BV) / $oldModel->BV )*100 , 2);
+                    $model->P_EPS = @number_format( (($model->P_EPS - $oldModel->P_EPS) / $oldModel->P_EPS )*100, 2);
+                    $model->P_TE = @number_format(  (($model->P_TE - $oldModel->P_TE) / $oldModel->P_TE )*100, 2);
+                    $model->P_SALES = @number_format(  (($model->P_SALES - $oldModel->P_SALES) / $oldModel->P_SALES )*100, 2);
+                    $model->P_NI = @number_format(  (($model->P_NI - $oldModel->P_NI) / $oldModel->P_NI )*100, 2);
                     $model->save();
                     //print_r($model->errors);
                     //die();

@@ -543,7 +543,7 @@ $this->registerJs('
     unitat = accounting.unformat($("#assetat-unitat").val());
 
     navat = 0;
-    if(unitat>0) navat = (aktivaat - hutang - hut_lain) / unitat;
+    if(unitat>0) navat = ((aktivaat - hutang - hut_lain) / unitat);
 
     $("#navat").val( accounting.formatNumber(navat, 2) );
     $("#assetat-navat").val( navat );
@@ -556,7 +556,7 @@ $this->registerJs('
     unit = accounting.unformat($("#asset-unit").val());
 
     nav = 0;
-    if(unit>0) nav = (aktiva - hutang - hut_lancar) / unit;
+    if(unit>0) nav = ((aktiva - hutang - hut_lancar) / unit );
 
     $("#nav").val( accounting.formatNumber(nav, 2) );
     $("#asset-nav").val( nav );
@@ -568,7 +568,7 @@ $this->registerJs('
     navat = accounting.unformat($("#navat").val());
 
     tumbuh = 0;
-    if(navat>0) tumbuh = ((nav - navat) / navat);// * 100;
+    if(navat>0) tumbuh = ((nav - navat) / navat) * 100;
 
     $("#tumbuh").val( accounting.formatNumber(tumbuh, 2) );
     $("#asset-tumbuh").val( tumbuh );
