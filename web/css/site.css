@@ -253,3 +253,11 @@ table.input-yellow > tbody input.form-control{
     -webkit-transform: perspective(400px);
   }
 }
+
+.ajax-loader{
+	background:url('loader.gif') center center no-repeat;
+	height:100px;
+	width:100px;
+	display:block;
+	margin:auto;
+}

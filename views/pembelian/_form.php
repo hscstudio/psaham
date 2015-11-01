@@ -158,10 +158,10 @@ use yii\widgets\Pjax;
         <?php
         echo $form->field($model, 'JMLSAHAM')->label(false)->hiddenInput();
         ?>
-        <label class="control-label">Jml Saham</label>
-        <?= Html::input('text', 'saham-total', number_format($model->JMLSAHAM), [
+        <label class="control-label">Share</label>
+        <?= Html::input('text', 'share', number_format($model->JMLSAHAM), [
             'class' => 'form-control',
-            'id'=> 'saham-total',
+            'id'=> 'share',
             'readonly'=> 'true',
             'style'=>'text-align:right;',
         ]) ?>
@@ -184,6 +184,16 @@ use yii\widgets\Pjax;
       </div>
     </div>
 
+    <?php
+    $share = $lotshare * $model->JMLLOT;
+    $bruto = $share * $model->HARGA;
+    // 2.	Perhitungan Total Komisi = kom_beli * harga * share / 100
+    $komisi_total = $model->KOM_BELI * $bruto / 100;
+
+    // 1.	Koreksi perhitungan total. Total = (jmlsaham * harga) + total komisi
+    $netto = $bruto + $komisi_total;
+    ?>
+
     <div class="row">
       <div class="col-xs-6 col-sm-3">
         <?php
@@ -200,7 +210,7 @@ use yii\widgets\Pjax;
       </div>
       <div class="col-xs-6 col-sm-6">
         <label class="control-label">Total Komisi</label>
-        <?= Html::input('text', 'komisi-total', number_format($model->KOM_BELI*$model->JMLSAHAM*$model->HARGA), [
+        <?= Html::input('text', 'komisi-total', number_format($komisi_total,2), [
             'class' => 'form-control',
             'id'=> 'komisi-total',
             'readonly'=> 'true',
@@ -209,7 +219,7 @@ use yii\widgets\Pjax;
       </div>
       <div class="col-xs-6 col-xs-offset-6 col-sm-3 col-sm-offset-0">
         <label class="control-label">Harga Total</label>
-        <?= Html::input('text', 'harga-total', number_format( $model->JMLSAHAM*$model->HARGA - ($model->KOM_BELI*$model->JMLSAHAM*$model->HARGA) ), [
+        <?= Html::input('text', 'harga-total', number_format($netto,2 ), [
             'class' => 'form-control',
             'id'=> 'harga-total',
             'readonly'=> 'true',
@@ -243,18 +253,23 @@ $this->registerJs('
   });
 
   function changeInput(){
-      jml_lot = accounting.unformat($("#pembelian-jmllot").val());
+      jmllot = accounting.unformat($("#pembelian-jmllot").val());
       harga = accounting.unformat($("#pembelian-harga").val());
       komisi = accounting.unformat($("#pembelian-kom_beli").val());
-      saham_total = '.$lotshare.'* jml_lot;
-      bruto = saham_total * harga
-      komisi_total = komisi * bruto;
-      netto = bruto - komisi_total;
 
-      $("#saham-total").val( accounting.formatNumber(saham_total, 2) );
+
+      share = '.$lotshare.'* jmllot;
+      bruto = share * harga
+      // 2.	Perhitungan Total Komisi = kom_beli * harga * share / 100
+      komisi_total = komisi * bruto / 100;
+
+      // 1.	Koreksi perhitungan total. Total = (jmlsaham * harga) + total komisi
+      netto = bruto + komisi_total;
+      
+      $("#share").val( accounting.formatNumber(share, 2) );
       $("#komisi-total").val( accounting.formatNumber(komisi_total, 2) );
       $("#harga-total").val( accounting.formatNumber(netto, 2) );
 
-      $("#pembelian-jmlsaham").val( saham_total );
+      $("#pembelian-jmlsaham").val( share );
   }
 ');

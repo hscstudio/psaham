@@ -119,7 +119,7 @@ use yii\widgets\Pjax;
         navat = accounting.unformat($("#indikator-navat").val());
 
         tumbuh = 0;
-        if(navat>0) tumbuh = ((nav - navat) / navat);
+        if(navat>0) tumbuh = ((nav - navat) / navat) * 100;
 
         $("#indikator_tumbuh").val( accounting.formatNumber(tumbuh, 2) );
         $("#indikator-tumbuh").val( tumbuh );

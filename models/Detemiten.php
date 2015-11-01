@@ -10,10 +10,13 @@ use Yii;
  * @property string $TGL
  * @property string $EMITEN_KODE
  * @property string $JMLLOT
+ * @property string $JMLSAHAM
  * @property string $SALDO
+ * @property string $SALDOR1
  * @property string $HARGA
  * @property string $TGLAKHIR
  * @property string $JMLLOTB
+ * @property string $JMLSAHAMB
  * @property string $SALDOB
  *
  * @property Emiten $eMITENKODE
@@ -34,9 +37,12 @@ class Detemiten extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['TGL', 'EMITEN_KODE', 'JMLLOT', 'SALDO', 'HARGA', 'TGLAKHIR', 'JMLLOTB', 'SALDOB'], 'required'],
+            [['TGL', 'EMITEN_KODE', 'JMLLOT', 'JMLSAHAM', 'SALDO', 'SALDOR1', 'HARGA', 'TGLAKHIR', 'JMLLOTB', 'JMLSAHAMB', 'SALDOB'], 'required'],
             [['TGL', 'TGLAKHIR'], 'safe'],
-            [['JMLLOT', 'SALDO', 'HARGA', 'JMLLOTB', 'SALDOB'], 'number'],
+            [['JMLLOT', 'JMLSAHAM', 'SALDO', 'HARGA', 'SALDOR1', 'JMLLOTB', 'JMLSAHAMB', 'SALDOB'], 'number',
+              //'min' => 0,
+              'enableClientValidation'=> false,
+            ],
             [['EMITEN_KODE'], 'string', 'max' => 8]
         ];
     }
@@ -47,13 +53,15 @@ class Detemiten extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'TGL' => 'Tgl',
-            'EMITEN_KODE' => 'Emiten  Kode',
-            'JMLLOT' => 'Jmllot',
+            'KODE' => 'Kode',
+            'NAMA' => 'Nama',
+            'JMLLOT' => 'Jml lot',
+            'JMLSAHAM' => 'Share',
             'SALDO' => 'Saldo',
             'HARGA' => 'Harga',
-            'TGLAKHIR' => 'Tglakhir',
+            'SALDOR1' => 'Saldo BJ',
             'JMLLOTB' => 'Jmllotb',
+            'JMLSAHAMB' => 'Share B',
             'SALDOB' => 'Saldob',
         ];
     }

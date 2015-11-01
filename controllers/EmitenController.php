@@ -84,7 +84,8 @@ class EmitenController extends Controller
         $model = new Emiten();
         $ajax = Yii::$app->request->isAjax;
         if ($model->load(Yii::$app->request->post())) {
-            $model->SALDOR1 = (float) @($model->SALDO / $model->JMLSAHAM);
+            //$model->SALDOR1 = (float) @($model->SALDO / $model->JMLSAHAM);
+            $model->SALDOR1 = 0;
             $model->JMLLOTB = $model->JMLLOT;
             $model->SALDOB = $model->SALDO;
             if($model->save()){

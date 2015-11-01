@@ -18,7 +18,9 @@ use yii\behaviors\TimestampBehavior;
  * @property string $HARGA
  * @property string $SALDOR1
  * @property string $JMLLOTB
+ * @property string $JMLSAHAMB
  * @property string $SALDOB
+ * @property string $last_update
  *
  * @property Detemiten[] $detemitens
  * @property Paramfund[] $paramfunds
@@ -54,7 +56,7 @@ class Emiten extends \yii\db\ActiveRecord
     {
         return [
             [['KODE', 'NAMA', 'JMLLOT', 'JMLSAHAM', 'SALDO', 'HARGA', 'SALDOR1', 'JMLLOTB', 'SALDOB'], 'required'],
-            [['JMLLOT', 'JMLSAHAM', 'SALDO', 'HARGA', 'SALDOR1', 'JMLLOTB', 'SALDOB'], 'number',
+            [['JMLLOT', 'JMLSAHAM', 'SALDO', 'HARGA', 'SALDOR1', 'JMLLOTB', 'JMLSAHAMB', 'SALDOB'], 'number',
               'min' => 0,
               'enableClientValidation'=> false,
             ],
@@ -73,11 +75,12 @@ class Emiten extends \yii\db\ActiveRecord
             'KODE' => 'Kode',
             'NAMA' => 'Nama',
             'JMLLOT' => 'Jml lot',
-            'JMLSAHAM' => 'Jml Saham',
+            'JMLSAHAM' => 'Share',
             'SALDO' => 'Saldo',
             'HARGA' => 'Harga',
-            'SALDOR1' => 'Saldor1',
+            'SALDOR1' => 'Saldo BJ',
             'JMLLOTB' => 'Jmllotb',
+            'JMLSAHAMB' => 'Share B',
             'SALDOB' => 'Saldob',
         ];
     }

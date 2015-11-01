@@ -51,15 +51,16 @@ use yii\widgets\Pjax;
       </div>
       <div class="col-xs-6 col-xs-offset-6 col-sm-3 col-sm-offset-0">
         <?php
-        echo $form->field($model, 'JMLSAHAM')->label(false)->hiddenInput();
+        echo $form->field($model, 'JMLSAHAM')->widget(MaskedInput::classname(),[
+            'clientOptions' => [
+                'alias' =>  'numeric',
+                'groupSeparator' => ',',
+                'radixPoint' => '.',
+                'autoGroup' => true,
+                'removeMaskOnSubmit' =>true,
+            ],
+        ]);
         ?>
-        <label class="control-label">Jml Saham</label>
-        <?= Html::input('text', 'saham-total', number_format($model->JMLSAHAM), [
-            'class' => 'form-control',
-            'id'=> 'saham-total',
-            'readonly'=> 'true',
-            'style'=>'text-align:right;',
-        ]) ?>
       </div>
     </div>
     <div class="row">
@@ -117,10 +118,25 @@ use yii\widgets\Pjax;
         </div>
       </div>
     </div>
-
+    <div class="row">
+      <div class="col-xs-6 col-sm-3">
+        <?= $form->field($model, 'JMLSAHAMB')->textInput(['maxlength' => true]) ?>
+      </div>
+      <div class="col-xs-6 col-sm-3">
+        <div class="form-group">
+        <label class="control-label">Saldo BJ</label>
+        <?= Html::input('text', 'saldor1', @number_format($model->SALDOR1), [
+            'class' => 'form-control',
+            'id'=> 'saldor1',
+            'readonly'=> 'true',
+            'style'=>'text-align:right;',
+        ]) ?>
+        </div>
+      </div>
+    </div>
     <!--
     AUTOMATIC
-      <?= $form->field($model, 'SALDOR1')->textInput(['maxlength' => true]) ?>
+
 
       <?= $form->field($model, 'JMLLOTB')->textInput(['maxlength' => true]) ?>
 
@@ -147,24 +163,41 @@ use yii\widgets\Pjax;
 
 <?php
 $this->registerJs('
-  $("#emiten-jmllot, #emiten-saldo, #emiten-harga").bind("change", function(){
+  $("#emiten-jmllot").bind("change", function(){
+      // Jika jmllot diisi maka share = jmllot * jmllbrsaham.
+      jmllot = accounting.unformat($("#emiten-jmllot").val());
+      share = jmllot * '.$lotshare.';
+      $("#emiten-jmlsaham").val( accounting.formatNumber(share, 2)  );
+  });
+
+  $("#emiten-jmlsaham").bind("change", function(){
+      //Jika share diisi maka jmllot = share / jmllbrsaham.
+      share = accounting.unformat($("#emiten-jmlsaham").val());
+      jmllot = share / '.$lotshare.';
+      $("#emiten-jmllot").val( accounting.formatNumber(jmllot, 2)  );
+  });
+
+  $("#emiten-saldo, #emiten-harga").bind("change", function(){
       changeInput();
   });
 
   function changeInput(){
-      jml_lot = accounting.unformat($("#emiten-jmllot").val());
+
       saldo = accounting.unformat($("#emiten-saldo").val());
       harga = accounting.unformat($("#emiten-harga").val());
+      share = accounting.unformat($("#emiten-jmlsaham").val());
 
-      saham_total = '.$lotshare.'* jml_lot;
-      range = saldo / saham_total;
-      saldo2 = harga * saham_total;
+      range = saldo / share;
+      saldo2 = harga * share;
 
-      $("#saham-total").val( accounting.formatNumber(saham_total, 2) );
+      $("#share").val( accounting.formatNumber(share, 2) );
       $("#range").val( accounting.formatNumber(range, 2) );
       $("#saldo2").val( accounting.formatNumber(saldo2, 2)  );
 
-      $("#emiten-jmlsaham").val( saham_total );
-
   }
+
+  //Tampilkan inputan jmllot dan share (keduanya bisa di edit).
+
+
+
 ');

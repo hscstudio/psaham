@@ -19,7 +19,7 @@ class EmitenSearch extends Emiten
     {
         return [
             [['KODE', 'NAMA'], 'safe'],
-            [['JMLLOT', 'JMLSAHAM', 'SALDO', 'HARGA', 'SALDOR1', 'JMLLOTB', 'SALDOB'], 'number'],
+            [['JMLLOT', 'JMLSAHAM', 'SALDO', 'HARGA', 'SALDOR1', 'JMLLOTB', 'JMLSAHAM', 'SALDOB'], 'number'],
         ];
     }
 
@@ -62,6 +62,7 @@ class EmitenSearch extends Emiten
             'HARGA' => $this->HARGA,
             'SALDOR1' => $this->SALDOR1,
             'JMLLOTB' => $this->JMLLOTB,
+            'JMLSAHAMB' => $this->JMLSAHAMB,
             'SALDOB' => $this->SALDOB,
         ]);
 
