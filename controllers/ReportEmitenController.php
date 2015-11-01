@@ -4,6 +4,7 @@ namespace app\controllers;
 
 use Yii;
 use app\models\Emiten;
+use app\models\Komisi;
 use app\models\EmitenSearch;
 use app\models\DetemitenSearch;
 use app\models\Detemiten;
@@ -116,7 +117,17 @@ class ReportEmitenController extends Controller
             $detemitenDates[$formatDate] = $formatDate;
         }
 
+        $komisi = Komisi::find()->one();
+        $lotshare = Lotshare::find()->one();
         //$detemitenDates = ['31-Oct-2015'=>'31-Oct-2015'];
+        //Saldo**) = jmlsaham * harga
+        $detemitenSaldo = Detemiten::find()
+          ->select('SUM(JMLSAHAM * HARGA) as total_saldo')
+          ->where(['TGL' => $reportDates[0]])
+          ->asArray()
+          ->one();
+        $total_saldo = $detemitenSaldo['total_saldo'];
+
         $searchModel = new DetemitenSearch([
             'TGL' => $reportDates[0],
         ]);
@@ -130,7 +141,51 @@ class ReportEmitenController extends Controller
             'simulation' => $simulation,
             'reportDates' => $reportDates,
             'detemitenDates' => $detemitenDates,
+            'komisi' => $komisi,
+            'lotshare' => $lotshare,
+            'total_saldo' => $total_saldo,
         ]);
+    }
+
+    /**
+     * Updates an existing Emiten model.
+     * If update is successful, the browser will be redirected to the 'view' page.
+     * @param string $id
+     * @return mixed
+     */
+    public function actionUpdate()
+    {
+        $dates= $this->getDates();
+        if ($post = Yii::$app->request->post()) {
+          $dates = $this->getDates($post['reportDate']);
+          foreach ($post['harga'] as $kode => $harga){
+            //echo $kode.'=>'.$harga.'<br>';
+            $detemiten = Detemiten::find()
+              ->where([
+                  'TGL'=>$dates[0],
+                  'EMITEN_KODE'=>$kode,
+              ])
+              ->one();
+            $detemiten->HARGA = (float)$harga;
+            $detemiten->save();
+          }
+          Yii::$app->session->setFlash('success', 'Data berhasil disimpan.');
+        }
+        return $this->redirect(['index', 'date' => $dates[0]]);
+    }
+
+    /**
+     * Updates an existing Emiten model.
+     * If update is successful, the browser will be redirected to the 'view' page.
+     * @param string $id
+     * @return mixed
+     */
+    public function actionDelete($date)
+    {
+        $dates= $this->getDates($date);
+        Detemiten::deleteAll(['TGL'=>$dates[0]]);
+        Yii::$app->session->setFlash('success', 'Data berhasil dihapus.');
+        return $this->redirect(['index']);
     }
 
     public function getDates($date=''){

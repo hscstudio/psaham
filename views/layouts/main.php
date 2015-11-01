@@ -143,34 +143,6 @@ Modal::begin([
 ]);
 echo '...';
 Modal::end();
-$this->registerJs("
-    $('#myModal').on('shown.bs.modal', function (event) {
-        var modal = $(this)
-        if(modal.attr('id')=='myModal'){
-          var button = $(event.relatedTarget)
-          var title = button.data('title')
-          var size = button.data('size')
-          var href = button.attr('href')
-          modal.find('.modal-title').html(title)
-          modal.find('.modal-dialog').attr('class','modal-dialog '+size)
-          modal.find('.modal-body').html('<span class=\"ajax-loader\"></span>')
-          $.ajax({
-            method: 'post',
-            url: href,
-            //async: true
-          }).done(function(data) {
-              modal.find('.modal-body').html(data)
-          });
-        }
-    })
-
-    $('#myModal').on('hidden.bs.modal', function (e) {
-      var modal = $(this)
-      modal.find('.modal-body').html('')
-      modal.find('.modal-title').html('')
-      //modal.find('.modal-dialog').attr('class','modal-dialog modal-sm')
-    })
-");
 ?>
 
 <footer class="footer">

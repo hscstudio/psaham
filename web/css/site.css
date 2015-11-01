@@ -261,3 +261,7 @@ table.input-yellow > tbody input.form-control{
 	display:block;
 	margin:auto;
 }
+
+.custom-selected{
+  background-color: #ddeeee !important;
+}
