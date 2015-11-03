@@ -157,9 +157,10 @@ $this->params['breadcrumbs'][] = $this->title;
               ],
               'hAlign'=>'right',
               'vAlign'=>'middle',
-              'value' => function($data)use($lotshare){
-                //Range Beli = saldob / (jmllotb * jmllbrsaham) -> Ket:  saldob, jmllotb dr detemiten; jmllbrsaham dr lotshare.
-                $range_beli = (float) @($data->SALDOB / ($data->JMLLOTB * $lotshare->JML_LBRSAHAM));
+              'value' => function($data){
+                // Range Beli = saldob / (jmllotb * jmllbrsaham) -> Ket:  saldob, jmllotb dr detemiten; jmllbrsaham dr lotshare.
+                //koreksi: Range Beli = saldob / jmlsahamb -> Ket:  saldob, jmlsahamb dr detemiten.
+                $range_beli = (float) @($data->SALDOB / $data->JMLSAHAMB);
                 return $range_beli;
               },
               'pageSummary'=>true,
@@ -177,7 +178,7 @@ $this->params['breadcrumbs'][] = $this->title;
               ],
               'hAlign'=>'right',
               'vAlign'=>'middle',
-              'value' => function($data)use($lotshare){
+              'value' => function($data){
                 //Range = saldo / jmlsaham.
                 $range =  (float) @($data->SALDO / $data->JMLSAHAM);
                 return $range;
@@ -279,7 +280,7 @@ $this->params['breadcrumbs'][] = $this->title;
               },
               'pageSummary'=>true,
               'pageSummaryFunc'=>GridView::F_SUM,
-              //'footer'=>true
+              'footer'=>'Total Laba/Rugi'
             ],
             [
               'label' => 'Laba(+) / Rugi(-)',
@@ -299,7 +300,7 @@ $this->params['breadcrumbs'][] = $this->title;
               },
               'pageSummary'=>true,
               'pageSummaryFunc'=>GridView::F_SUM,
-              //'footer'=>true
+              'footer'=>number_format($total_laba_rugi,2)
             ],
             /*[
               'attribute' => 'SALDOR1',
@@ -450,13 +451,17 @@ $this->params['breadcrumbs'][] = $this->title;
               </div>
               <div class="col-xs-6">
                 <div class="form-group">
-                  <label class="control-label" for="dynamicmodel-jml_saham">Jml Saham</label>
-                  <?= Html::input('text', 'DynamicModel[jml_saham]', '0.00', [
-                      'class' => 'form-control',
-                      'id'=> 'dynamicmodel-jml_saham',
-                      'readonly'=> 'true',
-                      'style'=>'text-align:right;',
-                  ]) ?>
+                  <?php
+                  echo $form->field($simulation, 'jml_saham')->widget(MaskedInput::classname(),[
+                      'clientOptions' => [
+                          'alias' =>  'numeric',
+                          'groupSeparator' => ',',
+                          'radixPoint' => '.',
+                          'autoGroup' => true,
+                          'removeMaskOnSubmit' =>true,
+                      ],
+                  ]);
+                  ?>
                 </div>
                 <div class="form-group">
                   <label class="control-label" for="dynamicmodel-range">Range</label>
@@ -529,15 +534,23 @@ $this->registerJs("
     }
   }
 
-  simulate()
+  simulate(1)
 
   $('#dynamicmodel-tipe').on('switchChange.bootstrapSwitch', function(event, state) {
     tipe = state;
-    simulate()
+    simulate(1)
   });
 
-  $('#dynamicmodel-jml_lot,#dynamicmodel-harga').bind('change', function(){
-      simulate()
+  $('#dynamicmodel-harga').bind('change', function(){
+      simulate(0)
+  });
+
+  $('#dynamicmodel-jml_lot').bind('change', function(){
+      simulate(1)
+  });
+
+  $('#dynamicmodel-jml_saham').bind('change', function(){
+      simulate(2)
   });
 
 
@@ -561,21 +574,29 @@ $this->registerJs("
     simulate();
   }
 
-  function simulate(){
-    jml_lot = accounting.unformat($('#dynamicmodel-jml_lot').val());
+  function simulate(x){
     harga = accounting.unformat($('#dynamicmodel-harga').val());
     kom_beli = ".$komisi->KOM_BELI.";
     kom_jual = ".$komisi->KOM_JUAL.";
-
-    //jmlsaham = jmllot * jmllbrsaham dr table lotshare
-    jml_saham = jml_lot * ".$lotshare->JML_LBRSAHAM.";
-
     komisi = 0;
     if(tipe){ // BELI
       komisi = kom_beli;
     }
     else{
       komisi = kom_jual;
+    }
+
+    if(x==1){
+      jml_lot = accounting.unformat($('#dynamicmodel-jml_lot').val());
+      //jmlsaham = jmllot * jmllbrsaham dr table lotshare
+      jml_saham = jml_lot * ".$lotshare->JML_LBRSAHAM.";
+      $('#dynamicmodel-jml_saham').val( accounting.formatNumber(jml_saham, 2) );
+    }
+    if(x==2){
+      jml_saham = accounting.unformat($('#dynamicmodel-jml_saham').val());
+      //jmllot = jmlsaham / jmllbrsaham dr table lotshare
+      jml_lot = jml_saham / ".$lotshare->JML_LBRSAHAM.";
+      $('#dynamicmodel-jml_lot').val( accounting.formatNumber(jml_lot, 2) );
     }
 
     //Total komisi = harga * jmlsaham * komisi penjualan atau pembelian / 100
@@ -585,7 +606,6 @@ $this->registerJs("
     total_harga = (harga * jml_saham) + total_komisi
     range = (saldoG - total_harga) / (jmlSahamG - jml_saham)
 
-    $('#dynamicmodel-jml_saham').val( accounting.formatNumber(jml_saham, 2) );
     $('#dynamicmodel-komisi').val( accounting.formatNumber(komisi, 2) );
     $('#dynamicmodel-total_komisi').val( accounting.formatNumber(total_komisi, 2) );
     $('#dynamicmodel-total_harga').val( accounting.formatNumber(total_harga, 2) );

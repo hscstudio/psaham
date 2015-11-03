@@ -4,11 +4,13 @@ namespace app\controllers;
 
 use Yii;
 use app\models\Emiten;
+use app\models\Detemiten;
 use app\models\EmitenSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
+use app\models\Lotshare;
 
 /**
  * HistoryEmitenController implements the CRUD actions for Emiten model.
@@ -49,11 +51,11 @@ class HistoryEmitenController extends Controller
         $dataProvider->pagination->pageSize=$perpage;
         $session = Yii::$app->session;
         $session->set('dataProvider',$dataProvider);
-
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
             'perpage' => $perpage,
+            'lotshare' => $this->getLotshare(),
         ]);
     }
 
@@ -101,7 +103,7 @@ class HistoryEmitenController extends Controller
         //$dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $session = Yii::$app->session;
         $dataProvider = $session->get('dataProvider');
-
+        $lotshare = $this->getLotshare();
         $objReader = \PHPExcel_IOFactory::createReader('Excel2007');
         $template = Yii::getAlias('@app/views/'.$this->id).'/_export.xlsx';
         $objPHPExcel = $objReader->load($template);
@@ -116,10 +118,28 @@ class HistoryEmitenController extends Controller
             $activeSheet->setCellValue('C'.$baseRow, $row->JMLLOT);
             $activeSheet->setCellValue('D'.$baseRow, $row->JMLSAHAM);
 
+            //-	Range Beli = saldob / (jmllotb * jmllbrsaham) -> Ket:  saldob, jmllotb dr detemiten; jmllbrsaham dr lotshare.
+            $detemiten = Detemiten::find()->where(['EMITEN_KODE'=>$row->KODE])->orderBy('TGL DESC')->one();
+            $range_beli = (float) @($detemiten->SALDOB / ($detemiten->JMLLOTB * $lotshare));
+
+            $activeSheet->setCellValue('E'.$baseRow, $range_beli);
+            $range = @($row->SALDO / $row->JMLSAHAM);
+            $activeSheet->setCellValue('F'.$baseRow, $range);
+
             $activeSheet->setCellValue('G'.$baseRow, $row->SALDO);
             $activeSheet->setCellValue('H'.$baseRow, $row->HARGA);
 
-            $activeSheet->setCellValue('J'.$baseRow, $row->SALDOR1);
+            $detemiten = Detemiten::find()->where(['EMITEN_KODE'=>$row->KODE])->orderBy('TGL DESC')->one();
+            if(substr($detemiten->TGLAKHIR,0,4)=='0000'){
+              $tgl = '-';
+            }
+            else
+              $tgl = date('d-m-Y',strtotime($detemiten->TGLAKHIR));
+            $activeSheet->setCellValue('I'.$baseRow, $tgl);
+            $saldo2 = @($row->HARGA / $row->JMLSAHAM);
+            $activeSheet->setCellValue('J'.$baseRow, $saldo2);
+            $laba_rugi = ($row->JMLSAHAM * $row->HARGA) - $row->SALDO;
+            $activeSheet->setCellValue('K'.$baseRow, $laba_rugi);
             if($baseRow%2==0){
                 $activeSheet->getStyle('A'.$baseRow.':'.'K'.$baseRow)->applyFromArray(
                     [
@@ -170,5 +190,15 @@ class HistoryEmitenController extends Controller
         $mpdf->WriteHTML($html);
         $mpdf->Output($this->id.'_'.date('YmdHis').'.pdf','D');
         exit;
+    }
+
+    public function getLotshare()
+    {
+        $lotshare = Lotshare::find()->select('JML_LBRSAHAM')->one();
+        $jml_saham = '100';
+        if($lotshare!==null){
+            $jml_saham = (int)$lotshare->JML_LBRSAHAM;
+        }
+        return $jml_saham;
     }
 }

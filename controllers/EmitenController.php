@@ -4,6 +4,7 @@ namespace app\controllers;
 
 use Yii;
 use app\models\Emiten;
+use app\models\Detemiten;
 use app\models\EmitenSearch;
 use app\models\Lotshare;
 use yii\web\Controller;
@@ -181,8 +182,14 @@ class EmitenController extends Controller
     {
       $model = $this->findModel($id);
       try {
-        $model->delete();
-        Yii::$app->session->setFlash('success', 'Data berhasil dihapus.');
+        $detemiten = Detemiten::find()->where(['EMITEN_KODE'=>$model->KODE])->exists();
+        if($detemiten){
+            $model->delete();
+            Yii::$app->session->setFlash('success', 'Data berhasil dihapus.');
+        }
+        else{
+            Yii::$app->session->setFlash('warning', 'Emiten ini sudah punya Detail Emiten sehingga Tidak Dapat Dihapus');
+        }
       } catch(Exception $e) {
         Yii::$app->session->setFlash('error', 'Data tidak dapat dihapus karena telah digunakan pada transaksi lain.');
       }

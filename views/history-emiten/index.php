@@ -6,6 +6,7 @@ use kartik\grid\GridView;
 use hscstudio\mimin\components\Mimin;
 use hscstudio\export\widgets\ButtonExport;
 use yii\widgets\Pjax;
+use app\models\Detemiten;
 
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\EmitenSearch */
@@ -26,7 +27,7 @@ $this->params['breadcrumbs'][] = $this->title;
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
         'responsive'=>true,
-        'responsiveWrap'=>true,
+        //'responsiveWrap'=>true,
         'hover'=>true,
         //'resizableColumns'=>true,
         //'showPageSummary'=>true,
@@ -94,7 +95,7 @@ $this->params['breadcrumbs'][] = $this->title;
               ],
               'hAlign'=>'right',
               'format'=>['decimal',2],
-              'hAlign'=>'center',
+              'hAlign'=>'right',
               'vAlign'=>'middle',
               'filter' => false,
             ],
@@ -108,6 +109,14 @@ $this->params['breadcrumbs'][] = $this->title;
               ],
               'hAlign'=>'right',
               'vAlign'=>'middle',
+              'value' => function ($data) use ($lotshare){
+                //-	Range Beli = saldob / (jmllotb * jmllbrsaham) -> Ket:  saldob, jmllotb dr detemiten; jmllbrsaham dr lotshare.
+                $detemiten = Detemiten::find()->where(['EMITEN_KODE'=>$data->KODE])->orderBy('TGL DESC')->one();
+                $range_beli = (float) @($detemiten->SALDOB / ($detemiten->JMLLOTB * $lotshare));
+                return number_format($range_beli,2);
+                //-	Laba/Rugi = (jmlsaham * harga) - saldo
+
+              }
             ],
             [
               'header' => 'Range',
@@ -153,6 +162,7 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
             [
               'header' => 'Tgl Akhir',
+              'format' => ['date','php:d/M/Y'],
               'options' => [
                   'width' => '100px',
               ],
@@ -161,6 +171,15 @@ $this->params['breadcrumbs'][] = $this->title;
               ],
               'hAlign'=>'right',
               'vAlign'=>'middle',
+              'value' => function ($data){
+                //-	Range Beli = saldob / (jmllotb * jmllbrsaham) -> Ket:  saldob, jmllotb dr detemiten; jmllbrsaham dr lotshare.
+                $detemiten = Detemiten::find()->where(['EMITEN_KODE'=>$data->KODE])->orderBy('TGL DESC')->one();
+                if(substr($detemiten->TGLAKHIR,0,4)=='0000'){
+
+                }
+                else
+                  return date('d-m-Y',strtotime($detemiten->TGLAKHIR));
+              }
             ],
             // - Saldo**) = Harga*) x Jml Saham
             // - Saldo**) tidak disimpan ke table emiten. Hanya merupakan info saja.
@@ -182,6 +201,7 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
             [
               'header' => 'Laba/Rugi',
+              'format'=>['decimal',2],
               'options' => [
                   'width' => '100px',
               ],
@@ -190,6 +210,10 @@ $this->params['breadcrumbs'][] = $this->title;
               ],
               'hAlign'=>'right',
               'vAlign'=>'middle',
+              'value' => function ($data){
+                return  ($data->JMLSAHAM * $data->HARGA) - $data->SALDO;
+
+              }
             ],
             // 'SALDOR1',
             // 'JMLLOTB',

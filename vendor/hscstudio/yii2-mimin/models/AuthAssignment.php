@@ -29,7 +29,7 @@ class AuthAssignment extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['item_name', 'user_id'], 'required'],
+            [['item_name', 'user_id'], 'safe'],
             [['created_at'], 'integer'],
             //[['item_name', 'user_id'], 'string', 'max' => 64]
         ];
