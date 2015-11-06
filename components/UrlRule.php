@@ -4,6 +4,7 @@ namespace app\components;
 use Yii;
 use yii\web\UrlRuleInterface;
 use yii\base\Object;
+use app\components\AesCtr;
 
 class UrlRule extends Object implements UrlRuleInterface
 {
@@ -66,27 +67,13 @@ class UrlRule extends Object implements UrlRuleInterface
     }
 
     public function encode($value) {
-  //        if (!$value) {
-  //            return false;
-  //        }
-  //        $text = $value;
-  //        $iv_size = mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_ECB);
-  //        $iv = mcrypt_create_iv($iv_size, MCRYPT_RAND);
-  //        $crypttext = mcrypt_encrypt(MCRYPT_RIJNDAEL_256, $this->skey, $text, MCRYPT_MODE_ECB, $iv);
-  //        return trim($this->safe_b64encode($crypttext));
-        return $this->mencrypt($value);
+        //return $this->mencrypt($value);
+        return AesCtr::encrypt($value, '123456', 256);
     }
 
     public function decode($value) {
-  //        if (!$value) {
-  //            return false;
-  //        }
-  //        $crypttext = $this->safe_b64decode($value);
-  //        $iv_size = mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_ECB);
-  //        $iv = mcrypt_create_iv($iv_size, MCRYPT_RAND);
-  //        $decrypttext = mcrypt_decrypt(MCRYPT_RIJNDAEL_256, $this->skey, $crypttext, MCRYPT_MODE_ECB, $iv);
-  //        return trim($decrypttext);
-        return $this->mdecrypt($value);
+        //return $this->mdecrypt($value);
+        return AesCtr::decrypt($value, '123456', 256);
     }
 
     function mencrypt($input) {

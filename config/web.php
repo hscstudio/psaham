@@ -8,7 +8,7 @@ $config = [
     'bootstrap' => ['log'],
     'timeZone' => 'Asia/Jakarta',
     'as access' => [
-         'class' => 'hscstudio\mimin\components\AccessControl',
+         'class' => '\hscstudio\mimin\components\AccessControl',
          'allowActions' => [
             'site/*',
             'debug/*',
@@ -18,7 +18,7 @@ $config = [
     ],
     'modules' => [
         'mimin' => [
-            'class' => 'hscstudio\mimin\Module',
+            'class' => '\hscstudio\mimin\Module',
         ],
         'gridview' =>  [
             'class' => '\kartik\grid\Module'
@@ -34,10 +34,10 @@ $config = [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => [
-                //[
-                    //'class' => 'app\components\UrlRule',
+                [
+                  'class' => 'app\components\UrlRule',
                     // ...configure other properties...
-                //],
+                ],
             ]
         ],
         'request' => [
