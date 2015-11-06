@@ -27,13 +27,34 @@ $this->params['breadcrumbs'][] = $this->title;
         'attributes' => [
             'KODE',
             'NAMA',
-            'JMLLOT',
-            'JMLSAHAM',
-            'SALDO',
-            'HARGA',
-            'SALDOR1',
-            'JMLLOTB',
-            'SALDOB',
+            [
+              'attribute'=>'JMLLOT',
+              'format'=>['decimal','2'],
+            ],
+            [
+              'attribute'=>'JMLSAHAM',
+              'format'=>['decimal','2'],
+            ],
+            [
+              'attribute'=>'SALDO',
+              'format'=>['decimal','2'],
+            ],
+            [
+              'attribute'=>'HARGA',
+              'format'=>['decimal','2'],
+            ],
+            [
+              'attribute'=>'SALDOR1',
+              'format'=>['decimal','2'],
+            ],
+            [
+              'attribute'=>'JMLLOTB',
+              'format'=>['decimal','2'],
+            ],
+            [
+              'attribute'=>'SALDOB',
+              'format'=>['decimal','2'],
+            ],
         ],
     ]) ?>
     <p>
@@ -46,6 +67,6 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
         ]) ?>
         <?= Html::a('Cancel',['index'],['class'=>'btn btn-default','onclick'=>(Yii::$app->request->isAjax)?'$("#myModal").modal("hide");return false':'']) ?>
-        
+
     </p>
 </div>

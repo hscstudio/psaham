@@ -30,7 +30,7 @@ class Asset extends \yii\db\ActiveRecord
     {
         return 'asset';
     }
-    
+
     /**
      * @inheritdoc
      */
@@ -41,7 +41,8 @@ class Asset extends \yii\db\ActiveRecord
             [['TGL'], 'safe'],
             [['KAS_BANK', 'TRAN_JALAN', 'INV_LAIN', 'STOK_SAHAM', 'HUTANG', 'HUT_LANCAR', 'MODAL', 'CAD_LABA', 'LABA_JALAN', 'UNIT', 'NAV', 'TUMBUH'], 'number',
               'enableClientValidation'=> false,
-            ]
+            ],
+            //jmllot, jmllotb dan jmlsaham, jmlsahamb
         ];
     }
 

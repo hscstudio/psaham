@@ -57,8 +57,10 @@ class Emiten extends \yii\db\ActiveRecord
         return [
             [['KODE', 'NAMA', 'JMLLOT', 'JMLSAHAM', 'SALDO', 'HARGA', 'SALDOR1', 'JMLLOTB', 'SALDOB'], 'required'],
             [['JMLLOT', 'JMLSAHAM', 'SALDO', 'HARGA', 'SALDOR1', 'JMLLOTB', 'JMLSAHAMB', 'SALDOB'], 'number',
-              'min' => 0,
               'enableClientValidation'=> false,
+            ],
+            [['JMLLOT', 'JMLSAHAM', 'JMLLOTB', 'JMLSAHAMB'], 'number',
+              'min' => 0,
             ],
             [['last_update'], 'integer'],
             [['KODE'], 'string', 'max' => 8],

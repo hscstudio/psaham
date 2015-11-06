@@ -37,9 +37,11 @@ class Pembelian extends \yii\db\ActiveRecord
             [['NOMOR', 'TGL', 'JMLLOT', 'JMLSAHAM', 'HARGA', 'KOM_BELI','EMITEN_KODE', 'SECURITAS_KODE'], 'required'],
             [['TGL'], 'safe'],
             [['JMLLOT', 'JMLSAHAM', 'HARGA', 'KOM_BELI'], 'number',
-                'min' => 0,
                 'enableClientValidation'=> false,
                 //'numberPattern' => '/^\s*[-+]?([0-9]\,?)+[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*$/mig',
+            ],
+            [['JMLLOT', 'JMLSAHAM'], 'number',
+              'min' => 0,
             ],
             [['NOMOR'], 'string', 'max' => 6],
             [['EMITEN_KODE', 'SECURITAS_KODE'], 'string', 'max' => 8]

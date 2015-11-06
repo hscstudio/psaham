@@ -43,6 +43,11 @@ class Detemiten extends \yii\db\ActiveRecord
               //'min' => 0,
               'enableClientValidation'=> false,
             ],
+            [['JMLLOT', 'JMLSAHAM', 'JMLLOTB', 'JMLSAHAMB'], 'number',
+              'min' => 0,
+            ],
+            //jmllot, jmllotb dan jmlsaham, jmlsahamb
+
             [['EMITEN_KODE'], 'string', 'max' => 8]
         ];
     }

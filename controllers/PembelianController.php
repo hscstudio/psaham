@@ -108,8 +108,10 @@ class PembelianController extends Controller
                   $modelEmiten->SALDOR1 = @ ($modelEmiten->SALDO + $model->TOTAL_BELI) / ($modelEmiten->JMLSAHAM + $model->JMLSAHAM);
                   //-Ada trigger saat terjadi pembelian untuk mengubah nilai jmllot dan saldo pada table emiten:
                   // JMLLOTB = JMLLOTB + JMLLOT BELI
+                  // JMLSAHAMB = JMLSAHAMB + JMLSAHAM
                   // SALDOB = SALDOB + TOTAL BELI
                   $modelEmiten->JMLLOTB = $modelEmiten->JMLLOTB + $model->JMLLOT;
+                  $modelEmiten->JMLSAHAMB = $modelEmiten->JMLSAHAMB + $model->JMLSAHAM;
                   $modelEmiten->SALDOB = $modelEmiten->SALDOB + $model->TOTAL_BELI;
                   if($modelEmiten->save()){
                     Yii::$app->session->setFlash('success', 'Data berhasil disimpan.');
@@ -178,7 +180,7 @@ class PembelianController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
-        $oldModel = $model;
+        $oldModel = clone $model;
         $dates = $this->getDates($model->TGL);
         $ajax = Yii::$app->request->isAjax;
         if ($model->load(Yii::$app->request->post())) {
@@ -196,8 +198,10 @@ class PembelianController extends Controller
                   $modelEmiten->SALDOR1 = @ ($modelEmiten->SALDO + $model->TOTAL_BELI - $oldModel->TOTAL_BELI ) / ($modelEmiten->JMLSAHAM + $model->JMLSAHAM - $oldModel->JMLSAHAM);
                   //-Ada trigger saat terjadi pembelian untuk mengubah nilai jmllot dan saldo pada table emiten:
                   // JMLLOTB = JMLLOTB + JMLLOT BELI
+                  // JMLSAHAMB = JMLSAHAMB + JMLSAHAM
                   // SALDOB = SALDOB + TOTAL BELI
                   $modelEmiten->JMLLOTB = $modelEmiten->JMLLOTB + $model->JMLLOT - $oldModel->JMLLOT;
+                  $modelEmiten->JMLSAHAMB = $modelEmiten->JMLSAHAMB + $model->JMLSAHAM - $oldModel->JMLSAHAM;
                   $modelEmiten->SALDOB = $modelEmiten->SALDOB + $model->TOTAL_BELI - $oldModel->TOTAL_BELI;
                   if($modelEmiten->save()){
                     Yii::$app->session->setFlash('success', 'Data berhasil disimpan.');
@@ -263,7 +267,7 @@ class PembelianController extends Controller
         $model = $this->findModel($id);
         $EMITEN_KODE = $model->EMITEN_KODE;
         $TOTAL_BELI = $model->TOTAL_BELI;
-        $SALDOR1 = $model->SALDOR1;
+        //$SALDOR1 = $model->SALDOR1;
         $JMLSAHAM = $model->JMLSAHAM;
         $JMLLOT = $model->JMLLOT;
         $connection = \Yii::$app->db;
@@ -276,23 +280,27 @@ class PembelianController extends Controller
             // Total Beli, Jml Saham Beli dari table Pembelian sesuai kode Emiten.
             $modelEmiten = Emiten::find()->where(['KODE'=>$EMITEN_KODE])->one();
             if($modelEmiten){
-              $modelEmiten->SALDOR1 = @ ($modelEmiten->SALDO - $TOTAL_BELI ) / ($modelEmiten->JMLSAHAM - $JMLSAHAM);
+              $modelEmiten->SALDOR1 = @(($modelEmiten->SALDO - $TOTAL_BELI ) / ($modelEmiten->JMLSAHAM - $JMLSAHAM));
               //-Ada trigger saat terjadi pembelian untuk mengubah nilai jmllot dan saldo pada table emiten:
               // JMLLOTB = JMLLOTB + JMLLOT BELI
+              // JMLSAHAMB = JMLSAHAMB + JMLSAHAM
               // SALDOB = SALDOB + TOTAL BELI
               $modelEmiten->JMLLOTB = $modelEmiten->JMLLOTB - $JMLLOT;
+              $modelEmiten->JMLSAHAMB =$modelEmiten->JMLSAHAMB - $JMLSAHAM;
+              if($modelEmiten->JMLSAHAMB<0) $modelEmiten->JMLSAHAMB=0;
               $modelEmiten->SALDOB = $modelEmiten->SALDOB - $TOTAL_BELI;
               if($modelEmiten->save()){
                 Yii::$app->session->setFlash('success', 'Data berhasil dihapus.');
                 $transaction->commit();
               }
               else{
+                //print_r($modelEmiten->errors);
                 Yii::$app->session->setFlash('error', 'Data gagal dihapus.');
                 $transaction->rollBack();
               }
             }
             else {
-              Yii::$app->session->setFlash('error', 'Data gagal dihapus.');
+              Yii::$app->session->setFlash('error', 'Data gagal dihapus, fatal error.');
               $transaction->rollBack();
             }
           }

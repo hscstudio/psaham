@@ -19,11 +19,23 @@ $this->params['breadcrumbs'][] = $this->title;
     <?= DetailView::widget([
         'model' => $model,
         'attributes' => [
-            'TGL',
+            [
+              'attribute'=>'TGL',
+              'format'=>['date','php:d M Y'],
+            ],
             'NAMA',
-            'NAVAT',
-            'NAV',
-            'TUMBUH',
+            [
+              'attribute'=>'NAVAT',
+              'format'=>['decimal','2'],
+            ],
+            [
+              'attribute'=>'NAV',
+              'format'=>['decimal','2'],
+            ],
+            [
+              'attribute'=>'TUMBUH',
+              'format'=>['decimal','2'],
+            ],
         ],
     ]) ?>
 

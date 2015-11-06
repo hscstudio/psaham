@@ -118,6 +118,7 @@ class ReportEmitenController extends Controller
             }
             $detemitenDates[$formatDate] = $formatDate;
         }
+        $session->set('detemitenDates',$detemitenDates);
 
         $komisi = Komisi::find()->one();
         $lotshare = Lotshare::find()->one();
@@ -157,6 +158,16 @@ class ReportEmitenController extends Controller
             'total_saldo' => $total_saldo,
             'total_laba_rugi'=> $total_laba_rugi,
         ]);
+    }
+
+    public function actionSetCookie()
+    {
+      $session = Yii::$app->session;
+      $simulates = [];
+      foreach($_POST as $num=>$val){
+        $simulates[$num] = $val;
+      }
+      $session->set('simulates',$simulates);
     }
 
     /**
@@ -295,6 +306,25 @@ class ReportEmitenController extends Controller
 
         }
         //$activeSheet->setCellValue('M'.$baseRow+1, ($total_laba_rugi) );
+        $simulates = $session->get('simulates');
+        $simulateRow = $baseRow;
+
+        $simulateRow += 1;
+        $activeSheet->setCellValue('C'.$simulateRow++,  ($simulates['tipe'])?'Pembelian':'Penjualan');
+        $activeSheet->setCellValue('C'.$simulateRow++,  $simulates['jml_lot']);
+        $activeSheet->setCellValue('C'.$simulateRow++,  $simulates['harga']);
+        $activeSheet->setCellValue('C'.$simulateRow,  $simulates['komisi']);
+        $activeSheet->setCellValue('E'.$simulateRow++,  $simulates['total_komisi']);
+        $activeSheet->setCellValue('C'.$simulateRow++,  $simulates['jml_saham']);
+        $activeSheet->setCellValue('C'.$simulateRow++,  $simulates['range']);
+        $activeSheet->setCellValue('C'.$simulateRow++,  $simulates['total_harga']);
+
+        $detemitenDates = $session->get('detemitenDates');
+        $detemitenDateRow = $baseRow;
+        $detemitenDateRow += 2;
+        foreach($detemitenDates as $detemitenDate){
+            $activeSheet->setCellValue('H'.$detemitenDateRow++, $detemitenDate);
+        }
         header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
         header('Content-Disposition: attachment;filename="'.$this->id.'_'.date('YmdHis').'.xlsx"');
         header('Cache-Control: max-age=0');
@@ -314,13 +344,17 @@ class ReportEmitenController extends Controller
         $dataProvider = $session->get('dataProvider');
         $total_saldo = $session->get('total_saldo');
         $total_laba_rugi = $session->get('total_laba_rugi');
+        $simulates = $session->get('simulates');
+        $detemitenDates = $session->get('detemitenDates');
         $html = $this->renderPartial('_pdf',[
           'dataProvider'=>$dataProvider,
           'total_saldo'=>$total_saldo,
           'total_laba_rugi'=>$total_laba_rugi,
+          'simulates'=>$simulates,
+          'detemitenDates'=>$detemitenDates,
         ]);
         //function mPDF($mode='',$format='A4',$default_font_size=0,$default_font='',$mgl=15,$mgr=15,$mgt=16,$mgb=16,$mgh=9,$mgf=9, $orientation='P') {
-        $mpdf=new \mPDF('c','A4-L',0,'' , 15 , 10 , 15 , 10 , 10 , 10);
+        $mpdf=new \mPDF('c','A4-L',0,'' , 15 , 10 , 10 , 5 , 10 , 10);
         $header = [
           'L' => [],
           'C' => [],

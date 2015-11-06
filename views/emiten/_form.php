@@ -121,22 +121,7 @@ MaskedInputAsset::register($this);
         </div>
       </div>
     </div>
-    <div class="row">
-      <div class="col-xs-6 col-sm-3">
-        <?= $form->field($model, 'JMLSAHAMB')->textInput(['maxlength' => true]) ?>
-      </div>
-      <div class="col-xs-6 col-sm-3">
-        <div class="form-group">
-        <label class="control-label">Saldo BJ</label>
-        <?= Html::input('text', 'saldor1', @number_format($model->SALDOR1), [
-            'class' => 'form-control',
-            'id'=> 'saldor1',
-            'readonly'=> 'true',
-            'style'=>'text-align:right;',
-        ]) ?>
-        </div>
-      </div>
-    </div>
+
     <!--
     AUTOMATIC
 

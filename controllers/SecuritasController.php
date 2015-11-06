@@ -83,6 +83,7 @@ class SecuritasController extends Controller
         $model = new Securitas();
         $ajax = Yii::$app->request->isAjax;
         if ($model->load(Yii::$app->request->post())) {
+          try {
             if($model->save()){
               Yii::$app->session->setFlash('success', 'Data berhasil disimpan.');
               return $this->redirect(['index']);
@@ -100,6 +101,12 @@ class SecuritasController extends Controller
                 ]);
               }
             }
+          } catch(Exception $e) {
+            Yii::$app->session->setFlash('error', 'Kode sudah ada, pilih kode lain.');
+            return $this->renderAjax('create', [
+                'model' => $model,
+            ]);
+          }
         } else {
             if ($ajax) {
               return $this->renderAjax('create', [
@@ -125,6 +132,7 @@ class SecuritasController extends Controller
         $model = $this->findModel($id);
         $ajax = Yii::$app->request->isAjax;
         if ($model->load(Yii::$app->request->post())) {
+          try {
             if($model->save()){
               Yii::$app->session->setFlash('success', 'Data berhasil disimpan.');
             }
@@ -139,6 +147,12 @@ class SecuritasController extends Controller
             else{
               return $this->refresh();
             }
+          } catch(Exception $e) {
+            Yii::$app->session->setFlash('error', 'Fatal error.');
+            return $this->renderAjax('update', [
+                'model' => $model,
+            ]);
+          }
         } else {
             if ($ajax) {
               return $this->renderAjax('update', [

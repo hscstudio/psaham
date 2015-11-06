@@ -602,14 +602,50 @@ $this->registerJs("
     //Total komisi = harga * jmlsaham * komisi penjualan atau pembelian / 100
     total_komisi = harga * jml_saham * komisi / 100;
 
-    //-. Pd Simulasi penjualan: 	total = (harga * jmlsaham) - total komisi
-    total_harga = (harga * jml_saham) + total_komisi
-    range = (saldoG - total_harga) / (jmlSahamG - jml_saham)
+    if(tipe){ // BELI
+      // Pd Simulasi pembelian :
+      // total = (harga * jmlsaham) + total komisi
+		  // range = (saldo[g] + total) / (jmlsaham[g] + jmlsaham)
+      total_harga = (harga * jml_saham) + total_komisi
+      range = (saldoG + total_harga) / (jmlSahamG + jml_saham)
+    }
+    else{
+      // Pd Simulasi penjualan:
+      // total = (harga * jmlsaham) - total komisi
+		  // range = (saldo[g] - total) / (jmlsaham[g] - jmlsaham)
+      total_harga = (harga * jml_saham) - total_komisi
+      range = (saldoG - total_harga) / (jmlSahamG - jml_saham)
+    }
 
     $('#dynamicmodel-komisi').val( accounting.formatNumber(komisi, 2) );
     $('#dynamicmodel-total_komisi').val( accounting.formatNumber(total_komisi, 2) );
     $('#dynamicmodel-total_harga').val( accounting.formatNumber(total_harga, 2) );
     $('#dynamicmodel-range').val( accounting.formatNumber(range, 2) );
+
+    var simulate_json = {
+      'tipe': tipe,
+      'jml_lot':jml_lot,
+      'harga':harga,
+      'komisi':komisi,
+      'total_komisi':total_komisi,
+      'jml_saham':jml_saham,
+      'range':range,
+      'total_harga':total_harga,
+    };
+
+      /*{'simulate':[
+        {'tipe':tipe},
+        {'jml_lot':jml_lot},
+
+      ]};*/
+
+      $.ajax({
+        type: 'POST',
+        url: '".Url::to(['set-cookie'])."',
+        data: simulate_json,
+        //contentType: 'application/json; charset=utf-8',
+        dataType: 'json',
+    });
   }
 ",\yii\web\View::POS_HEAD);
 ?>

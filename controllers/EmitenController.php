@@ -85,9 +85,11 @@ class EmitenController extends Controller
         $model = new Emiten();
         $ajax = Yii::$app->request->isAjax;
         if ($model->load(Yii::$app->request->post())) {
+          try{
             //$model->SALDOR1 = (float) @($model->SALDO / $model->JMLSAHAM);
             $model->SALDOR1 = 0;
             $model->JMLLOTB = $model->JMLLOT;
+            $model->JMLSAHAMB = $model->JMLSAHAM;
             $model->SALDOB = $model->SALDO;
             if($model->save()){
               Yii::$app->session->setFlash('success', 'Data berhasil disimpan.');
@@ -108,6 +110,13 @@ class EmitenController extends Controller
                 ]);
               }
             }
+          } catch(Exception $e) {
+            Yii::$app->session->setFlash('error', 'Kode sudah ada, silahkan pilih kode lain.');
+            return $this->renderAjax('create', [
+                'model' => $model,
+                'lotshare' => $this->getLotshare(),
+            ]);
+          }
             //return $this->redirect(['view', 'id' => $model->KODE]);
         } else {
           if ($ajax) {
@@ -182,8 +191,8 @@ class EmitenController extends Controller
     {
       $model = $this->findModel($id);
       try {
-        $detemiten = Detemiten::find()->where(['EMITEN_KODE'=>$model->KODE])->exists();
-        if($detemiten){
+        $detemiten = Detemiten::find()->where(['EMITEN_KODE'=>$model->KODE])->count();
+        if($detemiten==0){
             $model->delete();
             Yii::$app->session->setFlash('success', 'Data berhasil dihapus.');
         }

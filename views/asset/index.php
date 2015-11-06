@@ -60,8 +60,19 @@ $this->params['breadcrumbs'][] = $this->title;
             [
               'attribute' => 'TGL',
               'format'=>['date','php:d-M-Y'],
+              'filterType' => GridView::FILTER_DATE,
+              'filterWidgetOptions' => [
+                  'pluginOptions' => [
+                      'format' => 'yyyy-mm-dd',
+                      'autoclose' => true,
+                      'todayHighlight' => true,
+                  ]
+              ],
               'hAlign'=>'center',
               'vAlign'=>'middle',
+              'options' => [
+                  'width' => '200px',
+              ],
             ],
             [
               'attribute' => 'KAS_BANK',
