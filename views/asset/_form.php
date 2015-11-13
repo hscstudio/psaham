@@ -21,26 +21,32 @@ use kartik\grid\GridView;
 
     <div class="row">
       <div class="col-xs-6 col-sm-3">
-      <?= $form->field($model, 'TGL')->widget(DatePicker::classname(), [
-          'options' => ['placeholder' => 'Tgl Transaksi ...'],
-          'readonly' => true,
-          'removeButton' => false,
-          'pluginOptions' => [
-            'todayHighlight' => true,
-            'todayBtn' => true,
-            'format' => 'dd-M-yyyy',
-            'autoclose'=>true,
-          ],
-          'pluginEvents' => [
-            "changeDate" => "function(e) {
-                $.pjax.reload({
-                  url: '".Url::to(['update'])."?date='+e.format(0,'yyyy-m-d'),
-                  container: '#pjax-form',
-                  timeout: 1,
-                });
-            }",
-          ]
-      ]); ?>
+      <?php
+      if ($model->isNewRecord){
+        echo $form->field($model, 'TGL')->widget(DatePicker::classname(), [
+            'options' => ['placeholder' => 'Tgl Transaksi ...'],
+            'removeButton' => false,
+            'pluginOptions' => [
+              'todayHighlight' => true,
+              'todayBtn' => true,
+              'format' => 'dd-M-yyyy',
+              'autoclose'=>true,
+            ],
+            'pluginEvents' => [
+              "changeDate" => "function(e) {
+                  $.pjax.reload({
+                    url: '".Url::to(['update'])."?id='+e.format(0,'yyyy-m-d'),
+                    container: '#pjax-form',
+                    timeout: 1,
+                  });
+              }",
+            ]
+        ]);
+      }
+      else{
+        echo $form->field($model, 'TGL')->textInput(['readonly'=>'true']);
+      }
+      ?>
       </div>
     </div>
 
@@ -398,25 +404,35 @@ use kartik\grid\GridView;
     ?>
     <hr>
     <div class="form-group">
-        <?= Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
-        <?= Html::a('Cancel',['index'],['class'=>'btn btn-default']) ?>
+        <?= Html::submitButton($model->isNewRecord ? 'Create' : 'Update', [
+          'class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary',
+          'data-confirm'=>"Apakah anda yakin akan menyimpan data ini?",
+          ]) ?>
+        <?= Html::a('Close',['index'],[
+            'class'=>'btn btn-default',
+            'onclick'=>'
+              if (confirm("Apakah yakin mau keluar dari halaman ini?")) {
+                  return true;
+              }
+              else{
+                return false;
+              }
+            '
+        ]) ?>
     </div>
 
     <hr>
     <?php Pjax::begin([
       'id'=>'pjax-indikator',
-      'enablePushState'=>false,
-      'enableReplaceState'=>false,
+      //'enablePushState'=>false,
+      //'enableReplaceState'=>false,
     ]); ?>
     <?= GridView::widget([
       'dataProvider' => $dataProvider,
       'filterModel' => $searchModel,
     ]); ?>
-    <?php Pjax::end(); ?>
-
     <?php
     $this->registerJs("
-
       $.pjax.reload('#pjax-indikator', {
         url: '".Url::to(['indikator/index','tgl'=>date('Y-m-d',strtotime($model->TGL))])."',
         container: '#pjax-indikator',
@@ -424,10 +440,161 @@ use kartik\grid\GridView;
         push: false,
         replace: false
       });
-
     ");
     ?>
+    <?php Pjax::end(); ?>
     <?php ActiveForm::end(); ?>
+
+    <?php
+    $this->registerJs('
+      // KOLOM KIRI
+      $("#assetat-kas_bank, #assetat-tran_jalan, #assetat-inv_lain, #assetat-stok_saham").bind("change", function(){
+        setAktivateAt()
+        setNavAt()
+        setTumbuh()
+        setNegative()
+      });
+      $("#asset-kas_bank, #asset-tran_jalan, #asset-inv_lain, #asset-stok_saham").bind("change", function(){
+        setAktiva()
+        setNav()
+        setTumbuh()
+        setNegative()
+      });
+
+      // KOLOM KANAN (KUNING)
+      $("#assetat-hutang, #assetat-hut_lain, #assetat-modal, #assetat-cad_laba, #assetat-laba_jalan").bind("change", function(){
+        setPassivaAt()
+        setNavAt()
+        setTumbuh()
+        setNegative()
+      });
+
+      $("#asset-hutang, #asset-hut_lancar, #asset-modal, #asset-cad_laba, #asset-laba_jalan").bind("change", function(){
+        setPassiva()
+        setNav()
+        setTumbuh()
+        setNegative()
+      });
+
+      // KOLOM BAWAH
+      $("#assetat-unitat").bind("change", function(){
+        setNavAt()
+        setTumbuh()
+        setNegative()
+      });
+
+      $("#aktiva, #passiva, #asset-unit").bind("change", function(){
+        setNav()
+        setTumbuh()
+        setNegative()
+      });
+
+      // KOLOM TUMBUH
+      $("#nav, #navat, #asset-nav, #assetat-navat").bind("change", function(){
+        setTumbuh()
+        setNegative()
+      });
+
+      function setAktivaAt(){
+        kas_bank = accounting.unformat($("#assetat-kas_bank").val());
+        tran_jalan = accounting.unformat($("#assetat-tran_jalan").val());
+        inv_lain = accounting.unformat($("#assetat-inv_lain").val());
+        stok_saham = accounting.unformat($("#assetat-stok_saham").val());
+
+        aktivaat = kas_bank+tran_jalan+inv_lain+stok_saham;
+
+        $("#aktivaat").val( accounting.formatNumber(aktivaat, 2) );
+      }
+
+      function setAktiva(){
+        kas_bank = accounting.unformat($("#asset-kas_bank").val());
+        tran_jalan = accounting.unformat($("#asset-tran_jalan").val());
+        inv_lain = accounting.unformat($("#asset-inv_lain").val());
+        stok_saham = accounting.unformat($("#asset-stok_saham").val());
+
+        aktiva = kas_bank+tran_jalan+inv_lain+stok_saham;
+
+        $("#aktiva").val( accounting.formatNumber(aktiva, 2) );
+      }
+
+      // $passivaat = $modelat->HUTANG + $modelat->HUT_LAIN + $modelat->MODAL + $modelat->CAD_LABA + $modelat->LABA_JALAN;
+      // $passiva = $model->HUTANG + $model->HUT_LANCAR + $model->MODAL + $model->CAD_LABA + $model->LABA_JALAN;
+
+      function setPassivaAt(){
+        hutang = accounting.unformat($("#assetat-hutang").val());
+        hut_lain = accounting.unformat($("#assetat-hut_lain").val());
+        modal = accounting.unformat($("#assetat-modal").val());
+        cad_laba = accounting.unformat($("#assetat-cad_laba").val());
+        laba_jalan = accounting.unformat($("#assetat-laba_jalan").val());
+
+        passivaat = hutang+hut_lain+modal+cad_laba+laba_jalan;
+
+        $("#passivaat").val( accounting.formatNumber(passivaat, 2) );
+      }
+
+      function setPassiva(){
+        hutang = accounting.unformat($("#asset-hutang").val());
+        hut_lancar = accounting.unformat($("#asset-hut_lancar").val());
+        modal = accounting.unformat($("#asset-modal").val());
+        cad_laba = accounting.unformat($("#asset-cad_laba").val());
+        laba_jalan = accounting.unformat($("#asset-laba_jalan").val());
+
+        passiva = hutang+hut_lancar+modal+cad_laba+laba_jalan;
+
+        $("#passiva").val( accounting.formatNumber(passiva, 2) );
+      }
+
+      function setNavAt(){
+        aktivaat = accounting.unformat($("#aktivaat").val());
+        hutang = accounting.unformat($("#assetat-hutang").val());
+        hut_lain = accounting.unformat($("#assetat-hut_lain").val());
+        unitat = accounting.unformat($("#assetat-unitat").val());
+
+        navat = 0;
+        if(unitat>0) navat = ((aktivaat - hutang - hut_lain) / unitat);
+
+        $("#navat").val( accounting.formatNumber(navat, 2) );
+        $("#assetat-navat").val( navat );
+      }
+
+      function setNav(){
+        aktiva = accounting.unformat($("#aktiva").val());
+        hutang = accounting.unformat($("#asset-hutang").val());
+        hut_lancar = accounting.unformat($("#asset-hut_lancar").val());
+        unit = accounting.unformat($("#asset-unit").val());
+
+        nav = 0;
+        if(unit>0) nav = ((aktiva - hutang - hut_lancar) / unit );
+
+        $("#nav").val( accounting.formatNumber(nav, 2) );
+        $("#asset-nav").val( nav );
+      }
+
+      //NAV – NAV.AT)  / NAV.AT * 100
+      function setTumbuh(){
+        nav = accounting.unformat($("#nav").val());
+        navat = accounting.unformat($("#navat").val());
+
+        tumbuh = 0;
+        if(navat>0) tumbuh = ((nav - navat) / navat) * 100;
+
+        $("#tumbuh").val( accounting.formatNumber(tumbuh, 2) );
+        $("#asset-tumbuh").val( tumbuh );
+      }
+
+      function setNegative(){
+        $("div.wrap").find("input").each(function(){
+          val = $(this).val()
+          first = val.substring(0, 1);
+          $(this).removeClass("negative")
+          if(first=="-") $(this).addClass("negative")
+        });
+      }
+
+      setNegative()
+    ');
+    ?>
+
     <?php Pjax::end(); ?>
 
     <?= Html::a('<i class="glyphicon glyphicon-print"></i> Cetak EXCEL',['export-excel-detail','tgl'=>date('Y-m-d',strtotime($model->TGL))],[
@@ -436,152 +603,3 @@ use kartik\grid\GridView;
     <?= Html::a('<i class="glyphicon glyphicon-print"></i> Cetak PDF',['export-pdf-detail','tgl'=>date('Y-m-d',strtotime($model->TGL))],[
       'class'=>'btn btn-default']) ?>
 </div>
-
-<?php
-$this->registerJs('
-  // KOLOM KIRI
-  $("#assetat-kas_bank, #assetat-tran_jalan, #assetat-inv_lain, #assetat-stok_saham").bind("change", function(){
-    setAktivateAt()
-    setNavAt()
-    setTumbuh()
-    setNegative()
-  });
-  $("#asset-kas_bank, #asset-tran_jalan, #asset-inv_lain, #asset-stok_saham").bind("change", function(){
-    setAktiva()
-    setNav()
-    setTumbuh()
-    setNegative()
-  });
-
-  // KOLOM KANAN (KUNING)
-  $("#assetat-hutang, #assetat-hut_lain, #assetat-modal, #assetat-cad_laba, #assetat-laba_jalan").bind("change", function(){
-    setPassivaAt()
-    setNavAt()
-    setTumbuh()
-    setNegative()
-  });
-
-  $("#asset-hutang, #asset-hut_lancar, #asset-modal, #asset-cad_laba, #asset-laba_jalan").bind("change", function(){
-    setPassiva()
-    setNav()
-    setTumbuh()
-    setNegative()
-  });
-
-  // KOLOM BAWAH
-  $("#assetat-unitat").bind("change", function(){
-    setNavAt()
-    setTumbuh()
-    setNegative()
-  });
-
-  $("#aktiva, #passiva, #asset-unit").bind("change", function(){
-    setNav()
-    setTumbuh()
-    setNegative()
-  });
-
-  // KOLOM TUMBUH
-  $("#nav, #navat, #asset-nav, #assetat-navat").bind("change", function(){
-    setTumbuh()
-    setNegative()
-  });
-
-  function setAktivaAt(){
-    kas_bank = accounting.unformat($("#assetat-kas_bank").val());
-    tran_jalan = accounting.unformat($("#assetat-tran_jalan").val());
-    inv_lain = accounting.unformat($("#assetat-inv_lain").val());
-    stok_saham = accounting.unformat($("#assetat-stok_saham").val());
-
-    aktivaat = kas_bank+tran_jalan+inv_lain+stok_saham;
-
-    $("#aktivaat").val( accounting.formatNumber(aktivaat, 2) );
-  }
-
-  function setAktiva(){
-    kas_bank = accounting.unformat($("#asset-kas_bank").val());
-    tran_jalan = accounting.unformat($("#asset-tran_jalan").val());
-    inv_lain = accounting.unformat($("#asset-inv_lain").val());
-    stok_saham = accounting.unformat($("#asset-stok_saham").val());
-
-    aktiva = kas_bank+tran_jalan+inv_lain+stok_saham;
-
-    $("#aktiva").val( accounting.formatNumber(aktiva, 2) );
-  }
-
-  // $passivaat = $modelat->HUTANG + $modelat->HUT_LAIN + $modelat->MODAL + $modelat->CAD_LABA + $modelat->LABA_JALAN;
-  // $passiva = $model->HUTANG + $model->HUT_LANCAR + $model->MODAL + $model->CAD_LABA + $model->LABA_JALAN;
-
-  function setPassivaAt(){
-    hutang = accounting.unformat($("#assetat-hutang").val());
-    hut_lain = accounting.unformat($("#assetat-hut_lain").val());
-    modal = accounting.unformat($("#assetat-modal").val());
-    cad_laba = accounting.unformat($("#assetat-cad_laba").val());
-    laba_jalan = accounting.unformat($("#assetat-laba_jalan").val());
-
-    passivaat = hutang+hut_lain+modal+cad_laba+laba_jalan;
-
-    $("#passivaat").val( accounting.formatNumber(passivaat, 2) );
-  }
-
-  function setPassiva(){
-    hutang = accounting.unformat($("#asset-hutang").val());
-    hut_lancar = accounting.unformat($("#asset-hut_lancar").val());
-    modal = accounting.unformat($("#asset-modal").val());
-    cad_laba = accounting.unformat($("#asset-cad_laba").val());
-    laba_jalan = accounting.unformat($("#asset-laba_jalan").val());
-
-    passiva = hutang+hut_lancar+modal+cad_laba+laba_jalan;
-
-    $("#passiva").val( accounting.formatNumber(passiva, 2) );
-  }
-
-  function setNavAt(){
-    aktivaat = accounting.unformat($("#aktivaat").val());
-    hutang = accounting.unformat($("#assetat-hutang").val());
-    hut_lain = accounting.unformat($("#assetat-hut_lain").val());
-    unitat = accounting.unformat($("#assetat-unitat").val());
-
-    navat = 0;
-    if(unitat>0) navat = ((aktivaat - hutang - hut_lain) / unitat);
-
-    $("#navat").val( accounting.formatNumber(navat, 2) );
-    $("#assetat-navat").val( navat );
-  }
-
-  function setNav(){
-    aktiva = accounting.unformat($("#aktiva").val());
-    hutang = accounting.unformat($("#asset-hutang").val());
-    hut_lancar = accounting.unformat($("#asset-hut_lancar").val());
-    unit = accounting.unformat($("#asset-unit").val());
-
-    nav = 0;
-    if(unit>0) nav = ((aktiva - hutang - hut_lancar) / unit );
-
-    $("#nav").val( accounting.formatNumber(nav, 2) );
-    $("#asset-nav").val( nav );
-  }
-
-  //NAV – NAV.AT)  / NAV.AT * 100
-  function setTumbuh(){
-    nav = accounting.unformat($("#nav").val());
-    navat = accounting.unformat($("#navat").val());
-
-    tumbuh = 0;
-    if(navat>0) tumbuh = ((nav - navat) / navat) * 100;
-
-    $("#tumbuh").val( accounting.formatNumber(tumbuh, 2) );
-    $("#asset-tumbuh").val( tumbuh );
-  }
-
-  function setNegative(){
-    $("div.wrap").find("input").each(function(){
-      val = $(this).val()
-      first = val.substring(0, 1);
-      $(this).removeClass("negative")
-      if(first=="-") $(this).addClass("negative")
-    });
-  }
-
-  setNegative()
-');

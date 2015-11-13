@@ -118,6 +118,7 @@ class ReportEmitenController extends Controller
             }
             $detemitenDates[$formatDate] = $formatDate;
         }
+        $session->set('reportDates',$reportDates);
         $session->set('detemitenDates',$detemitenDates);
 
         $komisi = Komisi::find()->one();
@@ -160,7 +161,7 @@ class ReportEmitenController extends Controller
         ]);
     }
 
-    public function actionSetCookie()
+    public function actionSetSession()
     {
       $session = Yii::$app->session;
       $simulates = [];
@@ -260,6 +261,7 @@ class ReportEmitenController extends Controller
         $dataProvider = $session->get('dataProvider');
         $total_saldo = $session->get('total_saldo');
         $total_laba_rugi = $session->get('total_laba_rugi');
+        $reportDates = $session->get('reportDates');
 
         $objReader = \PHPExcel_IOFactory::createReader('Excel2007');
         $template = Yii::getAlias('@app/views/'.$this->id).'/_export.xlsx';
@@ -268,6 +270,7 @@ class ReportEmitenController extends Controller
         //$objPHPExcel->getActiveSheet()->getPageSetup()->setPaperSize(\PHPExcel_Worksheet_PageSetup::PAPERSIZE_FOLIO);
         $baseRow=4; // line 2
         $activeSheet = $objPHPExcel->getActiveSheet();
+        $activeSheet->setCellValue('L2', $reportDates[1]);
         foreach($dataProvider->getModels() as $row){
             if($baseRow!=4) $activeSheet->insertNewRowBefore($baseRow,1);
             $activeSheet->setCellValue('A'.$baseRow, $baseRow-3);
@@ -307,20 +310,21 @@ class ReportEmitenController extends Controller
         }
         //$activeSheet->setCellValue('M'.$baseRow+1, ($total_laba_rugi) );
         $simulates = $session->get('simulates');
-        $simulateRow = $baseRow;
+        $simulateRow = $baseRow+2;
 
         $simulateRow += 1;
-        $activeSheet->setCellValue('C'.$simulateRow++,  ($simulates['tipe'])?'Pembelian':'Penjualan');
-        $activeSheet->setCellValue('C'.$simulateRow++,  $simulates['jml_lot']);
-        $activeSheet->setCellValue('C'.$simulateRow++,  $simulates['harga']);
-        $activeSheet->setCellValue('C'.$simulateRow,  $simulates['komisi']);
-        $activeSheet->setCellValue('E'.$simulateRow++,  $simulates['total_komisi']);
-        $activeSheet->setCellValue('C'.$simulateRow++,  $simulates['jml_saham']);
-        $activeSheet->setCellValue('C'.$simulateRow++,  $simulates['range']);
-        $activeSheet->setCellValue('C'.$simulateRow++,  $simulates['total_harga']);
+        $tipe = (($simulates['tipe']=='true')?'Pembelian':'Penjualan') . ' Emiten '.$simulates['emitenCode'];
+        $activeSheet->setCellValue('C'.$simulateRow++,  $tipe);
+        $activeSheet->setCellValue('C'.$simulateRow++,  (float)$simulates['jml_lot']);
+        $activeSheet->setCellValue('C'.$simulateRow++,  (float)$simulates['jml_saham']);
+        $activeSheet->setCellValue('C'.$simulateRow++,  (float)$simulates['harga']);
+        $activeSheet->setCellValue('C'.$simulateRow,  (float)$simulates['komisi']);
+        $activeSheet->setCellValue('E'.$simulateRow++,  (float)$simulates['total_komisi']);
+        $activeSheet->setCellValue('C'.$simulateRow++,  (float)$simulates['range']);
+        $activeSheet->setCellValue('C'.$simulateRow++,  (float)$simulates['total_harga']);
 
         $detemitenDates = $session->get('detemitenDates');
-        $detemitenDateRow = $baseRow;
+        $detemitenDateRow = $baseRow+2;
         $detemitenDateRow += 2;
         foreach($detemitenDates as $detemitenDate){
             $activeSheet->setCellValue('H'.$detemitenDateRow++, $detemitenDate);
@@ -346,12 +350,14 @@ class ReportEmitenController extends Controller
         $total_laba_rugi = $session->get('total_laba_rugi');
         $simulates = $session->get('simulates');
         $detemitenDates = $session->get('detemitenDates');
+        $reportDates = $session->get('reportDates');
         $html = $this->renderPartial('_pdf',[
           'dataProvider'=>$dataProvider,
           'total_saldo'=>$total_saldo,
           'total_laba_rugi'=>$total_laba_rugi,
           'simulates'=>$simulates,
           'detemitenDates'=>$detemitenDates,
+          'reportDates'=>$reportDates,
         ]);
         //function mPDF($mode='',$format='A4',$default_font_size=0,$default_font='',$mgl=15,$mgr=15,$mgt=16,$mgb=16,$mgh=9,$mgf=9, $orientation='P') {
         $mpdf=new \mPDF('c','A4-L',0,'' , 15 , 10 , 10 , 5 , 10 , 10);

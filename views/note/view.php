@@ -14,17 +14,6 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <h1><?= Html::encode($this->title) ?></h1>
 
-    <p>
-        <?= Html::a('Update', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
-        <?= Html::a('Delete', ['delete', 'id' => $model->id], [
-            'class' => 'btn btn-danger',
-            'data' => [
-                'confirm' => 'Are you sure you want to delete this item?',
-                'method' => 'post',
-            ],
-        ]) ?>
-    </p>
-
     <?= DetailView::widget([
         'model' => $model,
         'attributes' => [
@@ -35,5 +24,20 @@ $this->params['breadcrumbs'][] = $this->title;
             'updated_at',
         ],
     ]) ?>
+
+    <p>
+      <?= Html::a('Close',['index'],[
+          'class'=>'btn btn-default',
+          'onclick'=>'
+            if (confirm("Apakah yakin mau keluar dari halaman ini?")) {
+                $("#myModal").modal("hide");
+                return false;
+            }
+            else{
+              return false;
+            }
+          '
+      ]) ?>
+    </p>
 
 </div>

@@ -164,8 +164,9 @@ class HistoryParamfundController extends Controller
         $activeSheet = $objPHPExcel->getActiveSheet();
         $iterate=0;
         $startRow = 3;
-        $spaceRow = 4;
+        $spaceRow = 5;
         $space = 2;
+        $activeSheet->setCellValue('K2', date('d-M-Y H:i:s'));
         foreach ($dataProviders as $emitenCode => $dataProvider) {
           $iterate++;
           if($iterate==1){
@@ -196,6 +197,8 @@ class HistoryParamfundController extends Controller
               $activeSheet->setCellValue('J'.$currentRow, $row->PER);
               $activeSheet->setCellValue('K'.$currentRow, $row->DER);
               $activeSheet->setCellValue('L'.$currentRow, $row->HARGA);
+              $activeSheet->setCellValue('F'.($currentRow+1), '=average(F'.($baseRow+$space+1).':F'.$currentRow.')');
+              $activeSheet->setCellValue('H'.($currentRow+1), '=average(H'.($baseRow+$space+1).':H'.$currentRow.')');
               if($no%2==0){
                   $activeSheet->getStyle('A'.$currentRow.':'.'L'.$currentRow)->applyFromArray(
                       [

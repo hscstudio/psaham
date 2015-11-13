@@ -22,7 +22,8 @@ use yii\widgets\Pjax;
     'enablePushState' => false,
   ]); ?>
     <?php $form = ActiveForm::begin([
-        'options' => ['data-pjax' => true ]
+        'options' => ['data-pjax' => true ],
+        'enableClientValidation' => false,
       ]); ?>
 
     <div class="row">
@@ -301,10 +302,35 @@ use yii\widgets\Pjax;
             'class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary',
             'data-confirm'=>"Apakah anda yakin akan menyimpan data ini?",
         ]) ?>
-        <?= Html::a('Cancel',['index'],['class'=>'btn btn-default','onclick'=>(Yii::$app->request->isAjax)?'$("#myModal").modal("hide");return false':'']) ?>
+        <?= Html::a('Close',['index'],[
+            'class'=>'btn btn-default',
+            'onclick'=>'
+              if (confirm("Apakah yakin mau keluar dari halaman ini?")) {
+                  $("#myModal").modal("hide");
+                  return false;
+              }
+              else{
+                return false;
+              }
+            '
+        ]) ?>
     </div>
 
     <?php ActiveForm::end(); ?>
+    <?php $this->registerJs('
+      $("#paramfund-tahun").focus();
+      $("#paramfund-form-pjax").on("pjax:end", function() {
+          $.pjax.reload("#paramfund-index-pjax", {
+            url: "'.Url::to(["index"]).'",
+            container: "#paramfund-index-pjax",
+            timeout: 3000,
+            push: false,
+            replace: false
+          });
+      });
+
+
+    ') ?>
     <?php
     if(Yii::$app->request->isAjax){
       AlertBlock::widget(Yii::$app->params['alertBlockConfig']);

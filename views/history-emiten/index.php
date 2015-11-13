@@ -17,12 +17,13 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="emiten-index">
 
-    <h1><?= Html::encode($this->title) ?></h1>
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
-    <?php Pjax::begin([
+    <?php
+    Pjax::begin([
       'id'=>'pjax-gridview',
-    ]); ?>
+    ]);
+    ?>
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
@@ -33,19 +34,22 @@ $this->params['breadcrumbs'][] = $this->title;
         //'showPageSummary'=>true,
         'showFooter'=>true,
         'panel' => [
-            'heading'=>'<h3 class="panel-title"><i class="glyphicon glyphicon-th"></i> <span class="hidden-xs"></span> </h3>',
+            'heading'=>'<h3 class="panel-title"><i class="glyphicon glyphicon-th"></i> <span class="hidden-xs"></span> '.Html::encode($this->title).'</h3>',
             //'type'=>'primary',
+            'footer'=>false,
+            'after'=>false,
             'before'=>'
               <div class="row">'.
                 '<div class="col-xs-2 col-md-1">'.
-                Html::dropDownList('perpage', $perpage, [
+                Html::dropDownList('per-page', $perpage, [
+                  '2'  =>'2',
                   '10'  =>'10',
                   '20'  =>'20',
                   '50'  =>'50',
                   '100' =>'100',
                   'all' =>'all',
                 ],[
-                  'id'=>'perpage',
+                  'id'=>'per-page',
                   'class'=>'form-control',
                 ]).
                 '</div>'.
@@ -175,7 +179,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 //-	Range Beli = saldob / (jmllotb * jmllbrsaham) -> Ket:  saldob, jmllotb dr detemiten; jmllbrsaham dr lotshare.
                 $detemiten = Detemiten::find()->where(['EMITEN_KODE'=>$data->KODE])->orderBy('TGL DESC')->one();
                 if(substr($detemiten->TGLAKHIR,0,4)=='0000'){
-
+                  return '-';
                 }
                 else
                   return date('d-m-Y',strtotime($detemiten->TGLAKHIR));
@@ -223,9 +227,9 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <?php
     $this->registerJs('
-      $("#perpage").on("change", function () {
+      $("#per-page").on("change", function () {
         $.pjax.reload("#pjax-gridview", {
-          url: "'.Url::to(['index']).'?perpage="+$(this).val(),
+          url: "'.Url::to(['index']).'?per-page="+$(this).val(),
           container: "#pjax-gridview",
           timeout: 3000,
           push: true,

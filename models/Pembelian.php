@@ -14,12 +14,32 @@ use Yii;
  * @property string $KOM_BELI
  * @property string $EMITEN_KODE
  * @property string $SECURITAS_KODE
+ * @property string $created_at
+ * @property string $created_by
+ * @property string $updated_at
+ * @property string $updated_by
  *
  * @property Emiten $eMITENKODE
  * @property Securitas $sECURITASKODE
  */
 class Pembelian extends \yii\db\ActiveRecord
 {
+    public function behaviors()
+    {
+        return [
+            'timestamp' => [
+                'class' => \yii\behaviors\TimestampBehavior::className(),
+            ],
+            'blameable' => [
+                'class' => \yii\behaviors\BlameableBehavior::className(),
+                'attributes' => [
+                        \yii\db\ActiveRecord::EVENT_BEFORE_INSERT => ['created_by','updated_by'],
+                        \yii\db\ActiveRecord::EVENT_BEFORE_UPDATE => ['updated_by'],
+                ],
+            ],
+        ];
+    }
+
     /**
      * @inheritdoc
      */
@@ -36,7 +56,7 @@ class Pembelian extends \yii\db\ActiveRecord
         return [
             [['NOMOR', 'TGL', 'JMLLOT', 'JMLSAHAM', 'HARGA', 'KOM_BELI','EMITEN_KODE', 'SECURITAS_KODE'], 'required'],
             [['TGL'], 'safe'],
-            [['JMLLOT', 'JMLSAHAM', 'HARGA', 'KOM_BELI'], 'number',
+            [['JMLLOT', 'JMLSAHAM', 'HARGA', 'KOM_BELI','TOTAL_BELI'], 'number',
                 'enableClientValidation'=> false,
                 //'numberPattern' => '/^\s*[-+]?([0-9]\,?)+[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*$/mig',
             ],
@@ -44,7 +64,8 @@ class Pembelian extends \yii\db\ActiveRecord
               'min' => 0,
             ],
             [['NOMOR'], 'string', 'max' => 6],
-            [['EMITEN_KODE', 'SECURITAS_KODE'], 'string', 'max' => 8]
+            [['EMITEN_KODE', 'SECURITAS_KODE'], 'string', 'max' => 8],
+            [['created_by', 'updated_by','created_at', 'updated_at'], 'safe'],
         ];
     }
 

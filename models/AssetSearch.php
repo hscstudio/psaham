@@ -12,6 +12,7 @@ use app\models\Asset;
  */
 class AssetSearch extends Asset
 {
+    public $start, $end;
     /**
      * @inheritdoc
      */
@@ -19,6 +20,7 @@ class AssetSearch extends Asset
     {
         return [
             [['TGL'], 'safe'],
+            [['start','end'], 'safe'],
             [['KAS_BANK', 'TRAN_JALAN', 'INV_LAIN', 'STOK_SAHAM', 'HUTANG', 'HUT_LANCAR', 'MODAL', 'CAD_LABA', 'LABA_JALAN', 'UNIT', 'NAV', 'TUMBUH'], 'number'],
         ];
     }
@@ -70,6 +72,14 @@ class AssetSearch extends Asset
             'NAV' => $this->NAV,
             'TUMBUH' => $this->TUMBUH,
         ]);
+
+        //if(!empty($start)){
+            //$query->andFilterWhere(['between', 'TGL', $this->start, $this->end]);
+            $query->andFilterWhere(['>=', 'TGL', $this->start]);
+        //}
+        //if(!empty($end)){
+            $query->andFilterWhere(['<=', 'TGL', $this->end]);
+        //}
 
         return $dataProvider;
     }

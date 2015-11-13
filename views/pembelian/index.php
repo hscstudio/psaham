@@ -7,6 +7,7 @@ use kartik\widgets\DatePicker;
 use yii\helpers\Url;
 use yii\widgets\Pjax;
 use hscstudio\mimin\components\Mimin;
+use hscstudio\export\widgets\ButtonExport;
 
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\PembelianSearch */
@@ -16,12 +17,11 @@ $this->title = 'Pembelian';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="pembelian-index">
-    <h1 class="ui header"><?= Html::encode($this->title) ?></h1>
     <!-- <div class="ui divider"></div> -->
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
     <?php Pjax::begin([
-  		'id'=>'pjax-gridview',
+  		'id'=>'pembelian-index-pjax',
   	]); ?>
     <?php
     $total_lot = 1;
@@ -30,14 +30,19 @@ $this->params['breadcrumbs'][] = $this->title;
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
         'responsive'=>true,
-        'responsiveWrap'=>true,
+        //'responsiveWrap'=>true,
         'hover'=>true,
-        'resizableColumns'=>true,
+        //'resizableColumns'=>true,
         'showPageSummary'=>true,
         'showFooter'=>true,
         'panel' => [
-            'heading'=>'<h3 class="panel-title"><i class="glyphicon glyphicon-shopping-cart"></i> <span class="hidden-xs">Tanggal</span> transaksi terakhir '.(($latestDate[1]==1)?'belum ada':$latestDate[1]).'</h3>',
+            'heading'=>'<h3 class="panel-title"><i class="glyphicon glyphicon-shopping-cart"></i> '.
+              Html::encode($this->title).
+              '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'.
+              '(<span class="hidden-xs">tanggal</span> transaksi terakhir '.(($latestDate[1]==1)?'belum ada':$latestDate[1]).')</h3>',
             //'type'=>'primary',
+            'after'=> false,
+            'footer' => false,
             'before'=>
             '<div class="row">'.
               '<div class="col-xs-2 col-lg-1">'.
@@ -45,9 +50,22 @@ $this->params['breadcrumbs'][] = $this->title;
               'data-pjax'=>'0',
               'data-toggle'=>"modal",
               'data-target'=>"#myModal",
-              'data-title'=>"Create Data",
+              'data-title'=>"Create Data Pembelian",
               'data-size'=>"modal-lg",
               ]):'').' '.
+              '</div>'.
+              '<div class="col-xs-2 col-md-1">'.
+              Html::dropDownList('per-page', $perpage, [
+                '2'  =>'2',
+                '10'  =>'10',
+                '20'  =>'20',
+                '50'  =>'50',
+                '100' =>'100',
+                'all' =>'all',
+              ],[
+                'id'=>'per-page',
+                'class'=>'form-control',
+              ]).
               '</div>'.
               '<div class="col-xs-5 col-sm-4 col-md-3 col-lg-2">'.
               DatePicker::widget([
@@ -68,8 +86,8 @@ $this->params['breadcrumbs'][] = $this->title;
                   'pluginEvents' => [
                       "changeDate" => "function(e) {
                           $.pjax.reload({
-            								url: '".Url::to(['index'])."?date='+e.format(0,'yyyy-m-d'),
-            								container: '#pjax-gridview',
+            								url: '".Url::to(['index'])."?per-page='+".$perpage."+'&date='+e.format(0,'yyyy-m-d'),
+            								container: '#pembelian-index-pjax',
             								timeout: 1,
             							});
                       }",
@@ -80,10 +98,10 @@ $this->params['breadcrumbs'][] = $this->title;
         ],
         'toolbar' => [
             ['content'=>
-                Html::a('<i class="glyphicon glyphicon-repeat"></i>', ['index','date'=>$dates[1]], ['data-pjax'=>0, 'class' => 'btn btn-default', 'title'=>'Reset Grid'])
+                Html::a('<i class="glyphicon glyphicon-repeat"></i>', ['index'], ['data-pjax'=>0, 'class' => 'btn btn-default', 'title'=>'Reset Grid'])
             ],
             //'{export}',
-            '{toggleData}',
+            ButtonExport::widget(),
         ],
         'export' => [
             'fontAwesome' => true
@@ -184,9 +202,10 @@ $this->params['breadcrumbs'][] = $this->title;
                   'style' => 'text-align:center'
               ],
               'value' => function($data) {
+                  // 2.	Perhitungan Total Komisi = kom_beli * harga * share / 100
                   $bruto = $data->JMLSAHAM * $data->HARGA;
-                  $netto = $data->KOM_BELI * $bruto;
-                  return $netto;
+                  $komisi_total = $data->KOM_BELI * $bruto / 100;
+                  return $komisi_total;
               },
               'hAlign'=>'right',
               'vAlign'=>'middle',
@@ -195,13 +214,8 @@ $this->params['breadcrumbs'][] = $this->title;
               //'footer'=>true
             ],
             [
-              'header' => 'Total',
+              'attribute' => 'TOTAL_BELI',
               'format'=>['decimal',2],
-              'value' => function($data) {
-                  $bruto = $data->JMLSAHAM * $data->HARGA;
-                  $netto = $bruto - $data->KOM_BELI * $bruto;
-                  return $netto;
-              },
               'headerOptions' => [
                   'style' => 'text-align:center'
               ],
@@ -228,7 +242,7 @@ $this->params['breadcrumbs'][] = $this->title;
                       'data-pjax'=>'0',
                       'data-toggle'=>"modal",
                       'data-target'=>"#myModal",
-                      'data-title'=>"Update Data",
+                      'data-title'=>"Update Data Pembelian",
                       'data-size'=>"modal-lg",
                     ]);
                   },
@@ -244,5 +258,18 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
         ],
     ]); ?>
+    <?php
+    $this->registerJs('
+      $("#per-page").on("change", function () {
+        $.pjax.reload("#pembelian-index-pjax", {
+          url: "'.Url::to(['index','date'=>$dates[0]]).'&per-page="+$(this).val(),
+          container: "#pembelian-index-pjax",
+          timeout: 3000,
+          push: true,
+          replace: true
+        });
+      });
+    ');
+    ?>
     <?php Pjax::end(); ?>
 </div>

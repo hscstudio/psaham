@@ -28,7 +28,8 @@ use yii\widgets\Pjax;
     ]); ?>
       <?php $form = ActiveForm::begin([
         'id' => 'pembelian-form',
-        'options' => ['data-pjax' => true ]
+        'options' => ['data-pjax' => true ],
+        'enableClientValidation' => false,
       ]); ?>
 
     <div class="row">
@@ -70,7 +71,9 @@ use yii\widgets\Pjax;
           'options' => [
             'placeholder' => 'Pilih Emiten ...',
             'onchange'=>'
-              $.post( "'.Url::to(['get-emiten']).'?id="+$(this).val(), function( data ) {
+              //var id = Aes.Ctr.encrypt($(this).val(), "123456", 256);
+              var id = $(this).val()
+              $.post( "'.Url::to(['get-emiten']).'?id="+id, function( data ) {
                 $( "#emiten-name" ).val( data.data.NAMA );
                 $( "#emiten-name" ).focus();
               });
@@ -111,7 +114,9 @@ use yii\widgets\Pjax;
           'options' => [
             'placeholder' => 'Pilih Securitas ...',
             'onchange'=>'
-              $.post( "'.Url::to(['get-securitas']).'?id="+$(this).val(), function( data ) {
+              //var id = Aes.Ctr.encrypt($(this).val(), "123456", 256);
+              var id = $(this).val()
+              $.post( "'.Url::to(['get-securitas']).'?id="+id, function( data ) {
                 $( "#securitas-name" ).val( data.data.NAMA );
                 $( "#securitas-name" ).focus();
               });
@@ -156,15 +161,16 @@ use yii\widgets\Pjax;
       </div>
       <div class="col-xs-6 col-xs-offset-6 col-sm-3 col-sm-offset-0">
         <?php
-        echo $form->field($model, 'JMLSAHAM')->label(false)->hiddenInput();
+        echo $form->field($model, 'JMLSAHAM')->widget(MaskedInput::classname(),[
+            'clientOptions' => [
+                'alias' =>  'numeric',
+                'groupSeparator' => ',',
+                'radixPoint' => '.',
+                'autoGroup' => true,
+                'removeMaskOnSubmit' =>true,
+            ],
+        ]);
         ?>
-        <label class="control-label">Share</label>
-        <?= Html::input('text', 'share', number_format($model->JMLSAHAM), [
-            'class' => 'form-control',
-            'id'=> 'share',
-            'readonly'=> 'true',
-            'style'=>'text-align:right;',
-        ]) ?>
       </div>
     </div>
 
@@ -209,6 +215,7 @@ use yii\widgets\Pjax;
         ?>
       </div>
       <div class="col-xs-6 col-sm-6">
+
         <label class="control-label">Total Komisi</label>
         <?= Html::input('text', 'komisi-total', number_format($komisi_total,2), [
             'class' => 'form-control',
@@ -225,6 +232,9 @@ use yii\widgets\Pjax;
             'readonly'=> 'true',
             'style'=>'text-align:right;',
         ]) ?>
+        <?php
+        echo $form->field($model, 'TOTAL_BELI')->hiddenInput()->label();
+        ?>
       </div>
     </div>
 
@@ -233,7 +243,18 @@ use yii\widgets\Pjax;
             'class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary',
             'data-confirm'=>"Apakah anda yakin akan menyimpan data ini?",
         ]) ?>
-        <?= Html::a('Cancel',['index','date' =>date('Y-m-d',strtotime($model->TGL))],['class'=>'btn btn-default','onclick'=>(Yii::$app->request->isAjax)?'$("#myModal").modal("hide");return false':'']) ?>
+        <?= Html::a('Close',['index','date' =>date('Y-m-d',strtotime($model->TGL))],[
+            'class'=>'btn btn-default',
+            'onclick'=>'
+              if (confirm("Apakah yakin mau keluar dari halaman ini?")) {
+                  $("#myModal").modal("hide");
+                  return false;
+              }
+              else{
+                return false;
+              }
+            '
+        ]) ?>
     </div>
 
     <?php ActiveForm::end(); ?>
@@ -243,33 +264,72 @@ use yii\widgets\Pjax;
       GrowlLoad::init($this);
     }
     ?>
+    <?php
+    if($model->isNewRecord){
+      $this->registerJs('
+        //$("#pembelian-emiten_kode").select2("focus");
+      ');
+    }
+    else{
+      $this->registerJs('
+        //$("#pembelian-securitas_kode").focus();
+      ');
+    }
+    ?>
+
+    <?php
+    $this->registerJs('
+      $("#pembelian-form-pjax").on("pjax:end", function() {
+          $.pjax.reload("#pembelian-index-pjax", {
+            url: "'.Url::to(["index",'date'=>date('Y-m-d',strtotime($model->TGL))]).'",
+            container: "#pembelian-index-pjax",
+            timeout: 3000,
+            push: false,
+            replace: false
+          });
+      });
+
+      $("#pembelian-jmllot").bind("change", function(){
+          // Jika jmllot diisi maka share = jmllot * jmllbrsaham.
+          jmllot = accounting.unformat($("#pembelian-jmllot").val());
+          share = jmllot * '.$lotshare.';
+          $("#pembelian-jmlsaham").val( accounting.formatNumber(share, 2)  );
+          changeInput();
+      });
+
+      $("#pembelian-jmlsaham").bind("change", function(){
+          //Jika share diisi maka jmllot = share / jmllbrsaham.
+          share = accounting.unformat($("#pembelian-jmlsaham").val());
+          jmllot = share / '.$lotshare.';
+          $("#pembelian-jmllot").val( accounting.formatNumber(jmllot, 2)  );
+          changeInput();
+      });
+
+      $("#pembelian-harga, #pembelian-kom_beli ").bind("change", function(){
+          changeInput();
+      });
+
+      function changeInput(){
+          jmllot = accounting.unformat($("#pembelian-jmllot").val());
+          jmlsaham = accounting.unformat($("#pembelian-jmlsaham").val());
+          harga = accounting.unformat($("#pembelian-harga").val());
+          komisi = accounting.unformat($("#pembelian-kom_beli").val());
+
+
+          share = '.$lotshare.'* jmllot;
+          bruto = share * harga
+          // 2.	Perhitungan Total Komisi = kom_beli * harga * share / 100
+          komisi_total = komisi * bruto / 100;
+
+          // 1.	Koreksi perhitungan total. Total = (jmlsaham * harga) + total komisi
+          netto = bruto + komisi_total;
+
+          $("#komisi-total").val( accounting.formatNumber(komisi_total, 2) );
+          $("#harga-total").val( accounting.formatNumber(netto, 2) );
+          $("#pembelian-total_beli").val( netto);
+      }
+    ');
+    ?>
+
   <?php Pjax::end(); ?>
 </div>
-
-<?php
-$this->registerJs('
-  $("#pembelian-jmllot, #pembelian-harga, #pembelian-kom_beli ").bind("change", function(){
-      changeInput();
-  });
-
-  function changeInput(){
-      jmllot = accounting.unformat($("#pembelian-jmllot").val());
-      harga = accounting.unformat($("#pembelian-harga").val());
-      komisi = accounting.unformat($("#pembelian-kom_beli").val());
-
-
-      share = '.$lotshare.'* jmllot;
-      bruto = share * harga
-      // 2.	Perhitungan Total Komisi = kom_beli * harga * share / 100
-      komisi_total = komisi * bruto / 100;
-
-      // 1.	Koreksi perhitungan total. Total = (jmlsaham * harga) + total komisi
-      netto = bruto + komisi_total;
-      
-      $("#share").val( accounting.formatNumber(share, 2) );
-      $("#komisi-total").val( accounting.formatNumber(komisi_total, 2) );
-      $("#harga-total").val( accounting.formatNumber(netto, 2) );
-
-      $("#pembelian-jmlsaham").val( share );
-  }
-');

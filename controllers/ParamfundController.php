@@ -45,6 +45,7 @@ class ParamfundController extends Controller
     {
         $searchModel = new ParamfundSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider->getSort()->defaultOrder = ['updated_at'=>SORT_DESC,'created_at'=>SORT_DESC];
         $dataProvider->pagination->pageSize=10;
         $session = Yii::$app->session;
         $session->set('dataProvider',$dataProvider);
@@ -98,7 +99,10 @@ class ParamfundController extends Controller
         }
 
         if ($model->load(Yii::$app->request->post())) {
-            if($model->save()){
+            if($this->findModel($model->EMITEN_KODE, $model->TAHUN, $model->TRIWULAN,true)){
+                Yii::$app->session->setFlash('warning', 'Duplikasi kode emiten, tahun dan triwulan!');
+            }
+            else if($model->save()){
                 Yii::$app->session->setFlash('success', 'Data berhasil disimpan.');
                 /*
                 1. P_BV = Persentase BV  didapat dari:
@@ -111,26 +115,40 @@ class ParamfundController extends Controller
                 $oldModel = $this->findModel($model->EMITEN_KODE, $model->TAHUN-1, $model->TRIWULAN,true);
                 if($oldModel){
                     $model->P_BV = @number_format( (($model->BV - $oldModel->BV) / $oldModel->BV )*100 , 2);
-                    $model->P_EPS = @number_format( (($model->P_EPS - $oldModel->P_EPS) / $oldModel->P_EPS )*100, 2);
-                    $model->P_TE = @number_format(  (($model->P_TE - $oldModel->P_TE) / $oldModel->P_TE )*100, 2);
-                    $model->P_SALES = @number_format(  (($model->P_SALES - $oldModel->P_SALES) / $oldModel->P_SALES )*100, 2);
-                    $model->P_NI = @number_format(  (($model->P_NI - $oldModel->P_NI) / $oldModel->P_NI )*100, 2);
+                    $model->P_EPS = @number_format( (($model->EPS - $oldModel->EPS) / $oldModel->EPS )*100, 2);
+                    $model->P_TE = @number_format(  (($model->TE - $oldModel->TE) / $oldModel->TE )*100, 2);
+                    $model->P_SALES = @number_format(  (($model->SALES - $oldModel->SALES) / $oldModel->SALES )*100, 2);
+                    $model->P_NI = @number_format(  (($model->NI - $oldModel->NI) / $oldModel->NI )*100, 2);
                     $model->save();
                 }
-                return $this->redirect(['index']);
+                $model = new Paramfund();
+                $model->TAHUN = date('Y');
+                if(date('m')>=9){
+                  $model->TRIWULAN = 'IV';
+                }
+                else if(date('m')>=6){
+                  $model->TRIWULAN = 'III';
+                }
+                else if(date('m')>=3){
+                  $model->TRIWULAN = 'II';
+                }
+                else{
+                  $model->TRIWULAN = 'I';
+                }
             }
             else{
                 Yii::$app->session->setFlash('error', 'Data gagal disimpan.');
-                if (Yii::$app->request->isAjax) {
-                  return $this->renderAjax('create', [
-                      'model' => $model,
-                  ]);
-                }
-                else{
-                  return $this->render('create', [
-                      'model' => $model,
-                  ]);
-                }
+            }
+
+            if (Yii::$app->request->isAjax) {
+              return $this->renderAjax('create', [
+                  'model' => $model,
+              ]);
+            }
+            else{
+              return $this->render('create', [
+                  'model' => $model,
+              ]);
             }
 
             //return $this->redirect(['view', 'EMITEN_KODE' => $model->EMITEN_KODE, 'TAHUN' => $model->TAHUN, 'TRIWULAN' => $model->TRIWULAN]);
@@ -166,13 +184,11 @@ class ParamfundController extends Controller
                 $oldModel = @$this->findModel($model->EMITEN_KODE, $model->TAHUN-1, $model->TRIWULAN,true);
                 if($oldModel){
                     $model->P_BV = @number_format( (($model->BV - $oldModel->BV) / $oldModel->BV )*100 , 2);
-                    $model->P_EPS = @number_format( (($model->P_EPS - $oldModel->P_EPS) / $oldModel->P_EPS )*100, 2);
-                    $model->P_TE = @number_format(  (($model->P_TE - $oldModel->P_TE) / $oldModel->P_TE )*100, 2);
-                    $model->P_SALES = @number_format(  (($model->P_SALES - $oldModel->P_SALES) / $oldModel->P_SALES )*100, 2);
-                    $model->P_NI = @number_format(  (($model->P_NI - $oldModel->P_NI) / $oldModel->P_NI )*100, 2);
+                    $model->P_EPS = @number_format( (($model->EPS - $oldModel->EPS) / $oldModel->EPS )*100, 2);
+                    $model->P_TE = @number_format(  (($model->TE - $oldModel->TE) / $oldModel->TE )*100, 2);
+                    $model->P_SALES = @number_format(  (($model->SALES - $oldModel->SALES) / $oldModel->SALES )*100, 2);
+                    $model->P_NI = @number_format(  (($model->NI - $oldModel->NI) / $oldModel->NI )*100, 2);
                     $model->save();
-                    //print_r($model->errors);
-                    //die();
                 }
                 return $this->redirect(['index']);
             }

@@ -36,6 +36,7 @@ class IndikatorController extends Controller
           'TGL' => $tgl
           ]);
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider->getSort()->defaultOrder = ['updated_at'=>SORT_DESC,'created_at'=>SORT_DESC];
 
         if (Yii::$app->request->isAjax) {
           return $this->renderAjax('index', [
@@ -86,6 +87,9 @@ class IndikatorController extends Controller
         if ($model->load(Yii::$app->request->post())) {
             if($model->save()){
               Yii::$app->session->setFlash('success', 'Data berhasil disimpan.');
+              $model = new Indikator([
+                'TGL' => $tgl
+              ]);
             }
             else{
               Yii::$app->session->setFlash('error', 'Data gagal disimpan.');

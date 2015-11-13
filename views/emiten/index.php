@@ -15,27 +15,27 @@ $this->title = 'Emitens';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="emiten-index">
-
-    <h1 class="ui header"><?= Html::encode($this->title) ?></h1>
     <!-- <div class="ui divider"></div> -->
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
     <?php Pjax::begin([
-      'id'=>'pjax-gridview',
+      'id'=>'emiten-index-pjax',
     ]); ?>
 
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
         'responsive'=>true,
-        'responsiveWrap'=>true,
+        //'responsiveWrap'=>true,
         'hover'=>true,
-        'resizableColumns'=>true,
+        //'resizableColumns'=>true,
         //'showPageSummary'=>true,
         'showFooter'=>true,
         'panel' => [
-            'heading'=>'<h3 class="panel-title"><i class="glyphicon glyphicon-th"></i> <span class="hidden-xs"></span> </h3>',
+            'heading'=>'<h3 class="panel-title"><i class="glyphicon glyphicon-th"></i> <span class="hidden-xs"></span> '.Html::encode($this->title).'</h3>',
             //'type'=>'primary',
+            'after'=> false,
+            'footer' => false,
             'before'=>
             '<div class="row">'.
               '<div class="col-xs-2 col-lg-1">'.
@@ -43,7 +43,7 @@ $this->params['breadcrumbs'][] = $this->title;
               'data-pjax'=>'0',
               'data-toggle'=>"modal",
               'data-target'=>"#myModal",
-              'data-title'=>"Create Data",
+              'data-title'=>"Create Data Emiten",
               'data-size'=>"modal-lg",
               ]):'').' '.
               '</div>'.
@@ -57,7 +57,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 Html::a('<i class="glyphicon glyphicon-repeat"></i>', ['index'], ['data-pjax'=>0, 'class' => 'btn btn-default', 'title'=>'Reset Grid'])
             ],
             ButtonExport::widget(),
-            '{toggleData}',
+            //'{toggleData}',
         ],
         'export' => [
             'fontAwesome' => true
@@ -227,7 +227,7 @@ $this->params['breadcrumbs'][] = $this->title;
                       'data-pjax'=>'0',
                       'data-toggle'=>"modal",
                       'data-target'=>"#myModal",
-                      'data-title'=>"View Data",
+                      'data-title'=>"View Data Emiten",
                     ]);
                   },
                   'update' => function ($url, $model) {
@@ -237,7 +237,7 @@ $this->params['breadcrumbs'][] = $this->title;
                       'data-pjax'=>'0',
                       'data-toggle'=>"modal",
                       'data-target'=>"#myModal",
-                      'data-title'=>"Update Data",
+                      'data-title'=>"Update Data Emiten",
                       'data-size'=>"modal-lg",
                     ]);
                   },

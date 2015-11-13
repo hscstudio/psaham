@@ -42,16 +42,22 @@ class AssetController extends Controller
      * Lists all Asset models.
      * @return mixed
      */
-    public function actionIndex()
+    public function actionIndex($start='',$end='')
     {
-        $searchModel = new AssetSearch();
+        $dates = $this->getFilterDates($start,$end);
+        $searchModel = new AssetSearch([
+            'start'=>$dates[0],
+            'end'=>$dates[2],
+        ]);
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider->getSort()->defaultOrder = ['updated_at'=>SORT_DESC,'created_at'=>SORT_DESC];
         $dataProvider->pagination->pageSize=10;
         $session = Yii::$app->session;
         $session->set('dataProvider',$dataProvider);
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
+            'dates' => $dates,
         ]);
     }
 
@@ -160,8 +166,7 @@ class AssetController extends Controller
     public function actionUpdate($id='')
     {
         $dates = $this->getDates($id);
-
-        $model = Asset::find()->where(['TGL'=>$dates[0]]) ->one();
+        $model = Asset::find()->where(['TGL'=>$dates[0]])->one();
         if(!$model){
           $model = new Asset([
             'TGL' => $dates[0],
@@ -181,23 +186,20 @@ class AssetController extends Controller
           $model->TGL = $dates[1];
         }
 
-        $modelat = Assetat::find()->where(['TGL'=>$dates[2]]) ->one();
+        $modelat = Assetat::find()->where(['TGL'=>$dates[2]])->one();
         if(!$modelat){
           $modelat = new Assetat([
             'TGL' => $dates[2],
           ]);
           if(!Yii::$app->request->post()){
             foreach ($modelat->attributes as $key => $value) {
-                if($key=='TGL'){
-                  $modelat->TGL = $dates[3];
-                }
-                else{
+                if($key!='TGL'){
                   $modelat->{$key} = 0.00;
                 }
             }
           }
           $modelat->save();
-          $modelat->TGL = $dates[4];
+          $modelat->TGL = $dates[3];
         }
 
         $searchModel = new IndikatorSearch([
@@ -227,6 +229,7 @@ class AssetController extends Controller
           return $this->redirect(['index', 'date' => $model->TGL]);
         } else {
             $model->TGL = $dates[1];
+            //die($model->TGL);
             $modelat->TGL = $dates[3];
             return $this->render('update', [
                 'model' => $model,
@@ -278,6 +281,28 @@ class AssetController extends Controller
             $dates[1] = date('d-M-Y');
             $dates[2] = date('Y').'-01-01';
             $dates[3] = '01-Jan-'.date('Y');
+        }
+        return $dates;
+    }
+
+    public function getFilterDates($date1, $date2){
+        $dates = [];
+        if(!empty($date1)){
+            $dates[0] = date('Y-m-d',strtotime($date1));
+            $dates[1] = date('d-M-Y',strtotime($date1));
+        }
+        else{
+            $dates[0] = date('Y').'-01-01';
+            $dates[1] = '01-Jan-'.date('Y');
+        }
+
+        if(!empty($date2)){
+            $dates[2] = date('Y-m-d',strtotime($date2));
+            $dates[3] = date('d-M-Y',strtotime($date2));
+        }
+        else{
+            $dates[2] = date('Y-m-d');
+            $dates[3] = date('d-M-Y');
         }
         return $dates;
     }

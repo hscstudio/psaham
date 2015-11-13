@@ -40,6 +40,17 @@ $this->params['breadcrumbs'][] = $this->title;
     ]) ?>
 
     <p>
-        <?= Html::a('Cancel',['index'],['class'=>'btn btn-default','onclick'=>(Yii::$app->request->isAjax)?'$("#myModal").modal("hide");return false':'']) ?>
+      <?= Html::a('Close',['index'],[
+          'class'=>'btn btn-default',
+          'onclick'=>'
+            if (confirm("Apakah yakin mau keluar dari halaman ini?")) {
+                $("#myModal").modal("hide");
+                return false;
+            }
+            else{
+              return false;
+            }
+          '
+      ]) ?>
     </p>
 </div>

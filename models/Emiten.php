@@ -21,6 +21,10 @@ use yii\behaviors\TimestampBehavior;
  * @property string $JMLSAHAMB
  * @property string $SALDOB
  * @property string $last_update
+ * @property string $created_at
+ * @property string $created_by
+ * @property string $updated_at
+ * @property string $updated_by
  *
  * @property Detemiten[] $detemitens
  * @property Paramfund[] $paramfunds
@@ -28,25 +32,29 @@ use yii\behaviors\TimestampBehavior;
  */
 class Emiten extends \yii\db\ActiveRecord
 {
+
+    public function behaviors()
+    {
+        return [
+            'timestamp' => [
+                'class' => \yii\behaviors\TimestampBehavior::className(),
+            ],
+            'blameable' => [
+                'class' => \yii\behaviors\BlameableBehavior::className(),
+                'attributes' => [
+                        \yii\db\ActiveRecord::EVENT_BEFORE_INSERT => ['created_by','updated_by'],
+                        \yii\db\ActiveRecord::EVENT_BEFORE_UPDATE => ['updated_by'],
+                ],
+            ],
+        ];
+    }
+
     /**
      * @inheritdoc
      */
     public static function tableName()
     {
         return 'emiten';
-    }
-
-    public function behaviors()
-    {
-      return [
-          [
-              'class' => TimestampBehavior::className(),
-              'attributes' => [
-                  ActiveRecord::EVENT_BEFORE_INSERT => ['last_update'],
-                  ActiveRecord::EVENT_BEFORE_UPDATE => ['last_update'],
-              ],
-          ],
-      ];
     }
 
     /**
@@ -62,9 +70,9 @@ class Emiten extends \yii\db\ActiveRecord
             [['JMLLOT', 'JMLSAHAM', 'JMLLOTB', 'JMLSAHAMB'], 'number',
               'min' => 0,
             ],
-            [['last_update'], 'integer'],
             [['KODE'], 'string', 'max' => 8],
-            [['NAMA'], 'string', 'max' => 50]
+            [['NAMA'], 'string', 'max' => 50],
+            [['created_by', 'updated_by','created_at', 'updated_at'], 'safe'],
         ];
     }
 

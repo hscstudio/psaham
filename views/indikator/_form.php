@@ -82,7 +82,18 @@ use yii\widgets\Pjax;
           'class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary',
           'data-confirm'=>"Apakah anda yakin akan menyimpan data ini?",
           ]) ?>
-        <?= Html::a('Cancel',['index'],['class'=>'btn btn-default','onclick'=>(Yii::$app->request->isAjax)?'$("#myModal").modal("hide");return false':'']) ?>
+          <?= Html::a('Close',['index'],[
+              'class'=>'btn btn-default',
+              'onclick'=>'
+                if (confirm("Apakah yakin mau keluar dari halaman ini?")) {
+                    $("#myModal").modal("hide");
+                    return false;
+                }
+                else{
+                  return false;
+                }
+              '
+          ]) ?>
     </div>
 
     <?php ActiveForm::end(); ?>
@@ -92,6 +103,10 @@ use yii\widgets\Pjax;
       GrowlLoad::init($this);
     }
     ?>
+
+    <?php $this->registerJs('
+      $("#indikator-nama").focus();
+    ') ?>
 
     <?php
     $this->registerJs('

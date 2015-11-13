@@ -83,20 +83,20 @@ class NoteController extends Controller
         if ($model->load(Yii::$app->request->post())) {
             if($model->save()){
               Yii::$app->session->setFlash('success', 'Data berhasil disimpan.');
-              return $this->redirect(['index']);
+              $model = new Note();
             }
             else{
               Yii::$app->session->setFlash('error', 'Data gagal disimpan.');
-              if ($ajax) {
-                return $this->renderAjax('create', [
-                    'model' => $model,
-                ]);
-              }
-              else{
-                return $this->render('create', [
-                    'model' => $model,
-                ]);
-              }
+            }
+            if ($ajax) {
+              return $this->renderAjax('create', [
+                  'model' => $model,
+              ]);
+            }
+            else{
+              return $this->render('create', [
+                  'model' => $model,
+              ]);
             }
         } else {
             if ($ajax) {

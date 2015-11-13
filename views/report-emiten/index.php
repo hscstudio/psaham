@@ -26,7 +26,6 @@ $this->params['breadcrumbs'][] = $this->title;
 ]); ?>
 <div class="report-emiten-index">
 
-    <h1 class="ui header"><?= Html::encode($this->title) ?></h1>
     <!-- <div class="ui divider"></div> -->
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
     <?php $form = ActiveForm::begin([
@@ -38,7 +37,7 @@ $this->params['breadcrumbs'][] = $this->title;
     ]); ?>
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
-        'filterModel' => $searchModel,
+        //'filterModel' => $searchModel,
         'responsive'=>true,
         'responsiveWrap'=>true,
         'hover'=>true,
@@ -46,8 +45,9 @@ $this->params['breadcrumbs'][] = $this->title;
         'showPageSummary'=>true,
         'showFooter'=>true,
         'panel' => [
-            'heading'=>'<h3 class="panel-title"><i class="glyphicon glyphicon-th"></i> <span class="hidden-xs"></span> </h3>',
+            'heading'=>'<h3 class="panel-title"><i class="glyphicon glyphicon-th"></i> <span class="hidden-xs"></span> '.Html::encode($this->title).'</h3>',
             //'type'=>'primary',
+            'after'=> false,
             'before'=>
             '<div class="row">'.
               '<div class="col-xs-5 col-md-4 col-md-3 col-lg-2">'.
@@ -90,7 +90,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 Html::a('<i class="glyphicon glyphicon-repeat"></i>', ['index'], ['data-pjax'=>0, 'class' => 'btn btn-default', 'title'=>'Reset Grid'])
             ],
             ButtonExport::widget(),
-            '{toggleData}',
+            //'{toggleData}',
         ],
         'export' => [
             'fontAwesome' => true
@@ -100,6 +100,7 @@ $this->params['breadcrumbs'][] = $this->title;
             [
               'attribute' => 'EMITEN_KODE',
               'label' => 'Kode',
+              'filter' => false,
               'format'=>'raw',
               'options' => [
                   'width' => '100px',
@@ -116,6 +117,7 @@ $this->params['breadcrumbs'][] = $this->title;
             [
               'attribute' => 'JMLLOT',
               'label' => 'Jml Lot',
+              'filter' => false,
               'format'=>['decimal',2],
               'options' => [
                   'width' => '100px',
@@ -125,14 +127,13 @@ $this->params['breadcrumbs'][] = $this->title;
               ],
               'hAlign'=>'right',
               'vAlign'=>'middle',
-              'pageSummary'=>true,
-              'pageSummaryFunc'=>GridView::F_SUM,
 
             ],
 
             [
               'attribute' => 'JMLSAHAM',
               'label' => 'Jml Saham',
+              'filter' => false,
               'format'=>['decimal',2],
               'options' => [
                   'width' => '100px',
@@ -149,6 +150,7 @@ $this->params['breadcrumbs'][] = $this->title;
             [
               'label' => 'Range Beli',
               'format'=>['decimal',2],
+              'filter' => false,
               'options' => [
                   'width' => '100px',
               ],
@@ -163,13 +165,12 @@ $this->params['breadcrumbs'][] = $this->title;
                 $range_beli = (float) @($data->SALDOB / $data->JMLSAHAMB);
                 return $range_beli;
               },
-              'pageSummary'=>true,
-              'pageSummaryFunc'=>GridView::F_SUM,
               //'footer'=>true
             ],
             [
               'label' => 'Range',
               'format'=>['decimal',2],
+              'filter' => false,
               'options' => [
                   'width' => '100px',
               ],
@@ -183,13 +184,12 @@ $this->params['breadcrumbs'][] = $this->title;
                 $range =  (float) @($data->SALDO / $data->JMLSAHAM);
                 return $range;
               },
-              'pageSummary'=>true,
-              'pageSummaryFunc'=>GridView::F_SUM,
               //'footer'=>true
             ],
             [
               'attribute' => 'SALDO',
               'label' => 'Saldo',
+              'filter' => false,
               'format'=>['decimal',2],
               'options' => [
                   'width' => '100px',
@@ -206,6 +206,7 @@ $this->params['breadcrumbs'][] = $this->title;
             [
               'attribute' => 'HARGA',
               'label' => 'Harga',
+              'filter' => false,
               'format' => 'raw',
               'options' => [
                   'width' => '100px',
@@ -233,6 +234,7 @@ $this->params['breadcrumbs'][] = $this->title;
             [
               'attribute' => 'TGLAKHIR',
               'label' => 'Tgl Akhir',
+              'filter' => false,
               'options' => [
                   'width' => '100px',
               ],
@@ -245,6 +247,7 @@ $this->params['breadcrumbs'][] = $this->title;
             [
               'label' => 'Saldo **)',
               'format'=>['decimal',2],
+              'filter' => false,
               'options' => [
                   'width' => '100px',
               ],
@@ -265,6 +268,7 @@ $this->params['breadcrumbs'][] = $this->title;
             [
               'label' => '(+) %',
               'format'=>['decimal',2],
+              'filter' => false,
               'options' => [
                   'width' => '100px',
               ],
@@ -278,13 +282,12 @@ $this->params['breadcrumbs'][] = $this->title;
                 $persen =  (float) @(($data->JMLSAHAM * $data->HARGA * 100) / $total_saldo);
                 return $persen;
               },
-              'pageSummary'=>true,
-              'pageSummaryFunc'=>GridView::F_SUM,
               'footer'=>'Total Laba/Rugi'
             ],
             [
               'label' => 'Laba(+) / Rugi(-)',
               'format'=>['decimal',2],
+              'filter' => false,
               'options' => [
                   'width' => '100px',
               ],
@@ -302,68 +305,7 @@ $this->params['breadcrumbs'][] = $this->title;
               'pageSummaryFunc'=>GridView::F_SUM,
               'footer'=>number_format($total_laba_rugi,2)
             ],
-            /*[
-              'attribute' => 'SALDOR1',
-              'format'=>['decimal',2],
-              'options' => [
-                  'width' => '100px',
-              ],
-              'headerOptions' => [
-                  'style' => 'text-align:center'
-              ],
-              'hAlign'=>'right',
-              'vAlign'=>'middle',
-              'pageSummary'=>true,
-              'pageSummaryFunc'=>GridView::F_SUM,
-              //'footer'=>true
-            ],
-            [
-              'attribute' => 'JMLLOTB',
-              'label' => 'Jml LotB',
-              'format'=>['decimal',2],
-              'options' => [
-                  'width' => '100px',
-              ],
-              'headerOptions' => [
-                  'style' => 'text-align:center'
-              ],
-              'hAlign'=>'right',
-              'vAlign'=>'middle',
-              'pageSummary'=>true,
-              'pageSummaryFunc'=>GridView::F_SUM,
-              //'footer'=>true
-            ],
-            [
-              'attribute' => 'JMLSAHAMB',
-              'format'=>['decimal',2],
-              'options' => [
-                  'width' => '100px',
-              ],
-              'headerOptions' => [
-                  'style' => 'text-align:center'
-              ],
-              'hAlign'=>'right',
-              'vAlign'=>'middle',
-              'pageSummary'=>true,
-              'pageSummaryFunc'=>GridView::F_SUM,
-              //'footer'=>true
-            ],
-            [
-              'attribute' => 'SALDOB',
-              'label' => 'Saldo B',
-              'format'=>['decimal',2],
-              'options' => [
-                  'width' => '100px',
-              ],
-              'headerOptions' => [
-                  'style' => 'text-align:center'
-              ],
-              'hAlign'=>'right',
-              'vAlign'=>'middle',
-              'pageSummary'=>true,
-              'pageSummaryFunc'=>GridView::F_SUM,
-              //'footer'=>true
-            ],*/
+
         ],
     ]); ?>
     <?php ActiveForm::end(); ?>
@@ -560,88 +502,86 @@ $this->registerJs("
   var tipe = true;
   var jmlSahamG = 0;
   var saldoG = 0;
+  var emitenCode = '';
 
   function setFromGridview(obj){
-    if (typeof last_obj !== 'undefined') {
-      last_obj.removeClass( 'custom-selected' );
-    }
-    obj.parent().parent().toggleClass( 'custom-selected' );
-    last_obj = obj.parent().parent()
-    //obj.find('li:nth-child(2)').html('XXX')
-    jmlSahamG = accounting.unformat($('tr.custom-selected > td:nth-child(4)').html())
-    saldoG = accounting.unformat($('tr.custom-selected > td:nth-child(5)').html())
-    //alert(jmlSahamG+' => '+saldoG)
-    simulate();
+      if (typeof last_obj !== 'undefined') {
+        last_obj.removeClass( 'custom-selected' );
+      }
+      obj.parent().parent().toggleClass( 'custom-selected' );
+      last_obj = obj.parent().parent()
+      //obj.find('li:nth-child(2)').html('XXX')
+      jmlSahamG = accounting.unformat($('tr.custom-selected > td:nth-child(4)').html())
+      saldoG = accounting.unformat($('tr.custom-selected > td:nth-child(5)').html())
+      emitenCode = obj.html()
+      //alert('emitenCode => '+emitenCode)
+      simulate();
   }
 
   function simulate(x){
-    harga = accounting.unformat($('#dynamicmodel-harga').val());
-    kom_beli = ".$komisi->KOM_BELI.";
-    kom_jual = ".$komisi->KOM_JUAL.";
-    komisi = 0;
-    if(tipe){ // BELI
-      komisi = kom_beli;
-    }
-    else{
-      komisi = kom_jual;
-    }
+      harga = accounting.unformat($('#dynamicmodel-harga').val());
+      kom_beli = ".$komisi->KOM_BELI.";
+      kom_jual = ".$komisi->KOM_JUAL.";
+      komisi = 0;
+      if(tipe){ // BELI
+        komisi = kom_beli;
+      }
+      else{
+        komisi = kom_jual;
+      }
 
-    if(x==1){
-      jml_lot = accounting.unformat($('#dynamicmodel-jml_lot').val());
-      //jmlsaham = jmllot * jmllbrsaham dr table lotshare
-      jml_saham = jml_lot * ".$lotshare->JML_LBRSAHAM.";
-      $('#dynamicmodel-jml_saham').val( accounting.formatNumber(jml_saham, 2) );
-    }
-    if(x==2){
-      jml_saham = accounting.unformat($('#dynamicmodel-jml_saham').val());
-      //jmllot = jmlsaham / jmllbrsaham dr table lotshare
-      jml_lot = jml_saham / ".$lotshare->JML_LBRSAHAM.";
-      $('#dynamicmodel-jml_lot').val( accounting.formatNumber(jml_lot, 2) );
-    }
+      if(x==1){
+        jml_lot = accounting.unformat($('#dynamicmodel-jml_lot').val());
+        //jmlsaham = jmllot * jmllbrsaham dr table lotshare
+        jml_saham = jml_lot * ".$lotshare->JML_LBRSAHAM.";
+        $('#dynamicmodel-jml_saham').val( accounting.formatNumber(jml_saham, 2) );
+      }
+      if(x==2){
+        jml_saham = accounting.unformat($('#dynamicmodel-jml_saham').val());
+        //jmllot = jmlsaham / jmllbrsaham dr table lotshare
+        jml_lot = jml_saham / ".$lotshare->JML_LBRSAHAM.";
+        $('#dynamicmodel-jml_lot').val( accounting.formatNumber(jml_lot, 2) );
+      }
 
-    //Total komisi = harga * jmlsaham * komisi penjualan atau pembelian / 100
-    total_komisi = harga * jml_saham * komisi / 100;
+      //Total komisi = harga * jmlsaham * komisi penjualan atau pembelian / 100
+      total_komisi = harga * jml_saham * komisi / 100;
 
-    if(tipe){ // BELI
-      // Pd Simulasi pembelian :
-      // total = (harga * jmlsaham) + total komisi
-		  // range = (saldo[g] + total) / (jmlsaham[g] + jmlsaham)
-      total_harga = (harga * jml_saham) + total_komisi
-      range = (saldoG + total_harga) / (jmlSahamG + jml_saham)
-    }
-    else{
-      // Pd Simulasi penjualan:
-      // total = (harga * jmlsaham) - total komisi
-		  // range = (saldo[g] - total) / (jmlsaham[g] - jmlsaham)
-      total_harga = (harga * jml_saham) - total_komisi
-      range = (saldoG - total_harga) / (jmlSahamG - jml_saham)
-    }
+      if(tipe){ // BELI
+        // Pd Simulasi pembelian :
+        // total = (harga * jmlsaham) + total komisi
+  		  // range = (saldo[g] + total) / (jmlsaham[g] + jmlsaham)
+        total_harga = (harga * jml_saham) + total_komisi
+        range = (saldoG + total_harga) / (jmlSahamG + jml_saham)
+      }
+      else{
+        // Pd Simulasi penjualan:
+        // total = (harga * jmlsaham) - total komisi
+  		  // range = (saldo[g] - total) / (jmlsaham[g] - jmlsaham)
+        total_harga = (harga * jml_saham) - total_komisi
+        range = (saldoG - total_harga) / (jmlSahamG - jml_saham)
+      }
 
-    $('#dynamicmodel-komisi').val( accounting.formatNumber(komisi, 2) );
-    $('#dynamicmodel-total_komisi').val( accounting.formatNumber(total_komisi, 2) );
-    $('#dynamicmodel-total_harga').val( accounting.formatNumber(total_harga, 2) );
-    $('#dynamicmodel-range').val( accounting.formatNumber(range, 2) );
+      $('#dynamicmodel-komisi').val( accounting.formatNumber(komisi, 2) );
+      $('#dynamicmodel-total_komisi').val( accounting.formatNumber(total_komisi, 2) );
+      $('#dynamicmodel-total_harga').val( accounting.formatNumber(total_harga, 2) );
+      $('#dynamicmodel-range').val( accounting.formatNumber(range, 2) );
 
-    var simulate_json = {
-      'tipe': tipe,
-      'jml_lot':jml_lot,
-      'harga':harga,
-      'komisi':komisi,
-      'total_komisi':total_komisi,
-      'jml_saham':jml_saham,
-      'range':range,
-      'total_harga':total_harga,
-    };
+      var simulate_json = {
+        'tipe': tipe,
+        'jml_lot':jml_lot,
+        'harga':harga,
+        'komisi':komisi,
+        'total_komisi':total_komisi,
+        'jml_saham':jml_saham,
+        'range':range,
+        'total_harga':total_harga,
+        'emitenCode':emitenCode,
+      };
 
-      /*{'simulate':[
-        {'tipe':tipe},
-        {'jml_lot':jml_lot},
-
-      ]};*/
 
       $.ajax({
         type: 'POST',
-        url: '".Url::to(['set-cookie'])."',
+        url: '".Url::to(['set-session'])."',
         data: simulate_json,
         //contentType: 'application/json; charset=utf-8',
         dataType: 'json',

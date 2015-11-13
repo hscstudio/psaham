@@ -18,6 +18,7 @@
 <body>
     <div class="page">
         <h2>LAPORAN EMITEN</h2>
+        <div class="text-right"><strong>Tgl <?= $reportDates[1] ?></strong></div>
         <table class="table table-striped table-bordered table-hover table-condensed">
         <thead>
         <tr>
@@ -37,6 +38,10 @@
         </thead>
         <?php
         $no = 1;
+        $jmlsaham = 0;
+        $saldo = 0;
+        $saldo_bintang = 0;
+        $laba_rugi = 0;
         foreach($dataProvider->getModels() as $row){
         ?>
         <tbody>
@@ -67,8 +72,26 @@
                 <td class="text-right"><?= number_format($laba_rugi,2) ?></td>
         </tr>
         <?php
+            $jmlsaham += $row->JMLSAHAM;
+            $saldo += $row->SALDO;
+            $saldo_bintang += $saldo2;
+            $laba_rugis += $laba_rugi;
         }
         ?>
+        <tr>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th class="text-right"><?= number_format($jmlsaham,2) ?></th>
+                <th></th>
+                <th></th>
+                <th class="text-right"><?= number_format($saldo,2) ?></th>
+                <th></th>
+                <th></th>
+                <th class="text-right"><?= number_format($saldo_bintang,2) ?></th>
+                <th></th>
+                <th class="text-right"><?= number_format($laba_rugis,2) ?></th>
+        </tr>
         <tr>
                 <th></th>
                 <th></th>
@@ -85,12 +108,16 @@
         </tbody>
         </table>
 
-        <table class="table table-condensed">
+        <table style="width:100%">
         <thead>
         <tr>
           <th style="width:50%">
-            Simulasi <?= ($simulates['tipe'])?'Pembelian':'Penjualan' ?>
+            <?php
+            $tipe = (($simulates['tipe']=='true')?'Pembelian':'Penjualan') . ' Emiten '.$simulates['emitenCode'];
+            ?>
+            Simulasi <?= $tipe ?>
           </th>
+          <th style="width:25%"></th>
           <th>
             Tanggal
           </th>
@@ -105,6 +132,11 @@
                   <td></td>
                 </tr>
                 <tr>
+                  <td>Jml Saham</td>
+                  <td class="text-right"><?= number_format($simulates['jml_saham'],2) ?></td>
+                  <td></td>
+                </tr>
+                <tr>
                   <td>Harga</td>
                   <td class="text-right"><?= number_format($simulates['harga'],2) ?></td>
                   <td></td>
@@ -115,13 +147,8 @@
                   <td class="text-right"><?= number_format($simulates['total_komisi'],2) ?></td>
                 </tr>
                 <tr>
-                  <td>Jml Saham</td>
-                  <td class="text-right"><?= number_format($simulates['jml_saham'],2) ?></td>
-                  <td></td>
-                </tr>
-                <tr>
                   <td>Range</td>
-                  <td class="text-right"><?= number_format($simulates['range'],2) ?></td>
+                  <td class="text-right"><?= @number_format($simulates['range'],2) ?></td>
                   <td></td>
                 </tr>
                 <tr>
@@ -132,7 +159,8 @@
               </tbody>
             </table>
           </td>
-          <td>
+          <td></td>
+          <td style="vertical-align:top">
             <?php
             foreach($detemitenDates as $detemitenDate){
                 echo date('d-M-Y',strtotime($detemitenDate)).'<br>';

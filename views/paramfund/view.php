@@ -115,14 +115,18 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <p>
 
-        <?= Html::a('Delete', ['delete', 'EMITEN_KODE' => $model->EMITEN_KODE, 'TAHUN' => $model->TAHUN, 'TRIWULAN' => $model->TRIWULAN], [
-            'class' => 'btn btn-danger',
-            'data' => [
-                'confirm' => 'Are you sure you want to delete this item?',
-                'method' => 'post',
-            ],
-        ]) ?>
-        <?= Html::a('Cancel',['index'],['class'=>'btn btn-default','onclick'=>(Yii::$app->request->isAjax)?'$("#myModal").modal("hide");return false':'']) ?>
+      <?= Html::a('Close',['index'],[
+          'class'=>'btn btn-default',
+          'onclick'=>'
+            if (confirm("Apakah yakin mau keluar dari halaman ini?")) {
+                $("#myModal").modal("hide");
+                return false;
+            }
+            else{
+              return false;
+            }
+          '
+      ]) ?>
 
     </p>
 </div>

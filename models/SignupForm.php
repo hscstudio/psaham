@@ -33,6 +33,16 @@ class SignupForm extends Model
 
             ['password', 'required'],
             ['password', 'string', 'min' => 6],
+            /*
+            [['password'], 'match', 'pattern' => '\S*(\S*([a-zA-Z]\S*[0-9])|([0-9]\S*[a-zA-Z]))\S*',
+              'message' => 'Password harus kombinasi angka dan huruf'],
+            */
+            /*
+            [['password'], 'match', 'pattern' => '/([A-Za-z]{1,}+[0-9]{1,})/i',
+              'message' => 'Password harus kombinasi angka dan huruf'],
+            */
+            [['password'], 'match', 'pattern' => '([A-Z][a-z]\d)+\w{6,}',
+              'message' => 'Password harus kombinasi angka dan huruf'],
         ];
     }
 

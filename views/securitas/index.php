@@ -22,7 +22,6 @@ echo $parent;
 */
 ?>
 <div class="securitas-index">
-    <h1 class="ui header"><?= Html::encode($this->title) ?></h1>
     <!-- <div class="ui divider"></div> -->
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
@@ -34,14 +33,16 @@ echo $parent;
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
         'responsive'=>true,
-        'responsiveWrap'=>true,
+        //'responsiveWrap'=>true,
         'hover'=>true,
-        'resizableColumns'=>true,
+        //'resizableColumns'=>true,
         //'showPageSummary'=>true,
         'showFooter'=>true,
         'panel' => [
-            'heading'=>'<h3 class="panel-title"><i class="glyphicon glyphicon-th"></i> <span class="hidden-xs"></span> </h3>',
+            'heading'=>'<h3 class="panel-title"><i class="glyphicon glyphicon-th"></i> <span class="hidden-xs"></span> '.Html::encode($this->title).'</h3>',
             //'type'=>'primary',
+            'after'=> false,
+            'footer' => false,
             'before'=>
             '<div class="row">'.
               '<div class="col-xs-2 col-lg-1">'.
@@ -49,7 +50,7 @@ echo $parent;
               'data-pjax'=>'0',
               'data-toggle'=>"modal",
               'data-target'=>"#myModal",
-              'data-title'=>"Create Data",
+              'data-title'=>"Create Data Securitas",
               ]):'').' '.
               '</div>'.
               '<div class="col-xs-5 col-sm-4 col-md-3 col-lg-2">'.
@@ -64,7 +65,7 @@ echo $parent;
                 ])
             ],
             ButtonExport::widget(),
-            '{toggleData}',
+            //'{toggleData}',
         ],
         'export' => [
             'fontAwesome' => true
@@ -95,7 +96,6 @@ echo $parent;
             ],
             [
               'attribute' => 'ALAMAT',
-              'label' => 'Alamat / Telp.',
               'options' => [
                   //'width' => '180px',
               ],
@@ -104,10 +104,28 @@ echo $parent;
               ],
               'hAlign'=>'left',
               'vAlign'=>'middle',
-              'format' => 'raw',
-              'value'=>function($data){
-                return $data->ALAMAT.'<br>'.$data->TELP;
-              }
+            ],
+            [
+              'attribute' => 'TELP',
+              'options' => [
+                  //'width' => '180px',
+              ],
+              'headerOptions' => [
+                  'style' => 'text-align:center'
+              ],
+              'hAlign'=>'left',
+              'vAlign'=>'middle',
+            ],
+            [
+              'attribute' => 'HP',
+              'options' => [
+                  //'width' => '180px',
+              ],
+              'headerOptions' => [
+                  'style' => 'text-align:center'
+              ],
+              'hAlign'=>'left',
+              'vAlign'=>'middle',
             ],
             [
               'attribute' => 'CP',
@@ -139,7 +157,7 @@ echo $parent;
                       'data-pjax'=>'0',
                       'data-toggle'=>"modal",
                       'data-target'=>"#myModal",
-                      'data-title'=>"View Data",
+                      'data-title'=>"View Data Securitas",
                     ]);
                   },
                   'update' => function ($url, $model) {
@@ -149,7 +167,7 @@ echo $parent;
                       'data-pjax'=>'0',
                       'data-toggle'=>"modal",
                       'data-target'=>"#myModal",
-                      'data-title'=>"Update Data",
+                      'data-title'=>"Update Data Securitas",
                     ]);
                   },
                   'delete' => function ($url, $model) {

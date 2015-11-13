@@ -16,7 +16,6 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="note-index">
 
-    <h1><?= Html::encode($this->title) ?></h1>
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
     <?php Pjax::begin([
@@ -26,14 +25,14 @@ $this->params['breadcrumbs'][] = $this->title;
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
         'responsive'=>true,
-        'responsiveWrap'=>true,
         'hover'=>true,
-        'resizableColumns'=>true,
         //'showPageSummary'=>true,
-        'showFooter'=>true,
+        //'showFooter'=>false,
         'panel' => [
-            'heading'=>'<h3 class="panel-title"><i class="glyphicon glyphicon-th"></i> <span class="hidden-xs"></span> </h3>',
+            'heading'=>'<h3 class="panel-title"><i class="glyphicon glyphicon-file"></i> <span class="hidden-xs"></span> '.Html::encode($this->title).'</h3>',
             //'type'=>'primary',
+            'after'=> false,
+            'footer' => false,
             'before'=>
             '<div class="row">'.
               '<div class="col-xs-2 col-lg-1">'.
@@ -41,7 +40,7 @@ $this->params['breadcrumbs'][] = $this->title;
               'data-pjax'=>'0',
               'data-toggle'=>"modal",
               'data-target'=>"#myModal",
-              'data-title'=>"Create Data"
+              'data-title'=>"Create Data Note"
               ]):'').' '.
               '</div>'.
               '<div class="col-xs-5 col-sm-4 col-md-3 col-lg-2">'.
@@ -54,7 +53,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 Html::a('<i class="glyphicon glyphicon-repeat"></i>', ['index'], ['data-pjax'=>0, 'class' => 'btn btn-default', 'title'=>'Reset Grid'])
             ],
             //'{export}',
-            '{toggleData}',
+            //'{toggleData}',
         ],
         'export' => [
             'fontAwesome' => true
@@ -102,7 +101,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     'data-pjax'=>'0',
                     'data-toggle'=>"modal",
                     'data-target'=>"#myModal",
-                    'data-title'=>"View Data",
+                    'data-title'=>"View Data Note",
                   ]);
                 },
                 'update' => function ($url, $model) {
@@ -112,7 +111,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     'data-pjax'=>'0',
                     'data-toggle'=>"modal",
                     'data-target'=>"#myModal",
-                    'data-title'=>"Update Data",
+                    'data-title'=>"Update Data Note",
                   ]);
                 },
                 'delete' => function ($url, $model) {

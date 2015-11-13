@@ -17,14 +17,12 @@ $this->title = 'Indikators';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="indikator-index">
-
-    <h1 class="ui header"><?= Html::encode($this->title) ?></h1>
     <!-- <div class="ui divider"></div> -->
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
-    <?php Pjax::begin([
-      'id'=>'pjax-gridview',
-    ]); ?>
+    <?php //Pjax::begin([
+      //'id'=>'pjax-gridview',
+    //]); ?>
 
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
@@ -32,12 +30,14 @@ $this->params['breadcrumbs'][] = $this->title;
         'responsive'=>true,
         'responsiveWrap'=>true,
         'hover'=>true,
-        'resizableColumns'=>true,
+        //'resizableColumns'=>true,
         //'showPageSummary'=>true,
         'showFooter'=>true,
         'panel' => [
-            'heading'=>'<h3 class="panel-title"><i class="glyphicon glyphicon-th"></i> <span class="hidden-xs"></span> </h3>',
+            'heading'=>'<h3 class="panel-title"><i class="glyphicon glyphicon-th"></i> <span class="hidden-xs"></span> '.Html::encode($this->title).'</h3>',
             //'type'=>'primary',
+            'after'=> false,
+            'footer' => false,
             'before'=>
             '<div class="row">'.
               '<div class="col-xs-2 col-lg-1">'.
@@ -45,7 +45,7 @@ $this->params['breadcrumbs'][] = $this->title;
               'data-pjax'=>'0',
               'data-toggle'=>"modal",
               'data-target'=>"#myModal",
-              'data-title'=>"Create Data",
+              'data-title'=>"Create Data Indikator",
               //'data-size'=>"modal-lg",
               ]):'').' '.
               '</div>'.
@@ -117,7 +117,7 @@ $this->params['breadcrumbs'][] = $this->title;
                       'data-pjax'=>'0',
                       'data-toggle'=>"modal",
                       'data-target'=>"#myModal",
-                      'data-title'=>"View Data",
+                      'data-title'=>"View Data Indikator",
                     ]);
                   },
                   'update' => function ($url, $model) {
@@ -127,14 +127,14 @@ $this->params['breadcrumbs'][] = $this->title;
                       'data-pjax'=>'0',
                       'data-toggle'=>"modal",
                       'data-target'=>"#myModal",
-                      'data-title'=>"Update Data",
+                      'data-title'=>"Update Data Indikator",
                     ]);
                   },
                   'delete' => function ($url, $model) {
                     $icon='<span class="glyphicon glyphicon-trash"></span>';
                     return Html::a($icon,$url,[
                       'class'=>'btn btn-default btn-xs pjax-delete',
-                      'data-pjax-container' => 'pjax-gridview',
+                      'data-pjax-container' => 'pjax-indikator',
                       'data-confirm-message' => 'Yakin akan menghapus data ini?',
                     ]);
                   },
@@ -181,5 +181,5 @@ $this->params['breadcrumbs'][] = $this->title;
 
     ");
     ?>
-    <?php Pjax::end(); ?>
+    <?php //Pjax::end(); ?>
 </div>

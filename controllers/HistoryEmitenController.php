@@ -42,15 +42,21 @@ class HistoryEmitenController extends Controller
      * Lists all Emiten models.
      * @return mixed
      */
-    public function actionIndex($perpage=20)
+    public function actionIndex()
     {
+        $perpage = 20;
+        if(!empty($_GET['per-page'])){
+            $perpage = (int)$_GET['per-page'];
+        }
+
         $searchModel = new EmitenSearch([
             'JMLLOT' => 0,
         ]);
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-        $dataProvider->pagination->pageSize=$perpage;
+        $dataProvider2 = clone $dataProvider;
         $session = Yii::$app->session;
-        $session->set('dataProvider',$dataProvider);
+        $session->set('dataProvider',$dataProvider2);
+        $dataProvider->pagination->pageSize=$perpage;
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
@@ -70,11 +76,11 @@ class HistoryEmitenController extends Controller
         header('Cache-Control: no-cache');
         //generate random number for demonstration
         $emiten = Emiten::find()
-          ->select('last_update')
-          ->orderBy('last_update DESC')
+          ->select('updated_at')
+          ->orderBy('updated_at DESC')
           ->one();
-        $last_update = $emiten->last_update;
-        echo "data: ".$last_update."\n\n";
+        $updated_at = $emiten->updated_at;
+        echo "data: ".$updated_at."\n\n";
         ob_flush();
     }
 
@@ -149,6 +155,16 @@ class HistoryEmitenController extends Controller
                         ]
                     ]
                 );
+            }
+            else{
+              $activeSheet->getStyle('A'.$baseRow.':'.'K'.$baseRow)->applyFromArray(
+                  [
+                      'fill' => [
+                          'type' => \PHPExcel_Style_Fill::FILL_SOLID,
+                          'color' => ['rgb' => 'ffffff']
+                      ]
+                  ]
+              );
             }
             $baseRow++;
 

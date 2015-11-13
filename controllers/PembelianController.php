@@ -46,18 +46,31 @@ class PembelianController extends Controller
      */
     public function actionIndex($date='')
     {
+        $perpage = 10;
+        if(!empty($_GET['per-page'])){
+            $perpage = (int)$_GET['per-page'];
+        }
+
         $dates = $this->getDates($date);
         $searchModel = new PembelianSearch([
             'TGL' => $dates[0]
         ]);
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-        $dataProvider->pagination->pageSize=10;
+        $dataProvider->getSort()->defaultOrder = ['updated_at'=>SORT_DESC,'created_at'=>SORT_DESC];
+        $dataProvider2 = clone $dataProvider;
+        $latestDate = $this->getLatestDate();
+        $session = Yii::$app->session;
+        $session->set('dataProvider',$dataProvider2);
+        $session->set('dates',$dates);
+        $session->set('latestDate',$latestDate);
+        $dataProvider->pagination->pageSize=$perpage;
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
-            'latestDate' => $this->getLatestDate(),
+            'latestDate' => $latestDate,
             'lotshare' => $this->getLotshare(),
             'dates' => $dates,
+            'perpage' => $perpage,
         ]);
     }
 
@@ -116,6 +129,11 @@ class PembelianController extends Controller
                   if($modelEmiten->save()){
                     Yii::$app->session->setFlash('success', 'Data berhasil disimpan.');
                     $transaction->commit();
+                    $model = new Pembelian([
+                          'TGL' => $dates[0],
+                    ]);
+                    $model->NOMOR = $this->getNumber();
+                    $model->KOM_BELI = $this->getKomisi();
                   }
                   else{
                     Yii::$app->session->setFlash('error', 'Data gagal disimpan.');
@@ -132,24 +150,24 @@ class PembelianController extends Controller
             else{
                 Yii::$app->session->setFlash('error', 'Data gagal disimpan.');
                 $transaction->rollBack();
-                if ($ajax) {
-                  return $this->renderAjax('create', [
-                      'model' => $model,
-                      'lotshare' => $this->getLotshare(),
-                  ]);
-                }
-                else{
-                  return $this->render('create', [
-                      'model' => $model,
-                      'lotshare' => $this->getLotshare(),
-                  ]);
-                }
             }
           } catch(Exception $e) {
             Yii::$app->session->setFlash('error', 'Fatal error.');
             $transaction->rollback();
           }
-          return $this->redirect(['index', 'date'=>$dates[0] ]);
+          //return $this->redirect(['index', 'date'=>$dates[0] ]);
+          if ($ajax) {
+            return $this->renderAjax('create', [
+                'model' => $model,
+                'lotshare' => $this->getLotshare(),
+            ]);
+          }
+          else{
+            return $this->render('create', [
+                'model' => $model,
+                'lotshare' => $this->getLotshare(),
+            ]);
+          }
         } else {
             $model->NOMOR = $this->getNumber();
             $model->TGL = $dates[1];
@@ -402,5 +420,106 @@ class PembelianController extends Controller
             $jml_saham = (int)$lotshare->JML_LBRSAHAM;
         }
         return $jml_saham;
+    }
+
+    /*
+  	EXPORT WITH PHPEXCEL
+  	*/
+  	public function actionExportExcel()
+    {
+        //$searchModel = new SecuritasSearch();
+        //$dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $session = Yii::$app->session;
+        $dataProvider = $session->get('dataProvider');
+        $dates = $session->get('dates');
+        $latestDate = $session->get('latestDate');
+
+        $objReader = \PHPExcel_IOFactory::createReader('Excel2007');
+        $template = Yii::getAlias('@app/views/'.$this->id).'/_export.xlsx';
+        $objPHPExcel = $objReader->load($template);
+        //$objPHPExcel->getActiveSheet()->getPageSetup()->setOrientation(\PHPExcel_Worksheet_PageSetup::ORIENTATION_LANDSCAPE);
+        //$objPHPExcel->getActiveSheet()->getPageSetup()->setPaperSize(\PHPExcel_Worksheet_PageSetup::PAPERSIZE_FOLIO);
+        $baseRow=4; // line 2
+        $activeSheet = $objPHPExcel->getActiveSheet();
+        $activeSheet->setCellValue('J2', $dates[1]);
+        $activeSheet->setCellValue('D2', $latestDate[1]);
+        foreach($dataProvider->getModels() as $row){
+            if($baseRow!=4) $activeSheet->insertNewRowBefore($baseRow,1);
+            $activeSheet->setCellValue('A'.$baseRow, $baseRow-3);
+            $activeSheet->setCellValue('B'.$baseRow, $row->TGL);
+            $activeSheet->setCellValue('C'.$baseRow, $row->NOMOR);
+            $activeSheet->setCellValue('D'.$baseRow, $row->EMITEN_KODE);
+            $activeSheet->setCellValue('E'.$baseRow, $row->SECURITAS_KODE);
+            $activeSheet->setCellValue('F'.$baseRow, $row->JMLLOT);
+            $activeSheet->setCellValue('G'.$baseRow, $row->JMLSAHAM);
+            $activeSheet->setCellValue('H'.$baseRow, $row->HARGA);
+            $activeSheet->setCellValue('I'.$baseRow, $row->KOM_BELI);
+            $activeSheet->setCellValue('J'.$baseRow, $row->TOTAL_BELI);
+            if($baseRow%2==1){
+                $activeSheet->getStyle('A'.$baseRow.':'.'J'.$baseRow)->applyFromArray(
+                    [
+                        'fill' => [
+                            'type' => \PHPExcel_Style_Fill::FILL_SOLID,
+                            'color' => ['rgb' => 'efefef']
+                        ]
+                    ]
+                );
+            }
+            else{
+              $activeSheet->getStyle('A'.$baseRow.':'.'J'.$baseRow)->applyFromArray(
+                  [
+                      'fill' => [
+                          'type' => \PHPExcel_Style_Fill::FILL_SOLID,
+                          'color' => ['rgb' => 'ffffff']
+                      ]
+                  ]
+              );
+            }
+            $baseRow++;
+
+        }
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment;filename="'.$this->id.'_'.date('YmdHis').'.xlsx"');
+        header('Cache-Control: max-age=0');
+        $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, "Excel2007");
+        $objWriter->save('php://output');
+        exit;
+    }
+
+    /*
+  	EXPORT WITH MPDF
+  	*/
+    public function actionExportPdf()
+    {
+        //$searchModel = new SecuritasSearch();
+        //$dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $session = Yii::$app->session;
+        $dataProvider = $session->get('dataProvider');
+        $dates = $session->get('dates');
+        $latestDate = $session->get('latestDate');
+        $html = $this->renderPartial('_pdf',[
+          'dataProvider'=>$dataProvider,
+          'dates'=>$dates,
+          'latestDate'=>$latestDate,
+        ]);
+        //function mPDF($mode='',$format='A4',$default_font_size=0,$default_font='',$mgl=15,$mgr=15,$mgt=16,$mgb=16,$mgh=9,$mgf=9, $orientation='P') {
+        $mpdf=new \mPDF('c','A4-L',0,'' , 15 , 10 , 15 , 10 , 10 , 10);
+        $header = [
+          'L' => [],
+          'C' => [],
+          'R' => [
+            'content' => 'Page {PAGENO} of {nbpg}',
+            'font-family' => 'sans',
+            'font-style' => '',
+            'font-size' => '9',	/* gives default */
+          ],
+          'line' => 1,		/* 1 or 0 to include line above/below header/footer */
+        ];
+        $mpdf->SetFooter($header,'O');
+        $mpdf->SetDisplayMode('fullpage');
+        $mpdf->list_indent_first_level = 0;  // 1 or 0 - whether to indent the first level of a list
+        $mpdf->WriteHTML($html);
+        $mpdf->Output($this->id.'_'.date('YmdHis').'.pdf','D');
+        exit;
     }
 }

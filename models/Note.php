@@ -11,8 +11,10 @@ use yii\behaviors\TimestampBehavior;
  * @property integer $id
  * @property string $title
  * @property string $content
- * @property integer $created_at
- * @property integer $updated_at
+ * @property string $created_at
+ * @property string $created_by
+ * @property string $updated_at
+ * @property string $updated_by
  */
 class Note extends \yii\db\ActiveRecord
 {
@@ -24,16 +26,22 @@ class Note extends \yii\db\ActiveRecord
         return 'note';
     }
 
-    /**
-     * @inheritdoc
-     */
     public function behaviors()
     {
         return [
-            TimestampBehavior::className(),
+            'timestamp' => [
+                'class' => \yii\behaviors\TimestampBehavior::className(),
+            ],
+            'blameable' => [
+                'class' => \yii\behaviors\BlameableBehavior::className(),
+                'attributes' => [
+                        \yii\db\ActiveRecord::EVENT_BEFORE_INSERT => ['created_by','updated_by'],
+                        \yii\db\ActiveRecord::EVENT_BEFORE_UPDATE => ['updated_by'],
+                ],
+            ],
         ];
     }
-    
+
     /**
      * @inheritdoc
      */
@@ -43,7 +51,8 @@ class Note extends \yii\db\ActiveRecord
             [['title', 'content'], 'required'],
             [['content'], 'string'],
             [['created_at', 'updated_at'], 'integer'],
-            [['title'], 'string', 'max' => 255]
+            [['title'], 'string', 'max' => 255],
+            [['created_by', 'updated_by','created_at', 'updated_at'], 'safe'],
         ];
     }
 

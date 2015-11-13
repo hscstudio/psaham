@@ -14,31 +14,29 @@ $this->title = 'Parameter Fundamental';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="paramfund-index">
-
-    <h1><?= Html::encode($this->title) ?></h1>
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
     <?php Pjax::begin([
-      'id'=>'pjax-gridview',
+      'id'=>'paramfund-index-pjax',
     ]); ?>
 
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
         'responsive'=>true,
-        'responsiveWrap'=>true,
         'hover'=>true,
-        'resizableColumns'=>true,
         'showPageSummary'=>true,
         'showFooter'=>true,
         'panel' => [
-            'heading'=>'<h3 class="panel-title"><i class="glyphicon glyphicon-th"></i> <span class="hidden-xs"></span>'.'</h3>',
+            'heading'=>'<h3 class="panel-title"><i class="glyphicon glyphicon-th"></i> <span class="hidden-xs"></span> '.Html::encode($this->title).'</h3>',
             //'type'=>'primary',
+            'after'=> false,
+            'footer' => false,
             'before'=>
             ((Mimin::filterRoute($this->context->id.'/create'))?Html::a('Create', ['create'], ['class' => 'btn btn-success',
             'data-pjax'=>'0',
             'data-toggle'=>"modal",
             'data-target'=>"#myModal",
-            'data-title'=>"Create Data",
+            'data-title'=>"Create Data Parameter",
             'data-size'=>"modal-lg",
             ]):'').' '
             ,
@@ -48,7 +46,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 Html::a('<i class="glyphicon glyphicon-repeat"></i>', ['index','date'=>$dates[1]], ['data-pjax'=>0, 'class' => 'btn btn-default', 'title'=>'Reset Grid'])
             ],
             ButtonExport::widget(),
-            '{toggleData}',
+            //'{toggleData}',
         ],
         'export' => [
             'fontAwesome' => true
@@ -169,7 +167,7 @@ $this->params['breadcrumbs'][] = $this->title;
                       'data-pjax'=>'0',
                       'data-toggle'=>"modal",
                       'data-target'=>"#myModal",
-                      'data-title'=>"View Data",
+                      'data-title'=>"View Data Parameter",
                     ]);
                   },
                   'update' => function ($url, $model) {
@@ -179,7 +177,7 @@ $this->params['breadcrumbs'][] = $this->title;
                       'data-pjax'=>'0',
                       'data-toggle'=>"modal",
                       'data-target'=>"#myModal",
-                      'data-title'=>"Update Data",
+                      'data-title'=>"Update Data Parameter",
                       'data-size'=>"modal-lg",
                     ]);
                   },

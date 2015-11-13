@@ -52,6 +52,10 @@ $this->params['breadcrumbs'][] = $this->title;
               'format'=>['decimal','2'],
             ],
             [
+              'attribute'=>'JMLSAHAMB',
+              'format'=>['decimal','2'],
+            ],
+            [
               'attribute'=>'SALDOB',
               'format'=>['decimal','2'],
             ],
@@ -59,14 +63,18 @@ $this->params['breadcrumbs'][] = $this->title;
     ]) ?>
     <p>
 
-        <?= Html::a('Delete', ['delete', 'id' => $model->KODE], [
-            'class' => 'btn btn-danger',
-            'data' => [
-                'confirm' => 'Are you sure you want to delete this item?',
-                'method' => 'post',
-            ],
-        ]) ?>
-        <?= Html::a('Cancel',['index'],['class'=>'btn btn-default','onclick'=>(Yii::$app->request->isAjax)?'$("#myModal").modal("hide");return false':'']) ?>
+      <?= Html::a('Close',['index'],[
+          'class'=>'btn btn-default',
+          'onclick'=>'
+            if (confirm("Apakah yakin mau keluar dari halaman ini?")) {
+                $("#myModal").modal("hide");
+                return false;
+            }
+            else{
+              return false;
+            }
+          '
+      ]) ?>
 
     </p>
 </div>

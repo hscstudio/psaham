@@ -45,6 +45,7 @@ class SecuritasController extends Controller
     {
         $searchModel = new SecuritasSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider->getSort()->defaultOrder = ['updated_at'=>SORT_DESC,'created_at'=>SORT_DESC];
         $dataProvider->pagination->pageSize=10;
         $session = Yii::$app->session;
         $session->set('dataProvider',$dataProvider);
@@ -86,20 +87,21 @@ class SecuritasController extends Controller
           try {
             if($model->save()){
               Yii::$app->session->setFlash('success', 'Data berhasil disimpan.');
-              return $this->redirect(['index']);
+              $model = new Securitas();
             }
             else{
               Yii::$app->session->setFlash('error', 'Data gagal disimpan.');
-              if ($ajax) {
-                return $this->renderAjax('create', [
-                    'model' => $model,
-                ]);
-              }
-              else{
-                return $this->render('create', [
-                    'model' => $model,
-                ]);
-              }
+            }
+
+            if ($ajax) {
+              return $this->renderAjax('create', [
+                  'model' => $model,
+              ]);
+            }
+            else{
+              return $this->render('create', [
+                  'model' => $model,
+              ]);
             }
           } catch(Exception $e) {
             Yii::$app->session->setFlash('error', 'Kode sudah ada, pilih kode lain.');
@@ -135,17 +137,18 @@ class SecuritasController extends Controller
           try {
             if($model->save()){
               Yii::$app->session->setFlash('success', 'Data berhasil disimpan.');
+              return $this->redirect(['index']);
             }
             else{
               Yii::$app->session->setFlash('error', 'Data gagal disimpan.');
-            }
-            if ($ajax) {
-              return $this->renderAjax('update', [
-                'model' => $model,
-              ]);
-            }
-            else{
-              return $this->refresh();
+              if ($ajax) {
+                return $this->renderAjax('update', [
+                  'model' => $model,
+                ]);
+              }
+              else{
+                return $this->refresh();
+              }
             }
           } catch(Exception $e) {
             Yii::$app->session->setFlash('error', 'Fatal error.');

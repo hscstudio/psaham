@@ -47,6 +47,7 @@ class EmitenController extends Controller
     {
         $searchModel = new EmitenSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider->getSort()->defaultOrder = ['updated_at'=>SORT_DESC,'created_at'=>SORT_DESC];
         $dataProvider->pagination->pageSize=10;
         $session = Yii::$app->session;
         $session->set('dataProvider',$dataProvider);
@@ -93,22 +94,22 @@ class EmitenController extends Controller
             $model->SALDOB = $model->SALDO;
             if($model->save()){
               Yii::$app->session->setFlash('success', 'Data berhasil disimpan.');
-              return $this->redirect(['index']);
+              $model = new Emiten();
             }
             else{
               Yii::$app->session->setFlash('error', 'Data gagal disimpan.');
-              if ($ajax) {
-                return $this->renderAjax('create', [
-                    'model' => $model,
-                    'lotshare' => $this->getLotshare(),
-                ]);
-              }
-              else{
-                return $this->render('create', [
-                    'model' => $model,
-                    'lotshare' => $this->getLotshare(),
-                ]);
-              }
+            }
+            if ($ajax) {
+              return $this->renderAjax('create', [
+                  'model' => $model,
+                  'lotshare' => $this->getLotshare(),
+              ]);
+            }
+            else{
+              return $this->render('create', [
+                  'model' => $model,
+                  'lotshare' => $this->getLotshare(),
+              ]);
             }
           } catch(Exception $e) {
             Yii::$app->session->setFlash('error', 'Kode sudah ada, silahkan pilih kode lain.');

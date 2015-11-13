@@ -19,16 +19,20 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <?php
     if(count($dataProviders)>0){
-
+      echo '<div class="text-right"><strong>TGL & WAKTU : '.date('d-M-Y H:i:s').'</strong></div>';
       foreach ($dataProviders as $emitenCode => $dataProvider) {
           echo "<hr>";
-          echo "<div style='font-weight:bold;'>Emiten: ".$emitenCode."</div>";
+          echo "<div style='font-weight:bold;'>Emiten: ".$emitenCode;
+          if (($emitenByCode = \app\models\Emiten::find()->where(['KODE'=>$emitenCode])->asArray()->one()) !== null) {
+              echo  ' ('.$emitenByCode['NAMA'].')';
+          }
+          echo "</div>";
           echo GridView::widget([
               'dataProvider' => $dataProvider,
               'responsive'=>true,
-              'responsiveWrap'=>true,
+              //'responsiveWrap'=>true,
               'hover'=>true,
-              'resizableColumns'=>true,
+              //'resizableColumns'=>true,
               'showPageSummary'=>true,
               'columns' => [
                   ['class' => 'kartik\grid\SerialColumn'],
@@ -63,6 +67,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     ],
                     'hAlign'=>'center',
                     'vAlign'=>'middle',
+                    'pageSummary' => 'Rata-rata',
                   ],
                   [
                     'attribute' => 'P_BV',

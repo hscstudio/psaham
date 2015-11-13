@@ -79,6 +79,21 @@ class SiteController extends Controller
     		//echo $module.'/'.$controller.'/'.$action;
     		//exit;
     		*/
+
+        /*
+        $message = "Halo Apa kabar";
+        $key = "abcd1234";
+        echo $message;
+        echo "<br>";
+        $encr = \app\components\AesCtr::encrypt($message, $key, 256);
+        echo $encr;
+        echo "<br>";
+        $decr = \app\components\AesCtr::decrypt($encr, $key, 256);
+        echo $decr;
+        echo "<br>";
+        exit;
+        */
+        //$decr = \app\components\AesCtr::decrypt($cipher, $pw, 256);
         return $this->render('index');
     }
 

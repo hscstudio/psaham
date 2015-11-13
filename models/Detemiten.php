@@ -20,9 +20,29 @@ use Yii;
  * @property string $SALDOB
  *
  * @property Emiten $eMITENKODE
+ * @property string $created_at
+ * @property string $created_by
+ * @property string $updated_at
+ * @property string $updated_by
  */
 class Detemiten extends \yii\db\ActiveRecord
 {
+    public function behaviors()
+    {
+        return [
+            'timestamp' => [
+                'class' => \yii\behaviors\TimestampBehavior::className(),
+            ],
+            'blameable' => [
+                'class' => \yii\behaviors\BlameableBehavior::className(),
+                'attributes' => [
+                        \yii\db\ActiveRecord::EVENT_BEFORE_INSERT => ['created_by','updated_by'],
+                        \yii\db\ActiveRecord::EVENT_BEFORE_UPDATE => ['updated_by'],
+                ],
+            ],
+        ];
+    }
+
     /**
      * @inheritdoc
      */
@@ -48,7 +68,8 @@ class Detemiten extends \yii\db\ActiveRecord
             ],
             //jmllot, jmllotb dan jmlsaham, jmlsahamb
 
-            [['EMITEN_KODE'], 'string', 'max' => 8]
+            [['EMITEN_KODE'], 'string', 'max' => 8],
+            [['created_by', 'updated_by','created_at', 'updated_at'], 'safe'],
         ];
     }
 
