@@ -29,8 +29,6 @@ $this->params['breadcrumbs'][] = $this->title;
         'panel' => [
             'heading'=>'<h3 class="panel-title"><i class="glyphicon glyphicon-th"></i> <span class="hidden-xs"></span> '.Html::encode($this->title).'</h3>',
             //'type'=>'primary',
-            'after'=> false,
-            'footer' => false,
             'before'=>
             ((Mimin::filterRoute($this->context->id.'/create'))?Html::a('Create', ['create'], ['class' => 'btn btn-success',
             'data-pjax'=>'0',

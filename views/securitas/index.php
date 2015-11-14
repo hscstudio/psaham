@@ -41,8 +41,6 @@ echo $parent;
         'panel' => [
             'heading'=>'<h3 class="panel-title"><i class="glyphicon glyphicon-th"></i> <span class="hidden-xs"></span> '.Html::encode($this->title).'</h3>',
             //'type'=>'primary',
-            'after'=> false,
-            'footer' => false,
             'before'=>
             '<div class="row">'.
               '<div class="col-xs-2 col-lg-1">'.

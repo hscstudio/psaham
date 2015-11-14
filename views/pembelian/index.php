@@ -41,8 +41,6 @@ $this->params['breadcrumbs'][] = $this->title;
               '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'.
               '(<span class="hidden-xs">tanggal</span> transaksi terakhir '.(($latestDate[1]==1)?'belum ada':$latestDate[1]).')</h3>',
             //'type'=>'primary',
-            'after'=> false,
-            'footer' => false,
             'before'=>
             '<div class="row">'.
               '<div class="col-xs-2 col-lg-1">'.
@@ -56,7 +54,7 @@ $this->params['breadcrumbs'][] = $this->title;
               '</div>'.
               '<div class="col-xs-2 col-md-1">'.
               Html::dropDownList('per-page', $perpage, [
-                '2'  =>'2',
+                '5'  =>'5',
                 '10'  =>'10',
                 '20'  =>'20',
                 '50'  =>'50',
