@@ -327,6 +327,9 @@ use yii\widgets\Pjax;
             push: false,
             replace: false
           });
+          setTimeout(function() {
+            $("#paramfund-tahun").focus();
+          },3000)
       });
 
 

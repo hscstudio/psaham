@@ -163,6 +163,9 @@ MaskedInputAsset::register($this);
             push: false,
             replace: false
           });
+          setTimeout(function() {
+            $("#emiten-nama").focus();
+          },3000)
       });
     ') ?>
     <?php

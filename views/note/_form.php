@@ -56,6 +56,9 @@ use yii\helpers\Url;
             push: false,
             replace: false
           });
+          setTimeout(function() {
+            $("#note-title").focus();
+          },3000)
       });
     ') ?>
 

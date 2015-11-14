@@ -87,7 +87,9 @@ use yii\widgets\Pjax;
 
     <?php ActiveForm::end(); ?>
     <?php $this->registerJs('
-      $("#komisi-kom_beli").focus();
+      setTimeout(function() {
+        $("#komisi-kom_beli").focus();
+      },1000)
     ') ?>
     <?php
     if(Yii::$app->request->isAjax){

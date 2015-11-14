@@ -88,6 +88,9 @@ use yii\helpers\Url;
             push: false,
             replace: false
           });
+          setTimeout(function() {
+            $("#securitas-kode").focus()
+          },3000)
       });
     ') ?>
     <?php

@@ -104,12 +104,9 @@ use yii\widgets\Pjax;
     }
     ?>
 
-    <?php $this->registerJs('
-      $("#indikator-nama").focus();
-    ') ?>
-
     <?php
     $this->registerJs('
+        $("#indikator-nama").focus();
         $("#indikator-form-pjax").on("pjax:end", function() {
             $.pjax.reload("#pjax-indikator", {
               url: "'.Url::to(["indikator/index","tgl"=>date('Y-m-d',strtotime($model->TGL))]).'",
@@ -118,6 +115,9 @@ use yii\widgets\Pjax;
               push: false,
               replace: false
             });
+            setTimeout(function() {
+              $("#indikator-nama").focus();
+            },3000)
         });
     ');
 
