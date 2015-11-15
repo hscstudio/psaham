@@ -162,28 +162,33 @@ class HistoryParamfundController extends Controller
         $template = Yii::getAlias('@app/views/'.$this->id).'/_export.xlsx';
         $objPHPExcel = $objReader->load($template);
         $activeSheet = $objPHPExcel->getActiveSheet();
-        $iterate=0;
-        $startRow = 3;
-        $spaceRow = 5;
-        $space = 2;
+        $iterate = 0;
+        $start = 1;
+
+        $startItemRow = 0;
+        $endItemRow = 0;
+        $spaceItemRow = 2;
+        $minItemRow = 4;
+
         $activeSheet->setCellValue('K2', date('d-M-Y H:i:s'));
         foreach ($dataProviders as $emitenCode => $dataProvider) {
           $iterate++;
           if($iterate==1){
-            $baseRow= $startRow; // line 2
-            $space = 1;
+              $startItemRow = $start + $spaceItemRow;
           }
           else{
-            $baseRow= $baseRow+$spaceRow; // line 2
-            $space = 2;
+              $startItemRow = $endItemRow + $spaceItemRow;
           }
-          $activeSheet->setCellValue('C'.($baseRow+($space-1)), $emitenCode);
+
+          $activeSheet->setCellValue('C'.($startItemRow), $emitenCode);
+          $endItemRow = $startItemRow + $minItemRow;
           $no = 0;
           foreach($dataProvider->getModels() as $row){
               $no++;
-              $currentRow = $no+$baseRow+$space;
+              $currentRow = $startItemRow+1+$no;
               if($no!=1){
                   $activeSheet->insertNewRowBefore($currentRow,1);
+                  $endItemRow++;
               }
               $activeSheet->setCellValue('A'.$currentRow, $no);
               $activeSheet->setCellValue('B'.$currentRow, $row->TAHUN);
@@ -197,9 +202,19 @@ class HistoryParamfundController extends Controller
               $activeSheet->setCellValue('J'.$currentRow, $row->PER);
               $activeSheet->setCellValue('K'.$currentRow, $row->DER);
               $activeSheet->setCellValue('L'.$currentRow, $row->HARGA);
-              $activeSheet->setCellValue('F'.($currentRow+1), '=average(F'.($baseRow+$space+1).':F'.$currentRow.')');
-              $activeSheet->setCellValue('H'.($currentRow+1), '=average(H'.($baseRow+$space+1).':H'.$currentRow.')');
-              if($no%2==0){
+              //$activeSheet->setCellValue('F'.($currentRow+1), '=average(F'.($baseRow+$space+1).':F'.$currentRow.')');
+              //$activeSheet->setCellValue('H'.($currentRow+1), '=average(H'.($baseRow+$space+1).':H'.$currentRow.')');
+              if($no%2==1){
+                  $activeSheet->getStyle('A'.$currentRow.':'.'L'.$currentRow)->applyFromArray(
+                      [
+                          'fill' => [
+                              'type' => \PHPExcel_Style_Fill::FILL_SOLID,
+                              'color' => ['rgb' => 'ffffff']
+                          ]
+                      ]
+                  );
+              }
+              else{
                   $activeSheet->getStyle('A'.$currentRow.':'.'L'.$currentRow)->applyFromArray(
                       [
                           'fill' => [
@@ -211,7 +226,8 @@ class HistoryParamfundController extends Controller
               }
           }
         }
-        $objPHPExcel->getActiveSheet()->removeRow($currentRow+$space, 50);
+        $startItemRow = $endItemRow + $spaceItemRow;
+        $objPHPExcel->getActiveSheet()->removeRow($startItemRow, 50);
         header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
         header('Content-Disposition: attachment;filename="'.$this->id.'_'.date('YmdHis').'.xlsx"');
         header('Cache-Control: max-age=0');

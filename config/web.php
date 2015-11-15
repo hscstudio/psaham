@@ -11,9 +11,9 @@ $config = [
          'class' => '\hscstudio\mimin\components\AccessControl',
          'allowActions' => [
             'site/*',
-            'debug/*',
-            'mimin/*',
-            'gii/*'
+            'debug/*', 
+            'mimin/*', // hapus ketika production
+            'gii/*', // hapus ketika production
         ],
     ],
     'modules' => [
@@ -22,23 +22,12 @@ $config = [
         ],
         'gridview' =>  [
             'class' => '\kartik\grid\Module'
-            // enter optional module parameters below - only if you need to
-            // use your own export download action or custom translation
-            // message source
-            // 'downloadAction' => 'gridview/export/download',
-            // 'i18n' => []
         ]
     ],
     'components' => [
         'urlManager' => [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
-            'rules' => [
-                [
-                  'class' => 'app\components\UrlRule',
-                    // ...configure other properties...
-                ],
-            ]
         ],
         'request' => [
             // !!! insert a secret key in the following (if it is empty) - this is required by cookie validation
@@ -56,12 +45,17 @@ $config = [
         'errorHandler' => [
             'errorAction' => 'site/error',
         ],
-        'mailer' => [
+        'mail' => [
             'class' => 'yii\swiftmailer\Mailer',
-            // send all mails to a file by default. You have to set
-            // 'useFileTransport' to false and configure a transport
-            // for the mailer to send real emails.
-            'useFileTransport' => true,
+            'useFileTransport' => false,
+			'transport'=>[
+				'class'=>'Swift_SmtpTransport',
+				'host'=>'smtp.gmail.com',
+				'username'=>'youremail@gmail.com',
+				'password'=>'your password',
+				'port'=>'587',
+				'encryption'=>'tls',
+			],			
         ],
         'log' => [
             'traceLevel' => YII_DEBUG ? 3 : 0,
