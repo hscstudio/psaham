@@ -2,8 +2,8 @@
 use kartik\widgets\AlertBlock;
 use kartik\widgets\Growl;
 return [
-    'adminEmail' => 'admin@example.com',
-    'supportEmail' => 'support@example.com',
+    'adminEmail' => 'yourgmail@gmail.com',
+    'supportEmail' => 'yourgmail@gmail.com',
     'user.passwordResetTokenExpire' => 3600,
     'alertBlockConfig' => [
         'type' => AlertBlock::TYPE_GROWL,

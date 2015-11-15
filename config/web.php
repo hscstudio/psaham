@@ -11,7 +11,7 @@ $config = [
          'class' => '\hscstudio\mimin\components\AccessControl',
          'allowActions' => [
             'site/*',
-            'debug/*', 
+            'debug/*',
             'mimin/*', // hapus ketika production
             'gii/*', // hapus ketika production
         ],
@@ -45,17 +45,18 @@ $config = [
         'errorHandler' => [
             'errorAction' => 'site/error',
         ],
-        'mail' => [
+        'mailer' => [
+            // https://www.google.com/settings/security/lesssecureapps
             'class' => 'yii\swiftmailer\Mailer',
             'useFileTransport' => false,
-			'transport'=>[
-				'class'=>'Swift_SmtpTransport',
-				'host'=>'smtp.gmail.com',
-				'username'=>'youremail@gmail.com',
-				'password'=>'your password',
-				'port'=>'587',
-				'encryption'=>'tls',
-			],			
+      			'transport'=>[
+      				'class'=>'Swift_SmtpTransport',
+      				'host'=>'smtp.gmail.com',
+      				'username'=>'yourgmail@gmail.com',
+      				'password'=>'yourpassword',
+      				'port'=>'587',
+      				'encryption'=>'tls',
+      			],
         ],
         'log' => [
             'traceLevel' => YII_DEBUG ? 3 : 0,
