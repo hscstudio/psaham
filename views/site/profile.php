@@ -49,11 +49,11 @@ $this->params['breadcrumbs'][] = $this->title;
       <strong> Biarkan kosong jika tidak ingin mengubah password</strong>
       <div class="ui divider"></div>
 
-      <?= $form->field($model, 'new_password') ?>
+      <?= $form->field($model, 'new_password')->passwordInput(); ?>
 
-      <?= $form->field($model, 'repeat_password') ?>
+      <?= $form->field($model, 'repeat_password')->passwordInput() ?>
 
-      <?= $form->field($model, 'old_password') ?>
+      <?= $form->field($model, 'old_password')->passwordInput() ?>
 
       <div class="ui divider"></div>
 
@@ -67,6 +67,13 @@ $this->params['breadcrumbs'][] = $this->title;
       </div>
     </div>
     <?php
+    $this->registerJs('
+    $("#profile-new_password,#profile-repeat_password,#profile-old_password").focus(function(){
+      this.type = "text";
+    }).blur(function(){
+      this.type = "password";
+    })
+    ');
     if(Yii::$app->request->isAjax){
       GrowlLoad::init($this);
       AlertBlock::widget(Yii::$app->params['alertBlockConfig']);

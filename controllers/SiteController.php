@@ -213,8 +213,11 @@ class SiteController extends Controller
         $ajax = Yii::$app->request->isAjax;
         if ($model->load(Yii::$app->request->post())) {
           if(!empty($model->new_password)){
-            if($model->validatePassword($model->new_password)){
+            if($model->validatePassword($model->old_password)){
                 $model->setPassword($model->new_password) ;
+            }
+            else{
+                Yii::$app->session->setFlash('warning','Password lama salah');
             }
           }
           if($model->save()){
