@@ -24,6 +24,7 @@ $this->params['breadcrumbs'][] = $this->title;
         'filterModel' => $searchModel,
         'responsive'=>true,
         'hover'=>true,
+        'resizableColumns' => false,
         'showPageSummary'=>true,
         'showFooter'=>true,
         'panel' => [

@@ -30,9 +30,9 @@ $this->params['breadcrumbs'][] = $this->title;
           echo GridView::widget([
               'dataProvider' => $dataProvider,
               'responsive'=>true,
-              //'responsiveWrap'=>true,
+              'responsiveWrap'=>true,
               'hover'=>true,
-              //'resizableColumns'=>true,
+              'resizableColumns' => false,
               'showPageSummary'=>true,
               'columns' => [
                   ['class' => 'kartik\grid\SerialColumn'],

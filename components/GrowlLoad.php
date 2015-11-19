@@ -11,7 +11,7 @@ use kartik\base\AnimateAsset;
  */
 class GrowlLoad extends Growl
 {
-    public function init($view)
+    public static function reload($view)
     {
         GrowlAsset::register($view);
         AnimateAsset::register($view);

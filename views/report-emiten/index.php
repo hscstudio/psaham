@@ -41,7 +41,7 @@ $this->params['breadcrumbs'][] = $this->title;
         'responsive'=>true,
         'responsiveWrap'=>true,
         'hover'=>true,
-        //'resizableColumns'=>true,
+        'resizableColumns' => false,
         'showPageSummary'=>true,
         'showFooter'=>true,
         'panel' => [
@@ -449,7 +449,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <?php
     if(Yii::$app->request->isAjax){
       AlertBlock::widget(Yii::$app->params['alertBlockConfig']);
-      GrowlLoad::init($this);
+      GrowlLoad::reload($this);
     }
     ?>
 </div>

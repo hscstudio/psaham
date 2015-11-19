@@ -33,9 +33,9 @@ echo $parent;
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
         'responsive'=>true,
-        //'responsiveWrap'=>true,
+        'responsiveWrap'=>true,
         'hover'=>true,
-        //'resizableColumns'=>true,
+        'resizableColumns' => false,
         //'showPageSummary'=>true,
         'showFooter'=>true,
         'panel' => [

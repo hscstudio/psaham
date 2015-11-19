@@ -428,9 +428,10 @@ use kartik\grid\GridView;
       //'enableReplaceState'=>false,
     ]); ?>
     <?= GridView::widget([
-      'dataProvider' => $dataProvider,
-      'filterModel' => $searchModel,
-    ]); ?>
+        'dataProvider' => $dataProvider,
+        'filterModel' => $searchModel,
+        'resizableColumns' => false,
+      ]); ?>
     <?php
     $this->registerJs("
       $.pjax.reload('#pjax-indikator', {
@@ -440,6 +441,13 @@ use kartik\grid\GridView;
         push: false,
         replace: false
       });
+
+      /*
+      $( document ).on('pjax:error', function( event, request ) {
+        console.log(request);
+        event.preventDefault();
+      });
+      */
     ");
     ?>
     <?php Pjax::end(); ?>

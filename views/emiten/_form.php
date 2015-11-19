@@ -3,7 +3,6 @@
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use yii\widgets\MaskedInput;
-use yii\widgets\MaskedInputAsset;
 use app\components\GrowlLoad;
 use kartik\widgets\AlertBlock;
 use yii\widgets\Pjax;
@@ -12,8 +11,6 @@ use yii\helpers\Url;
 /* @var $this yii\web\View */
 /* @var $model app\models\Emiten */
 /* @var $form yii\widgets\ActiveForm */
-
-MaskedInputAsset::register($this);
 ?>
 
 <div class="emiten-form">
@@ -171,7 +168,7 @@ MaskedInputAsset::register($this);
     <?php
     if(Yii::$app->request->isAjax){
       AlertBlock::widget(Yii::$app->params['alertBlockConfig']);
-      GrowlLoad::init($this);
+      GrowlLoad::reload($this);
     }
     ?>
   <?php Pjax::end(); ?>
@@ -213,7 +210,5 @@ $this->registerJs('
   }
 
   //Tampilkan inputan jmllot dan share (keduanya bisa di edit).
-
-
 
 ');

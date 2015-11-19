@@ -68,11 +68,13 @@ class UrlRule extends Object implements UrlRuleInterface
 
     public function encode($value) {
         //return $this->mencrypt($value);
+        // http://www.movable-type.co.uk/scripts/aes.html
         return AesCtr::encrypt($value, '123456', 256);
     }
 
     public function decode($value) {
         //return $this->mdecrypt($value);
+        // http://www.movable-type.co.uk/scripts/aes-php.html
         return AesCtr::decrypt($value, '123456', 256);
     }
 

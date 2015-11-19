@@ -75,7 +75,7 @@ $this->params['breadcrumbs'][] = $this->title;
     })
     ');
     if(Yii::$app->request->isAjax){
-      GrowlLoad::init($this);
+      GrowlLoad::reload($this);
       AlertBlock::widget(Yii::$app->params['alertBlockConfig']);
     }
     ?>

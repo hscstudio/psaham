@@ -93,8 +93,8 @@ use yii\widgets\Pjax;
     ') ?>
     <?php
     if(Yii::$app->request->isAjax){
-      GrowlLoad::init($this);
       AlertBlock::widget(Yii::$app->params['alertBlockConfig']);
+      GrowlLoad::reload($this);
     }
     ?>
     <?php Pjax::end(); ?>
