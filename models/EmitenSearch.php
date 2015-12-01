@@ -12,6 +12,8 @@ use app\models\Emiten;
  */
 class EmitenSearch extends Emiten
 {
+
+    public $KODES;
     /**
      * @inheritdoc
      */
@@ -69,6 +71,14 @@ class EmitenSearch extends Emiten
         $query->andFilterWhere(['like', 'KODE', $this->KODE])
             ->andFilterWhere(['like', 'NAMA', $this->NAMA]);
 
+        if(!empty($this->KODES)){
+          $i=0;
+          foreach ($this->KODES as $key => $value) {
+            if($value!='null')  $i++;
+          }
+          if($i>0) $query->orFilterWhere(['KODE'=>$this->KODES]);
+          $this->KODES = [];
+        }
         return $dataProvider;
     }
 }

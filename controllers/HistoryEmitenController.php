@@ -42,16 +42,19 @@ class HistoryEmitenController extends Controller
      * Lists all Emiten models.
      * @return mixed
      */
-    public function actionIndex()
+    public function actionIndex($emitens='')
     {
         $perpage = 20;
         if(!empty($_GET['per-page'])){
             $perpage = (int)$_GET['per-page'];
         }
 
-        $searchModel = new EmitenSearch([
-            'JMLLOT' => 0,
-        ]);
+        $parameters = [];
+        //$parameters['JMLLOT'] => 0;
+        if(!empty($emitens)){
+          $parameters['KODES'] = explode(',', $emitens);
+        }
+        $searchModel = new EmitenSearch($parameters);
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $dataProvider2 = clone $dataProvider;
         $session = Yii::$app->session;
@@ -61,6 +64,7 @@ class HistoryEmitenController extends Controller
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
             'perpage' => $perpage,
+            'emitens' => $parameters['KODES'],
             'lotshare' => $this->getLotshare(),
         ]);
     }

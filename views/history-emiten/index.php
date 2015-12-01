@@ -24,9 +24,20 @@ $this->params['breadcrumbs'][] = $this->title;
       'id'=>'pjax-gridview',
     ]);
     ?>
+
+    <?php
+    $dataEmitens = \yii\helpers\ArrayHelper::map(
+      app\models\Emiten::find()
+        ->select([
+          'KODE','NAMA', 'DERIVED' => 'CONCAT(KODE," - ",NAMA)'
+        ])
+        ->asArray()
+        ->all(), 'KODE', 'KODE');
+    ?>
+
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
-        'filterModel' => $searchModel,
+        //'filterModel' => $searchModel,
         'responsive'=>true,
         'responsiveWrap'=>true,
         'hover'=>true,
@@ -51,6 +62,31 @@ $this->params['breadcrumbs'][] = $this->title;
                   'class'=>'form-control',
                 ]).
                 '</div>'.
+                '<div class="col-xs-6 col-md-4">'.
+                \kartik\widgets\Select2::widget([
+                  'name'=> 'emitens',
+                  'data' => $dataEmitens,
+                  'value' => $emitens,
+                  'options' => [
+                    'placeholder' => 'Pilih Emiten ...',
+                    'onchange'=>'
+                        $.pjax.reload("#pjax-gridview", {
+                          url: "'.Url::to(['index']).'?emitens="+$(this).val(),
+                          container: "#pjax-gridview",
+                          timeout: 3000,
+                          push: false,
+                          replace: false
+                        });
+                    ',
+                    //'disabled'=>(!$model->isNewRecord)?true:false,
+                  ],
+                  'pluginOptions' => [
+                    'allowClear' => true,
+                    'multiple' => true,
+                  ],
+                ]).
+                '</div>'.
+
               '</div>',
         ],
         'toolbar' => [
